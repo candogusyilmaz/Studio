@@ -1,0 +1,28 @@
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
+cors:
+  allowed-headers: "*"
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS,HEAD
+  allowed-origins: "http://127.0.0.1:5173"
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/studio_db
+    username: postgres
+    password: 123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        generate_statistics: true
+        format_sql: true
+    open-in-view: false
+logging:
+  level:
+    org:
+      hibernate: #TODO: Should be replaced with ERROR when in production
+        stat: DEBUG
+        SQL: DEBUG

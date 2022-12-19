@@ -1,0 +1,25 @@
+{
+  "login": {
+    "title": "Welcome to Studio",
+    "username": "Username",
+    "usernamePlaceHolder": "Your username",
+    "password": "Password",
+    "passwordPlaceholder": "Your very very secret password",
+    "login": "Login",
+    "errors": {
+      "wrongCredentials" : "Username or password is incorrect!",
+      "usernameEmpty": "Username can't be empty",
+      "passwordEmpty": "Password can't be empty"
+    }
+  },
+  "403": {
+    "title" : "We Are Sorry...",
+    "description": "You don't have enough permissions to the page you are trying to access.",
+    "backToHomepage": "Take Me Home"
+  },
+  "404": {
+    "title" : "Page Not Found",
+    "description": "Hey There! You seem lost, the page you are trying to access doesn't exist. Would you like to be escorted to the homepage?",
+    "backToHomepage": "Back to Homepage"
+  }
+}

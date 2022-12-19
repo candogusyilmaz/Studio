@@ -1,0 +1,25 @@
+{
+  "login": {
+    "title": "Studio'ya Hoşgeldin",
+    "username": "Kullanıcı Adı",
+    "usernamePlaceHolder": "Kullanıcı adınız",
+    "password": "Şifre",
+    "passwordPlaceholder": "Şifreniz",
+    "login": "Giriş",
+    "errors": {
+      "wrongCredentials" : "Kullanıcı adı veya şifre hatalı!",
+      "usernameEmpty": "Kullanıcı adı boş bırakılamaz",
+      "passwordEmpty": "Şifre boş bırakılamaz"
+    }
+  },
+  "403": {
+    "title" : "Çok Üzgünüz...",
+    "description": "Bu sayfaya erişmek için gerekli izinleriniz bulunmuyor.",
+    "backToHomepage": "Anasayfa'ya Geri Dön"
+  },
+  "404": {
+    "title" : "Sayfa Bulunamadı",
+    "description": "Dikkat! Kaybolmuş gibisin, ulaşmaya çalıştığın sayfa bulunmuyor. Seni anasayfaya götürmeme ne dersin?",
+    "backToHomepage": "Anasayfa'ya Geri Dön"
+  }
+}
