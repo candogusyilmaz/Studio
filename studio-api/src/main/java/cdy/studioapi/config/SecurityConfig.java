@@ -12,8 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
@@ -43,9 +43,9 @@ public class SecurityConfig {
         http.csrf().disable(); //
         // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         http.cors(Customizer.withDefaults());
-        http.authorizeRequests(auth -> auth
-                .mvcMatchers("/api/auth/token").permitAll()
-                .mvcMatchers("/api/auth/refresh-token").permitAll()
+        http.authorizeHttpRequests(auth -> auth.shouldFilterAllDispatcherTypes(true)
+                .requestMatchers("/api/auth/token").permitAll()
+                .requestMatchers("/api/auth/refresh-token").permitAll()
                 .anyRequest().authenticated());
         http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
         http.exceptionHandling()
@@ -59,7 +59,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8();
     }
 
     @Bean

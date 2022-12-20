@@ -1,10 +1,10 @@
 package cdy.studioapi.models;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Getter

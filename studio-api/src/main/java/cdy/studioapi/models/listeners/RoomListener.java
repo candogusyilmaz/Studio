@@ -2,7 +2,7 @@ package cdy.studioapi.models.listeners;
 
 import cdy.studioapi.models.Room;
 
-import javax.persistence.PostPersist;
+import jakarta.persistence.PostPersist;
 
 public class RoomListener {
 

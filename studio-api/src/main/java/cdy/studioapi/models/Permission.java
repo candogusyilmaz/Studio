@@ -1,8 +1,8 @@
 package cdy.studioapi.models;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Getter
