@@ -1,9 +1,8 @@
 package cdy.studioapi.models;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import jakarta.persistence.*;
 
 @Getter
 @Setter
@@ -15,5 +14,5 @@ public class Location extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    private Location location;
+    private Location parent;
 }

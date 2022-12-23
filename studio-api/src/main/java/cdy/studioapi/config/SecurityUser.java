@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SecurityUser implements UserDetails {
     @Getter
@@ -22,7 +21,7 @@ public class SecurityUser implements UserDetails {
     private final boolean isEnabled;
     @Getter
     private final Integer tokenVersion;
-    private final List<GrantedAuthority> authorities;
+    private final List<SimpleGrantedAuthority> authorities;
 
     public SecurityUser(UserView user) {
         this.id = user.getId();
@@ -36,7 +35,7 @@ public class SecurityUser implements UserDetails {
         authorities = user.getRoles().stream()
                 .flatMap(r -> r.getPermissions().stream())
                 .map(p -> new SimpleGrantedAuthority(p.getName()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

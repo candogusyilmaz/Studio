@@ -11,10 +11,10 @@ public class PermissionService {
     private final PermissionRepository permissionRepository;
 
     public void updateDisplayName(PermissionUpdateRequest req) {
-        var permission = permissionRepository.findById(req.getId())
-                .orElseThrow(() -> new RuntimeException("Permission with the id " + req.getId() + " not found"));
+        var permission = permissionRepository.findById(req.id())
+                .orElseThrow(() -> new RuntimeException("Permission with the id " + req.id() + " not found"));
 
-        permission.updateDisplayName(req.getDisplayName());
+        permission.updateDisplayName(req.displayName());
 
         permissionRepository.save(permission);
     }

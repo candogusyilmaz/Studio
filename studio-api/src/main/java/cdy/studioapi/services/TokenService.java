@@ -15,7 +15,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -69,6 +68,6 @@ public class TokenService {
         var token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
         return new LoginResponse(principal.getUsername(), principal.getEmail(), principal.getDisplayName(),
-                token, LocalDateTime.ofInstant(expiresAt, ZoneOffset.UTC), principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+                token, LocalDateTime.ofInstant(expiresAt, ZoneOffset.UTC), principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
     }
 }
