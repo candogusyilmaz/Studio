@@ -8,8 +8,6 @@ import cdy.studioapi.infrastructure.UserRepository;
 import cdy.studioapi.models.Permission;
 import cdy.studioapi.models.Role;
 import cdy.studioapi.models.User;
-import cdy.studioapi.requests.PermissionUpdateRequest;
-import cdy.studioapi.services.PermissionService;
 import cdy.studioapi.services.UserRoleService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -30,7 +28,7 @@ public class StudioApi {
     }
 
     @Bean
-    public CommandLineRunner runner(UserRepository userRepo, RoleRepository roleRepo, UserRoleService userRoleService, PasswordEncoder encoder, PermissionRepository perRepo, PermissionService perSer) {
+    public CommandLineRunner runner(UserRepository userRepo, RoleRepository roleRepo, UserRoleService userRoleService, PasswordEncoder encoder, PermissionRepository perRepo) {
         return args -> {
             var user = new User("mirakyu", encoder.encode("123"));
             user.setDisplayName("didid");
@@ -48,11 +46,6 @@ public class StudioApi {
 
             var permission = new Permission("per 1", "per1");
             perRepo.save(permission);
-
-            var perup = new PermissionUpdateRequest(permission.getId(), "de");
-            perSer.updateDisplayName(perup);
-
-
         };
     }
 }
