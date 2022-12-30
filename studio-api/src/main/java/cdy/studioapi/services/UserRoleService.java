@@ -1,5 +1,7 @@
 package cdy.studioapi.services;
 
+import cdy.studioapi.enums.ExceptionCode;
+import cdy.studioapi.exceptions.BadRequestException;
 import cdy.studioapi.infrastructure.UserRoleRepository;
 import cdy.studioapi.models.Role;
 import cdy.studioapi.models.User;
@@ -12,12 +14,12 @@ import org.springframework.stereotype.Service;
 public class UserRoleService {
     private final UserRoleRepository userRoleRepository;
 
-    public UserRole createRoleMember(User user, Role role) {
+    public UserRole assignRole(User user, Role role) {
 
         var exists = existsRoleMember(user, role);
 
         if (exists) {
-            throw new RuntimeException("User already has the role!");
+            throw new BadRequestException(ExceptionCode.USER_HAS_ROLE, "User already has the role.");
         }
 
         var roleMember = new UserRole(user, role);
@@ -25,7 +27,7 @@ public class UserRoleService {
         return userRoleRepository.save(roleMember);
     }
 
-    public void removeRoleMember(UserRole userRole) {
+    public void unassignRole(UserRole userRole) {
         userRoleRepository.delete(userRole);
     }
 

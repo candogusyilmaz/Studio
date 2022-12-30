@@ -44,7 +44,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export function Login() {
-  const { isClientError, login } = useContext(AuthContext);
+  const { isClientError, isLoggingIn, login } = useContext(AuthContext);
   const { classes } = useStyles();
   const { t } = useTranslation();
 
@@ -93,7 +93,7 @@ export function Login() {
             {...form.getInputProps("password")}
           />
           {/* <Checkbox label="Keep me logged in" mt="xl" size="sm" /> */}
-          <Button fullWidth mt="xl" size="sm" type="submit">
+          <Button fullWidth mt="xl" size="sm" type="submit" loading={isLoggingIn}>
             {t("login.login")}
           </Button>
         </form>

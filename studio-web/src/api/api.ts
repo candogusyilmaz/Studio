@@ -1,3 +1,4 @@
+import { showNotification } from "@mantine/notifications";
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
@@ -39,7 +40,7 @@ export const AxiosInterceptor = ({ children }: any) => {
       if (
         error.response?.status === 401 &&
         error.response?.headers["www-authenticate"]?.startsWith(
-          "Bearer error=\"invalid_token\", error_description=\"An error occurred while attempting to decode the Jwt: Jwt expired at",
+          'Bearer error="invalid_token", error_description="An error occurred while attempting to decode the Jwt: Jwt expired at',
         )
       ) {
         return api
@@ -53,6 +54,24 @@ export const AxiosInterceptor = ({ children }: any) => {
             return s;
           });
       } else {
+        if (!error.response) {
+          showNotification({
+            id: "server-error-no-response",
+            title: "Sunucu Hatası",
+            message: "Sunucularımıza bağlanırken bir problem oluştu. Lütfen daha sonra tekrar deneyin.",
+            color: "red",
+            autoClose: 5000,
+          });
+        } else if (error.response.status >= 500) {
+          showNotification({
+            id: "server-error-500",
+            title: "Sunucu Hatası",
+            message: "Sunucularımızda bir problem yaşıyoruz. Lütfen daha sonra tekrar deneyin.",
+            color: "red",
+            autoClose: 5000,
+          });
+        }
+
         return Promise.reject(error);
       }
     });

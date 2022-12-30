@@ -11,6 +11,8 @@ import { AxiosInterceptor } from "./api/api";
 import RequireAuth from "./components/shared/RequireAuth";
 import { Unauthorized } from "./pages/Unauthorized";
 import { NotFound } from "./pages/NotFound";
+import darkTheme from "./themes/darkTheme";
+import lightTheme from "./themes/lightTheme";
 
 function AxiosProvider() {
   return (
@@ -39,11 +41,12 @@ function App() {
     defaultValue: "light",
     getInitialValueInEffect: true,
   });
-  const toggleColorScheme = (value?: ColorScheme) => setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
+  const toggleColorScheme = (value?: ColorScheme) => setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+  
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-      <MantineProvider withGlobalStyles withNormalizeCSS theme={{ colorScheme }}>
+      <MantineProvider withGlobalStyles withNormalizeCSS theme={colorScheme === "dark" ? darkTheme : lightTheme}>
         <ModalsProvider>
           <NotificationsProvider position="top-right">
             <AxiosProvider />

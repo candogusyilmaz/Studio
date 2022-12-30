@@ -1,4 +1,3 @@
-import { showNotification } from "@mantine/notifications";
 import { AxiosError } from "axios";
 import React, { createContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -20,6 +19,7 @@ interface AuthProviderProps {
 
 interface AuthContextProps {
   isClientError: boolean;
+  isLoggingIn: boolean;
   user?: AuthProps | null;
   login: (username: string, password: string) => void;
   logout: () => void;
@@ -28,6 +28,7 @@ interface AuthContextProps {
 
 export const AuthContext = createContext<AuthContextProps>({
   isClientError: false,
+  isLoggingIn: false,
   login: (u, p) => {},
   logout: () => {},
   refresh: () => {},
@@ -36,44 +37,35 @@ export const AuthContext = createContext<AuthContextProps>({
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthProps | null>(null);
   const [isClientError, setIsClientError] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const from: string = location.state?.from?.pathname || "/";
 
   function login(username: string, password: string) {
+    setIsLoggingIn(true);
     api
       .post("auth/token", {
         username: username,
         password: password,
       })
       .then((s) => {
+        setIsLoggingIn(false);
         setUser(s.data);
         setIsClientError(false);
         setUserToLocalStorage(s.data);
         navigate(from, { replace: true });
       })
       .catch((s: AxiosError) => {
-        if (!s.response) {
-          showNotification({
-            title: "Sunucu Hatası",
-            message: "Sunucularımıza bağlanırken bir problem oluştu. Lütfen daha sonra tekrar deneyin.",
-            color: "red",
-            autoClose: 5000,
-          });
-          return;
-        }
-
-        if (s.response.status >= 500) {
-          showNotification({
-            title: "Sunucu Hatası",
-            message: "Sunucularımızda bir problem yaşıyoruz. Lütfen daha sonra tekrar deneyin.",
-            color: "red",
-            autoClose: 5000,
-          });
+        if (!s.response || s.response.status >= 500) {
           return;
         }
 
         setIsClientError(true);
+      }).finally(() => {
+        setTimeout(() => {
+          setIsLoggingIn(false);
+        }, 500)
       });
   }
 
@@ -96,5 +88,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     navigate("/login");
   }
 
-  return <AuthContext.Provider value={{ isClientError, user, login, logout, refresh }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ isClientError, isLoggingIn, user, login, logout, refresh }}>{children}</AuthContext.Provider>;
 };

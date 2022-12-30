@@ -56,7 +56,7 @@ public class TokenService {
 
     public LoginResponse createAccessToken(SecurityUser principal) {
         var now = Instant.now();
-        var expiresAt = now.plus(10, ChronoUnit.SECONDS);
+        var expiresAt = now.plus(10, ChronoUnit.MINUTES);
 
         var claims = JwtClaimsSet.builder()
                 .issuer("studio-api")

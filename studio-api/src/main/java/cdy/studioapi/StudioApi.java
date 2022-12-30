@@ -5,9 +5,6 @@ import cdy.studioapi.config.RsaKeyProperties;
 import cdy.studioapi.infrastructure.PermissionRepository;
 import cdy.studioapi.infrastructure.RoleRepository;
 import cdy.studioapi.infrastructure.UserRepository;
-import cdy.studioapi.models.Permission;
-import cdy.studioapi.models.Role;
-import cdy.studioapi.models.User;
 import cdy.studioapi.services.UserRoleService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -30,6 +27,7 @@ public class StudioApi {
     @Bean
     public CommandLineRunner runner(UserRepository userRepo, RoleRepository roleRepo, UserRoleService userRoleService, PasswordEncoder encoder, PermissionRepository perRepo) {
         return args -> {
+            /*
             var user = new User("mirakyu", encoder.encode("123"));
             user.setDisplayName("didid");
             user.setEmail("asdgasdg");
@@ -40,12 +38,13 @@ public class StudioApi {
 
             var role2 = roleRepo.save(new Role("deneme rol 2"));
 
-            userRoleService.createRoleMember(user, role);
-            userRoleService.createRoleMember(user, role2);
+            //userRoleService.createRoleMember(user, role);
+            //userRoleService.createRoleMember(user, role2);
             //roleMemberService.removeRoleMember(member);
 
             var permission = new Permission("per 1", "per1");
             perRepo.save(permission);
+            */
         };
     }
 }

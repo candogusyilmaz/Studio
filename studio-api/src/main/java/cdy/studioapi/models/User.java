@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -25,10 +26,10 @@ public class User extends BaseEntity {
     private String timezone;
 
     @ManyToMany
-    @JoinTable(name = "role_members",
+    @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles = new java.util.ArrayList<>();
+    private Set<Role> roles = new LinkedHashSet<>();
 
     protected User() {
     }

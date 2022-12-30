@@ -1,11 +1,10 @@
 package cdy.studioapi.models;
 
 import cdy.studioapi.models.listeners.RoomListener;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
-
-import jakarta.persistence.*;
 
 @Getter
 @Setter

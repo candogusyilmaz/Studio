@@ -1,37 +1,22 @@
 package cdy.studioapi.services;
 
 import cdy.studioapi.config.SecurityUser;
-import cdy.studioapi.dtos.UserView;
 import cdy.studioapi.infrastructure.UserRepository;
 import cdy.studioapi.models.User;
-import com.blazebit.persistence.CriteriaBuilderFactory;
-import com.blazebit.persistence.view.EntityViewManager;
-import com.blazebit.persistence.view.EntityViewSetting;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.EntityManager;
-
 @Service
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final CriteriaBuilderFactory cbf;
-    private final EntityManager em;
-    private final EntityViewManager evm;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var cb = cbf.create(em, User.class)
-                .where("username")
-                .eq(username);
-
-        var user = evm.applySetting(EntityViewSetting.create(UserView.class), cb)
-                .getSingleResult();
-
+        var user = userRepository.findByUsernameIncludePermissions(username);
         return new SecurityUser(user);
     }
 

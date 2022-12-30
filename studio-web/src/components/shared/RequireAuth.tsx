@@ -9,9 +9,7 @@ export default function RequireAuth({ allowedRoles = [] }: { allowedRoles?: stri
   const location = useLocation();
 
   let juser = user === null ? getUserFromLocalStorage() : user;
-
-  console.log("juser: ", juser);
-
+  
   if (juser !== null) {
     if (dayjs(juser?.expiresAt).isBefore(new Date())) {
       refresh();

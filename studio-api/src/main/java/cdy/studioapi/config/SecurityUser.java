@@ -1,6 +1,6 @@
 package cdy.studioapi.config;
 
-import cdy.studioapi.dtos.UserView;
+import cdy.studioapi.views.UserView;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,7 +27,7 @@ public class SecurityUser implements UserDetails {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.isEnabled = user.getIsEnabled();
+        this.isEnabled = user.isEnabled();
         this.tokenVersion = user.getTokenVersion();
         this.displayName = user.getDisplayName();
         this.email = user.getEmail();
