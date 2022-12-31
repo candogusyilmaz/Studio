@@ -1,11 +1,14 @@
 package cdy.studioapi.exceptions;
 
-import cdy.studioapi.enums.ExceptionCode;
 import org.springframework.http.HttpStatus;
 
 public class NotFoundException extends ApiException {
 
-    public NotFoundException(ExceptionCode ex, String message) {
-        super(ex.name(), message, HttpStatus.NOT_FOUND);
+    public NotFoundException(String message) {
+        super(message, HttpStatus.NOT_FOUND);
+    }
+
+    public NotFoundException(String errorCode, String message) {
+        super(errorCode, message, HttpStatus.NOT_FOUND);
     }
 }

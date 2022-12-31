@@ -1,6 +1,5 @@
 package cdy.studioapi.services;
 
-import cdy.studioapi.enums.ExceptionCode;
 import cdy.studioapi.exceptions.BadRequestException;
 import cdy.studioapi.exceptions.NotFoundException;
 import cdy.studioapi.infrastructure.RoleRepository;
@@ -20,12 +19,12 @@ public class RoleService {
 
     public Role getById(Integer id) {
         return roleRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(ExceptionCode.ROLE_NOT_FOUND, "There are no records with the id " + id));
+                .orElseThrow(() -> new NotFoundException("There are no records with the id " + id));
     }
 
     public Role createRole(RoleCreateRequest req) {
         if (roleRepository.exists(req.getName())) {
-            throw new BadRequestException(ExceptionCode.ROLE_ALREADY_EXISTS, "Role already exists");
+            throw new BadRequestException("Role already exists");
         }
 
         return roleRepository.save(req.asEntity());
@@ -35,7 +34,7 @@ public class RoleService {
         var exists = userRoleRepository.exists(user.getId(), role.getId());
 
         if (exists) {
-            throw new BadRequestException(ExceptionCode.USER_HAS_ROLE, "Role is already assigned to the user.");
+            throw new BadRequestException("Role is already assigned to the user.");
         }
 
         var roleMember = new UserRole(user, role);

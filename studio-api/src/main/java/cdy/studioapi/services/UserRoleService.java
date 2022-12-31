@@ -1,6 +1,5 @@
 package cdy.studioapi.services;
 
-import cdy.studioapi.enums.ExceptionCode;
 import cdy.studioapi.exceptions.BadRequestException;
 import cdy.studioapi.infrastructure.UserRoleRepository;
 import cdy.studioapi.models.Role;
@@ -19,7 +18,7 @@ public class UserRoleService {
         var exists = existsRoleMember(user, role);
 
         if (exists) {
-            throw new BadRequestException(ExceptionCode.USER_HAS_ROLE, "User already has the role.");
+            throw new BadRequestException("User already has the role.");
         }
 
         var roleMember = new UserRole(user, role);
