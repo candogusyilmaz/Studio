@@ -11,17 +11,26 @@ import java.util.List;
 
 public class SecurityUser implements UserDetails {
     @Getter
-    private final Integer id;
-    private final String username;
-    private final String password;
+    private Integer id;
+    private String username;
+    private String password;
     @Getter
-    private final String displayName;
+    private String displayName;
     @Getter
-    private final String email;
-    private final boolean isEnabled;
+    private String email;
+    private boolean isEnabled;
     @Getter
-    private final Integer tokenVersion;
-    private final List<SimpleGrantedAuthority> authorities;
+    private Integer tokenVersion;
+    @Getter
+    private String timezone;
+    private List<SimpleGrantedAuthority> authorities;
+
+    public SecurityUser(Integer id, String username, String email, String timezone) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.timezone = timezone;
+    }
 
     public SecurityUser(UserView user) {
         this.id = user.getId();
@@ -31,6 +40,7 @@ public class SecurityUser implements UserDetails {
         this.tokenVersion = user.getTokenVersion();
         this.displayName = user.getDisplayName();
         this.email = user.getEmail();
+        this.timezone = user.getTimezone();
 
         authorities = user.getRoles().stream()
                 .flatMap(r -> r.getPermissions().stream())

@@ -2,6 +2,7 @@ package cdy.studioapi.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.LinkedHashSet;
@@ -11,6 +12,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
 public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String username;
@@ -31,7 +33,8 @@ public class User extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new LinkedHashSet<>();
 
-    protected User() {
+    public User(int id) {
+        super(id);
     }
 
     public User(String username, String password) {

@@ -3,8 +3,10 @@ package cdy.studioapi.models;
 
 import cdy.studioapi.enums.ReservationStatus;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +26,8 @@ public class ReservationAction extends BaseEntity {
     private String description;
 
     @Column(nullable = false)
+    @UpdateTimestamp
+    @Setter(AccessLevel.NONE)
     private LocalDateTime actionDate;
 
     @ManyToOne(optional = false)

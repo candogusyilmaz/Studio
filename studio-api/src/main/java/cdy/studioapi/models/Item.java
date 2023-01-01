@@ -14,5 +14,4 @@ public class Item extends BaseEntity {
     @Column(nullable = false)
     private String name;
     private String pictureUrl;
-
 }
