@@ -3,10 +3,11 @@ package cdy.studioapi.views;
 import cdy.studioapi.models.Slot;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
-public class SlotView {
+public class SlotView implements Serializable {
     private final int id;
     private final String name;
     private final RoomView room;

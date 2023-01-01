@@ -63,6 +63,10 @@ public class TokenService {
                 .issuedAt(now)
                 .expiresAt(expiresAt)
                 .subject(principal.getUsername())
+                .claim("id", principal.getId())
+                .claim("email", principal.getEmail())
+                .claim("timezone", principal.getTimezone())
+                .claim("scope", principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .build();
 
         var token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

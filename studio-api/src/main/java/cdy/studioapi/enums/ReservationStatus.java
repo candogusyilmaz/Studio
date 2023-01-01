@@ -1,8 +1,10 @@
 package cdy.studioapi.enums;
 
 public enum ReservationStatus {
-    PENDING,
+    ACTIVE,
+    CANCELLED,
     CHANGED,
     CONFIRMED,
-    CANCELLED
+    PENDING
+
 }

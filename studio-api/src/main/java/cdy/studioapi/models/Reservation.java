@@ -24,4 +24,19 @@ public class Reservation extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDateTime endDate;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "last_action_id")
+    private ReservationAction lastAction;
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "user=" + user.getId() +
+                ", slot=" + slot.getId() +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", lastAction=" + (lastAction == null ? "null" : lastAction.getId()) +
+                '}';
+    }
 }
