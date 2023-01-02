@@ -18,7 +18,7 @@ public class SlotService {
     private final SlotRepository slotRepository;
 
     @EventListener
-    public void create(RoomCreateEvent event) {
+    public void createSlotsWhenRoomCreated(RoomCreateEvent event) {
         List<Slot> slots = new ArrayList<>();
 
         for (int i = 1; i <= event.getRoom().getCapacity(); i++) {
