@@ -26,7 +26,12 @@ public class ReservationController {
     }
 
     @GetMapping({"", "/"})
-    public List<ReservationView> getAll() {
+    public List<ReservationView> getReservationsByAuth(Auth auth) {
+        return reservationService.getAll(auth.getUser().getId());
+    }
+
+    @GetMapping("/all")
+    public List<ReservationView> getReservations() {
         return reservationService.getAll();
     }
 }

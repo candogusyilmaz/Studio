@@ -60,6 +60,10 @@ public class ReservationService {
         return reservationRepository.findAllAsReservationView();
     }
 
+    public List<ReservationView> getAll(int userId) {
+        return reservationRepository.findAllAsReservationView(userId);
+    }
+
     @EventListener
     public void updateLastActionWhenReservationActionCreated(ReservationActionCreateEvent event) {
         reservationRepository.updateLastAction(event.getAction().getReservation().getId(), event.getAction().getId());

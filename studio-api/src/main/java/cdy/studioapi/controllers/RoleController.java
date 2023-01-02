@@ -3,8 +3,10 @@ package cdy.studioapi.controllers;
 import cdy.studioapi.requests.RoleCreateRequest;
 import cdy.studioapi.services.RoleService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
@@ -13,7 +15,6 @@ public class RoleController {
     private final RoleService roleService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
     public void create(@RequestBody RoleCreateRequest req) {
         roleService.createRole(req);
     }
