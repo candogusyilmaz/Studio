@@ -2,6 +2,8 @@ package cdy.studioapi.controllers;
 
 import cdy.studioapi.config.Auth;
 import cdy.studioapi.dtos.ReservationCreateDto;
+import cdy.studioapi.dtos.ReservationUpdateDto;
+import cdy.studioapi.exceptions.NotFoundException;
 import cdy.studioapi.services.ReservationService;
 import cdy.studioapi.views.ReservationView;
 import jakarta.transaction.Transactional;
@@ -23,6 +25,17 @@ public class ReservationController {
     @Transactional
     public void create(@RequestBody @Valid ReservationCreateDto req, Auth auth) {
         reservationService.create(req, auth.getUser().getId());
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
+    public void update(@RequestBody @Valid ReservationUpdateDto req, @PathVariable int id) {
+        if (id <= 0) {
+            throw new NotFoundException("Rezervasyon bulunamadı.");
+        }
+
+        reservationService.update(id, req);
     }
 
     @GetMapping({"", "/"})

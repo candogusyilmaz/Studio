@@ -3,6 +3,7 @@ package cdy.studioapi.services;
 import cdy.studioapi.enums.ReservationStatus;
 import cdy.studioapi.events.ReservationActionCreateEvent;
 import cdy.studioapi.events.ReservationCreateEvent;
+import cdy.studioapi.events.ReservationUpdateEvent;
 import cdy.studioapi.infrastructure.ReservationActionRepository;
 import cdy.studioapi.models.ReservationAction;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,19 @@ public class ReservationActionService {
         action.setReservation(event.getReservation());
         action.setActionBy(event.getReservation().getUser());
         action.setStatus(ReservationStatus.ACTIVE);
+        action.setDescription(event.getReservation().toString());
+
+        actionRepository.save(action);
+        eventPublisher.publishEvent(new ReservationActionCreateEvent(action));
+    }
+
+    @EventListener
+    public void createActionWhenReservationUpdated(ReservationUpdateEvent event) {
+        var action = new ReservationAction();
+
+        action.setReservation(event.getReservation());
+        action.setActionBy(event.getReservation().getUser());
+        action.setStatus(ReservationStatus.UPDATED);
         action.setDescription(event.getReservation().toString());
 
         actionRepository.save(action);

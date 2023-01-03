@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Getter
 @Setter
@@ -38,5 +39,13 @@ public class Reservation extends BaseEntity {
                 ", endDate=" + endDate +
                 ", lastAction=" + (lastAction == null ? "null" : lastAction.getId()) +
                 '}';
+    }
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate.withSecond(59).truncatedTo(ChronoUnit.SECONDS);
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate.withSecond(1).truncatedTo(ChronoUnit.SECONDS);
     }
 }

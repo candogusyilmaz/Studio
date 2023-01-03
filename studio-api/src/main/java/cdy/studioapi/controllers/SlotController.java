@@ -3,6 +3,7 @@ package cdy.studioapi.controllers;
 import cdy.studioapi.dtos.queries.SlotCriteria;
 import cdy.studioapi.services.SlotService;
 import cdy.studioapi.views.SlotView;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,7 @@ public class SlotController {
     }
 
     @GetMapping("/available")
-    public List<SlotView> getAvailableSlots(SlotCriteria criteria) {
+    public List<SlotView> getAvailableSlots(@Valid SlotCriteria criteria) {
         return slotService.findAvailableSlots(criteria);
     }
 }
