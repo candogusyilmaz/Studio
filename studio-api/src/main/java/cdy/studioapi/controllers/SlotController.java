@@ -1,5 +1,6 @@
 package cdy.studioapi.controllers;
 
+import cdy.studioapi.dtos.queries.SlotCriteria;
 import cdy.studioapi.services.SlotService;
 import cdy.studioapi.views.SlotView;
 import lombok.AllArgsConstructor;
@@ -18,5 +19,10 @@ public class SlotController {
     @GetMapping({"", "/"})
     public List<SlotView> getAll() {
         return slotService.getAll();
+    }
+
+    @GetMapping("/available")
+    public List<SlotView> getAvailableSlots(SlotCriteria criteria) {
+        return slotService.findAvailableSlots(criteria);
     }
 }

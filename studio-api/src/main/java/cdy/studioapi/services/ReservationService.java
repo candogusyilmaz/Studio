@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -26,7 +27,11 @@ public class ReservationService {
 
     public void create(ReservationCreateDto dto, int userId) {
         if (dto.getStartDate().isAfter(dto.getEndDate())) {
-            throw new BadRequestException("Başlangıç tarihi bitiş tarihinden sonra olamaz.");
+            throw new BadRequestException("Başlangıç tarihi bitiş tarihinden sonra olmalıdır.");
+        }
+
+        if (Duration.between(dto.getStartDate(), dto.getEndDate()).toMinutes() < Duration.ofMinutes(10).toMinutes()) {
+            throw new BadRequestException("Başlangıç tarihi ile bitiş tarihi arasında en az 10 dakika olmalıdır.");
         }
 
         var conflicting = reservationRepository.hasActiveReservationBetweenDates(userId, dto.getStartDate(), dto.getEndDate());

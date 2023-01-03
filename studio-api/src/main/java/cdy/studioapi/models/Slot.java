@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Getter
@@ -28,4 +30,7 @@ public class Slot extends AuditableEntity {
 
     @Column(nullable = false)
     private boolean deleted;
+
+    @OneToMany(mappedBy = "slot")
+    private Collection<Reservation> reservations = new ArrayList<>();
 }
