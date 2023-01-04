@@ -1,7 +1,7 @@
 package cdy.studioapi.services;
 
 import cdy.studioapi.exceptions.BadRequestException;
-import cdy.studioapi.infrastructure.UserRoleRepository;
+import cdy.studioapi.infrastructure.jpa.UserRoleJpaRepository;
 import cdy.studioapi.models.Role;
 import cdy.studioapi.models.User;
 import cdy.studioapi.models.UserRole;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class UserRoleService {
-    private final UserRoleRepository userRoleRepository;
+    private final UserRoleJpaRepository userRoleRepository;
 
     public UserRole assignRole(User user, Role role) {
 

@@ -2,8 +2,8 @@ package cdy.studioapi.services;
 
 import cdy.studioapi.exceptions.BadRequestException;
 import cdy.studioapi.exceptions.NotFoundException;
-import cdy.studioapi.infrastructure.RoleRepository;
-import cdy.studioapi.infrastructure.UserRoleRepository;
+import cdy.studioapi.infrastructure.jpa.RoleJpaRepository;
+import cdy.studioapi.infrastructure.jpa.UserRoleJpaRepository;
 import cdy.studioapi.models.Role;
 import cdy.studioapi.models.User;
 import cdy.studioapi.models.UserRole;
@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class RoleService {
-    private final RoleRepository roleRepository;
-    private final UserRoleRepository userRoleRepository;
+    private final RoleJpaRepository roleRepository;
+    private final UserRoleJpaRepository userRoleRepository;
 
     public Role getById(Integer id) {
         return roleRepository.findById(id)

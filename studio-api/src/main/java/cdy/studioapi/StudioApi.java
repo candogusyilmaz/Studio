@@ -2,9 +2,9 @@ package cdy.studioapi;
 
 import cdy.studioapi.config.CorsProperties;
 import cdy.studioapi.config.RsaKeyProperties;
-import cdy.studioapi.infrastructure.PermissionRepository;
-import cdy.studioapi.infrastructure.RoleRepository;
-import cdy.studioapi.infrastructure.UserRepository;
+import cdy.studioapi.infrastructure.jpa.PermissionJpaRepository;
+import cdy.studioapi.infrastructure.jpa.RoleJpaRepository;
+import cdy.studioapi.infrastructure.jpa.UserJpaRepository;
 import cdy.studioapi.services.UserRoleService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -25,7 +25,7 @@ public class StudioApi {
     }
 
     @Bean
-    public CommandLineRunner runner(UserRepository userRepo, RoleRepository roleRepo, UserRoleService userRoleService, PasswordEncoder encoder, PermissionRepository perRepo) {
+    public CommandLineRunner runner(UserJpaRepository userRepo, RoleJpaRepository roleRepo, UserRoleService userRoleService, PasswordEncoder encoder, PermissionJpaRepository perRepo) {
         return args -> {
             /*
             var user = new User("mirakyu", encoder.encode("123"));

@@ -4,7 +4,7 @@ import cdy.studioapi.enums.ReservationStatus;
 import cdy.studioapi.events.ReservationActionCreateEvent;
 import cdy.studioapi.events.ReservationCreateEvent;
 import cdy.studioapi.events.ReservationUpdateEvent;
-import cdy.studioapi.infrastructure.ReservationActionRepository;
+import cdy.studioapi.infrastructure.jpa.ReservationActionJpaRepository;
 import cdy.studioapi.models.ReservationAction;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class ReservationActionService {
-    private final ReservationActionRepository actionRepository;
+    private final ReservationActionJpaRepository actionRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @EventListener

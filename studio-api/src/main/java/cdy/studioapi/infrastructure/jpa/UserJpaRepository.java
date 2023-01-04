@@ -1,4 +1,4 @@
-package cdy.studioapi.infrastructure;
+package cdy.studioapi.infrastructure.jpa;
 
 import cdy.studioapi.models.User;
 import cdy.studioapi.views.UserView;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
+public interface UserJpaRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
     @Query("select u from User u where u.username = :username")
     Optional<User> findByUsername(String username);
 

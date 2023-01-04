@@ -1,4 +1,4 @@
-package cdy.studioapi.infrastructure;
+package cdy.studioapi.infrastructure.jpa;
 
 import cdy.studioapi.models.Reservation;
 import cdy.studioapi.views.ReservationView;
@@ -8,7 +8,7 @@ import org.springframework.lang.NonNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface ReservationRepository extends JpaRepository<Reservation, Integer>, JpaSpecificationExecutor<Reservation> {
+public interface ReservationJpaRepository extends JpaRepository<Reservation, Integer>, JpaSpecificationExecutor<Reservation> {
 
     @Modifying
     @Query("update Reservation set lastAction.id = :reservationActionId where id = :reservationId")

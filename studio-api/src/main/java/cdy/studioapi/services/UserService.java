@@ -1,7 +1,7 @@
 package cdy.studioapi.services;
 
 import cdy.studioapi.config.SecurityUser;
-import cdy.studioapi.infrastructure.UserRepository;
+import cdy.studioapi.infrastructure.jpa.UserJpaRepository;
 import cdy.studioapi.models.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final UserJpaRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

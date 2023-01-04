@@ -7,8 +7,8 @@ import cdy.studioapi.events.ReservationCreateEvent;
 import cdy.studioapi.events.ReservationUpdateEvent;
 import cdy.studioapi.exceptions.BadRequestException;
 import cdy.studioapi.exceptions.NotFoundException;
-import cdy.studioapi.infrastructure.ReservationRepository;
-import cdy.studioapi.infrastructure.SlotRepository;
+import cdy.studioapi.infrastructure.jpa.ReservationJpaRepository;
+import cdy.studioapi.infrastructure.jpa.SlotJpaRepository;
 import cdy.studioapi.models.Reservation;
 import cdy.studioapi.models.User;
 import cdy.studioapi.views.ReservationView;
@@ -24,8 +24,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class ReservationService {
-    private final ReservationRepository reservationRepository;
-    private final SlotRepository slotRepository;
+    private final ReservationJpaRepository reservationRepository;
+    private final SlotJpaRepository slotRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public void create(ReservationCreateDto dto, int userId) {

@@ -2,7 +2,7 @@ package cdy.studioapi.services;
 
 import cdy.studioapi.dtos.queries.SlotCriteria;
 import cdy.studioapi.events.RoomCreateEvent;
-import cdy.studioapi.infrastructure.SlotRepository;
+import cdy.studioapi.infrastructure.jpa.SlotJpaRepository;
 import cdy.studioapi.models.Slot;
 import cdy.studioapi.views.SlotView;
 import jakarta.persistence.criteria.JoinType;
@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SlotService {
 
-    private final SlotRepository slotRepository;
+    private final SlotJpaRepository slotRepository;
 
     @EventListener
     public void createSlotsWhenRoomCreated(RoomCreateEvent event) {
