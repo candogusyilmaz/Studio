@@ -23,8 +23,8 @@ public class ReservationController {
     @PostMapping({"", "/"})
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public void create(@RequestBody @Valid ReservationCreateDto req, Auth auth) {
-        reservationService.create(req, auth.getUser().getId());
+    public void create(@RequestBody @Valid ReservationCreateDto req) {
+        reservationService.create(req, Auth.asUser().getId());
     }
 
     @PutMapping("/{id}")
@@ -39,8 +39,8 @@ public class ReservationController {
     }
 
     @GetMapping({"", "/"})
-    public List<ReservationView> getReservationsByAuth(Auth auth) {
-        return reservationService.getAll(auth.getUser().getId());
+    public List<ReservationView> getReservationsByAuth() {
+        return reservationService.getAll(Auth.asUser().getId());
     }
 
     @GetMapping("/all")
