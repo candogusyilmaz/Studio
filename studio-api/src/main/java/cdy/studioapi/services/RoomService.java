@@ -3,7 +3,7 @@ package cdy.studioapi.services;
 import cdy.studioapi.dtos.RoomCreateDto;
 import cdy.studioapi.events.RoomCreateEvent;
 import cdy.studioapi.exceptions.NotFoundException;
-import cdy.studioapi.infrastructure.jpa.LocationJpaRepository;
+import cdy.studioapi.infrastructure.LocationRepository;
 import cdy.studioapi.infrastructure.jpa.RoomJpaRepository;
 import cdy.studioapi.models.Room;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class RoomService {
 
     private final RoomJpaRepository roomRepository;
-    private final LocationJpaRepository locationRepository;
+    private final LocationRepository locationRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public void create(RoomCreateDto dto) {

@@ -2,6 +2,7 @@ package cdy.studioapi.views;
 
 import cdy.studioapi.models.Location;
 import lombok.Getter;
+import org.hibernate.Hibernate;
 
 import java.util.List;
 
@@ -16,6 +17,9 @@ public class LocationView {
         this.id = location.getId();
         this.name = location.getName();
         this.parent = new LocationParentView(location);
-        this.rooms = location.getRooms().stream().map(RoomView::new).toList();
+
+        if (Hibernate.isInitialized(location.getRooms())) {
+            this.rooms = location.getRooms().stream().map(RoomView::new).toList();
+        }
     }
 }
