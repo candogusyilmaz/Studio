@@ -1,9 +1,11 @@
 package cdy.studioapi.models;
 
+import cdy.studioapi.exceptions.BadRequestException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -47,5 +49,17 @@ public class Reservation extends BaseEntity {
 
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate.withSecond(1).truncatedTo(ChronoUnit.SECONDS);
+    }
+
+    @PreUpdate
+    @PrePersist
+    private void upsertPreChecks() {
+        if (startDate.isAfter(endDate)) {
+            throw new BadRequestException("Başlangıç tarihi bitiş tarihinden sonra olmalıdır.");
+        }
+
+        if (Duration.between(startDate, endDate).toMinutes() < Duration.ofMinutes(10).toMinutes()) {
+            throw new BadRequestException("Başlangıç tarihi ile bitiş tarihi arasında en az 10 dakika olmalıdır.");
+        }
     }
 }

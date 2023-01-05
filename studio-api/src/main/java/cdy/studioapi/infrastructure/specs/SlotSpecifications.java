@@ -34,4 +34,8 @@ public class SlotSpecifications {
             return cb.equal(room.get("id"), roomId);
         };
     }
+
+    public static Specification<Slot> slotIdEquals(int slotId) {
+        return (root, query, cb) -> cb.equal(root.get("id"), slotId);
+    }
 }
