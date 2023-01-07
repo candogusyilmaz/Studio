@@ -28,4 +28,9 @@ public class RoomController {
     public List<RoomView> getAll() {
         return roomService.getAll();
     }
+
+    @GetMapping("/{id}")
+    public RoomView getById(@PathVariable int id) {
+        return roomService.getById(id);
+    }
 }

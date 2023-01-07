@@ -18,7 +18,7 @@ public class LocationView implements Serializable {
         this.id = location.getId();
         this.name = location.getName();
 
-        if(Hibernate.isInitialized(location.getParent())){
+        if (Hibernate.isInitialized(location.getParent()) && location.getParent() != null) {
             this.parent = new LocationParentView(location.getParent());
         }
 

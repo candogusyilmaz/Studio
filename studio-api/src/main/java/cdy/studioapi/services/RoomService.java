@@ -37,4 +37,11 @@ public class RoomService {
     public List<RoomView> getAll() {
         return roomRepository.findBy((root, query, criteriaBuilder) -> null, r -> r.project("location").all().stream().map(RoomView::new).toList());
     }
+
+    public RoomView getById(int id) {
+        var room = roomRepository.findBy((root, query, cb) -> cb.equal(root.get("id"), id), r -> r.project("location").first())
+                .orElseThrow(() -> new NotFoundException("Oda bulunamadı."));
+
+        return new RoomView(room);
+    }
 }
