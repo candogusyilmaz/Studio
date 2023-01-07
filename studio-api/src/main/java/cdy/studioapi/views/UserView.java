@@ -2,6 +2,7 @@ package cdy.studioapi.views;
 
 import cdy.studioapi.models.User;
 import lombok.Getter;
+import org.hibernate.Hibernate;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,8 +17,7 @@ public class UserView implements Serializable {
     private final boolean isEnabled;
     private final int tokenVersion;
     private final String timezone;
-
-    private final List<RoleView> roles;
+    private List<RoleView> roles;
 
     public UserView(User user) {
         this.id = user.getId();
@@ -28,6 +28,9 @@ public class UserView implements Serializable {
         this.isEnabled = user.getIsEnabled();
         this.tokenVersion = user.getTokenVersion();
         this.timezone = user.getTimezone();
-        this.roles = user.getRoles().stream().map(RoleView::new).toList();
+
+        if(Hibernate.isInitialized(user.getRoles())) {
+            this.roles = user.getRoles().stream().map(RoleView::new).toList();
+        }
     }
 }
