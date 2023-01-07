@@ -33,7 +33,7 @@ public class RoleService {
     public void assignRole(User user, Role role) {
         var exists = userRoleRepository.exists(user.getId(), role.getId());
 
-        if (exists) {
+        if (Boolean.TRUE.equals(exists)) {
             throw new BadRequestException("Role is already assigned to the user.");
         }
 

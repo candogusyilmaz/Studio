@@ -6,9 +6,12 @@ import cdy.studioapi.exceptions.NotFoundException;
 import cdy.studioapi.infrastructure.LocationRepository;
 import cdy.studioapi.infrastructure.jpa.RoomJpaRepository;
 import cdy.studioapi.models.Room;
+import cdy.studioapi.views.RoomView;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -29,5 +32,9 @@ public class RoomService {
 
         roomRepository.save(room);
         eventPublisher.publishEvent(new RoomCreateEvent(room));
+    }
+
+    public List<RoomView> getAll() {
+        return roomRepository.findBy((root, query, criteriaBuilder) -> null, r -> r.project("location").all().stream().map(RoomView::new).toList());
     }
 }

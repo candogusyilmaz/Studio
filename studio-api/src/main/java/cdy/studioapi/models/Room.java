@@ -1,12 +1,11 @@
 package cdy.studioapi.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,4 +24,7 @@ public class Room extends AuditableEntity {
 
     @Column(nullable = false)
     private boolean deleted;
+
+    @OneToMany(mappedBy = "room")
+    private List<Slot> slots;
 }

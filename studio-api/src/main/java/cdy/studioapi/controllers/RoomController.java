@@ -2,11 +2,14 @@ package cdy.studioapi.controllers;
 
 import cdy.studioapi.dtos.RoomCreateDto;
 import cdy.studioapi.services.RoomService;
+import cdy.studioapi.views.RoomView;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -19,5 +22,10 @@ public class RoomController {
     @Transactional
     public void create(@RequestBody @Valid RoomCreateDto req) {
         roomService.create(req);
+    }
+
+    @GetMapping({"", "/"})
+    public List<RoomView> getAll() {
+        return roomService.getAll();
     }
 }
