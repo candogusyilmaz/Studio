@@ -25,7 +25,7 @@ public class SlotService {
 
         for (int i = 1; i <= event.getRoom().getCapacity(); i++) {
             var slot = new Slot();
-            slot.setName("Slot #" + i);
+            slot.setName("Masa " + i);
             slot.setRoom(event.getRoom());
             slots.add(slot);
         }
@@ -34,7 +34,8 @@ public class SlotService {
     }
 
     public List<SlotView> getAll() {
-        return repo.findAllIncludeRoomsItems();
+        var slots = repo.findBy((root, query, cb) -> null, r -> r.sortBy(Sort.by("id")).project("room.location", "items").all());
+        return slots.stream().map(SlotView::new).toList();
     }
 
     public List<SlotView> findAvailableSlots(SlotCriteria criteria) {
@@ -46,7 +47,7 @@ public class SlotService {
 
         var availableSlots = repo.findBy(spec,
                 r -> r.sortBy(Sort.by("id"))
-                        .project("room", "items").all());
+                        .project("room.location", "items").all());
 
         return availableSlots.stream().map(SlotView::new).toList();
     }

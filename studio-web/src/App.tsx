@@ -13,24 +13,40 @@ import { Unauthorized } from "./pages/Unauthorized";
 import { NotFound } from "./pages/NotFound";
 import darkTheme from "./themes/darkTheme";
 import lightTheme from "./themes/lightTheme";
+import { NewReservation } from "./pages/reservations/NewReservation";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 5000,
+      staleTime: 5000,
+      refetchOnWindowFocus: false,
+      retry: 0,
+    },
+  },
+});
 
 function AxiosProvider() {
   return (
     <AxiosInterceptor>
-      <Routes>
-        <Route element={<DashboardLayout />}>
-          <Route element={<RequireAuth />}>
-            <Route path="/" element={<div>This is dashboard</div>} />
+      <QueryClientProvider client={queryClient}>
+        <Routes>
+          <Route element={<DashboardLayout />}>
+            <Route element={<RequireAuth allowedRoles={["per 1"]} />}>
+              <Route path="/" element={<div>This is dashboard</div>} />
+              <Route path="/reservations/new" element={<NewReservation />} />
+            </Route>
+            <Route element={<RequireAuth allowedRoles={["dd"]} />}>
+              <Route path="/protected" element={<div>hello</div>} />
+            </Route>
           </Route>
-          <Route element={<RequireAuth allowedRoles={["dd"]} />}>
-            <Route path="/protected" element={<div>hello</div>} />
-          </Route>
-        </Route>
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </QueryClientProvider>
     </AxiosInterceptor>
   );
 }
@@ -43,7 +59,7 @@ function App() {
   });
 
   const toggleColorScheme = (value?: ColorScheme) => setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
-  
+
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider withGlobalStyles withNormalizeCSS theme={colorScheme === "dark" ? darkTheme : lightTheme}>

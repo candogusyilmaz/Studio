@@ -1,8 +1,9 @@
 import { AxiosError } from "axios";
-import React, { createContext, useState } from "react";
+import dayjs from "dayjs";
+import React, { createContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../api/api";
-import { removeUserFromLocalStorage, setUserToLocalStorage } from "../helper/helper";
+import { getUserFromLocalStorage, removeUserFromLocalStorage, setUserToLocalStorage } from "../helper/helper";
 
 export interface AuthProps {
   email: string;
@@ -20,7 +21,7 @@ interface AuthProviderProps {
 interface AuthContextProps {
   isClientError: boolean;
   isLoggingIn: boolean;
-  user?: AuthProps | null;
+  getUser: () => AuthProps | null;
   login: (username: string, password: string) => void;
   logout: () => void;
   refresh: () => void;
@@ -29,6 +30,7 @@ interface AuthContextProps {
 export const AuthContext = createContext<AuthContextProps>({
   isClientError: false,
   isLoggingIn: false,
+  getUser: () => null,
   login: (u, p) => {},
   logout: () => {},
   refresh: () => {},
@@ -41,6 +43,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const from: string = location.state?.from?.pathname || "/";
+
+  useEffect(() => {
+    const userInLocalStorage = getUserFromLocalStorage();
+
+    if (!user && userInLocalStorage) {
+      setUser(userInLocalStorage);
+    }
+
+    if (!user && !userInLocalStorage) {
+      logout();
+    }
+  }, []);
+
+  function getUser() {
+    if (user) {
+      return user;
+    }
+
+    return getUserFromLocalStorage();
+  }
 
   function login(username: string, password: string) {
     setIsLoggingIn(true);
@@ -62,14 +84,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
 
         setIsClientError(true);
-      }).finally(() => {
+      })
+      .finally(() => {
         setTimeout(() => {
           setIsLoggingIn(false);
-        }, 500)
+        }, 500);
       });
   }
 
-  async function refresh() {
+  function refresh() {
     api
       .post("auth/refresh-token")
       .then((s) => {
@@ -88,5 +111,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     navigate("/login");
   }
 
-  return <AuthContext.Provider value={{ isClientError, isLoggingIn, user, login, logout, refresh }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ isClientError, isLoggingIn, getUser, login, logout, refresh }}>{children}</AuthContext.Provider>;
 };

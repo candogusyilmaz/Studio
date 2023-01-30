@@ -2,6 +2,7 @@ package cdy.studioapi.services;
 
 import cdy.studioapi.dtos.RoomCreateDto;
 import cdy.studioapi.events.RoomCreateEvent;
+import cdy.studioapi.exceptions.BadRequestException;
 import cdy.studioapi.exceptions.NotFoundException;
 import cdy.studioapi.infrastructure.LocationRepository;
 import cdy.studioapi.infrastructure.jpa.RoomJpaRepository;
@@ -9,6 +10,7 @@ import cdy.studioapi.models.Room;
 import cdy.studioapi.views.RoomView;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +26,10 @@ public class RoomService {
     public void create(RoomCreateDto dto) {
         var location = locationRepository.findById(dto.getLocationId())
                 .orElseThrow(() -> new NotFoundException("Lokasyon bulunamadı!"));
+
+        if (roomNameUniqueAtLocation(location.getId(), dto.getName())) {
+            throw new BadRequestException("Lokasyona ait aynı isimde bir oda bulunmaktadır.");
+        }
 
         var room = new Room();
         room.setName(dto.getName());
@@ -43,5 +49,12 @@ public class RoomService {
                 .orElseThrow(() -> new NotFoundException("Oda bulunamadı."));
 
         return new RoomView(room);
+    }
+
+    private boolean roomNameUniqueAtLocation(int locationId, String roomName) {
+        return roomRepository.findBy((root, query, cb) -> cb.and(
+                cb.equal(cb.lower(root.get("name")), roomName.toLowerCase()),
+                cb.equal(root.get("location").get("id"), locationId)
+        ), FluentQuery.FetchableFluentQuery::exists);
     }
 }

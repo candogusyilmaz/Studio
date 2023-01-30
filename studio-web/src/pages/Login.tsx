@@ -81,13 +81,13 @@ export function Login() {
         <form onSubmit={handleLogin}>
           <TextInput
             label={t("login.username")}
-            placeholder={t("login.usernamePlaceHolder")}
+            placeholder={t("login.usernamePlaceHolder")!}
             size="sm"
             {...form.getInputProps("username")}
           />
           <PasswordInput
             label={t("login.password")}
-            placeholder={t("login.passwordPlaceholder")}
+            placeholder={t("login.passwordPlaceholder")!}
             mt="md"
             size="sm"
             {...form.getInputProps("password")}
