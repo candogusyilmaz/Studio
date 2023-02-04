@@ -18,7 +18,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
     List<ReservationView> findAllAsReservationView();
 
     @Query("select r from Reservation r where r.user.id = :userId")
-    @EntityGraph(attributePaths = {"user", "slot.items", "slot.room", "lastAction"})
+    @EntityGraph(attributePaths = {"user", "slot.items", "slot.room.location", "lastAction"})
     List<ReservationView> findAllAsReservationView(int userId);
 
     @Query("select r from Reservation r " +

@@ -38,8 +38,8 @@ public class ReservationController {
         reservationService.update(id, req);
     }
 
-    @GetMapping({"", "/"})
-    public List<ReservationView> getReservationsByAuth() {
+    @GetMapping("/history")
+    public List<ReservationView> getReservationsHistoryByUser() {
         return reservationService.getAll(Auth.asUser().getId());
     }
 

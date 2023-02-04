@@ -82,3 +82,15 @@ export const AxiosInterceptor = ({ children }: any) => {
 
   return children;
 };
+
+
+
+export function getErrorMessage(axiosError: AxiosError) {
+  let message;
+
+  Object.values(axiosError?.response?.data ?? {}).forEach((val) => {
+    message = val;
+  });
+
+  return message ?? "Bilinmeyen bir hata oluştu!";
+}

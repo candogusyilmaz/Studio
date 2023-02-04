@@ -2,7 +2,6 @@ import {
   Button,
   Container,
   createStyles,
-  Divider,
   Flex,
   Group,
   Paper,
@@ -18,10 +17,14 @@ import { DatePicker } from "@mantine/dates";
 import { showNotification } from "@mantine/notifications";
 import { IconCalendarEvent, IconHome, IconLocation } from "@tabler/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
+import dayjs from "dayjs";
 import { useState } from "react";
-import { createReservation } from "../../api/ReservationService";
-import { fetchAvailableSlots } from "../../api/SlotService";
+import { getErrorMessage } from "../../api/api";
+import { createReservation } from "../../api/reservationService";
+import { fetchAvailableSlots } from "../../api/slotService";
+import { SlotView, ItemView } from "../../api/types";
+import { convertNumberToDate, convertNumberToShortTimeString } from "../../utils/DateTimeUtils";
 
 const useStyles = createStyles((theme) => ({
   boxedTextTitle: {
@@ -41,51 +44,12 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-type SlotType = {
-  id: number;
-  name: string;
-  room: RoomType;
-  items: ItemType[];
-};
-
-type RoomType = {
-  id: number;
-  name: string;
-  capacity: number;
-  location: LocationType;
-};
-
-type LocationType = {
-  id: number;
-  name: string;
-};
-
-type ItemType = {
-  id: number;
-  name: string;
-};
-
 type ApiErrorResponse = {
   message?: string;
   startDate?: string;
   endDate?: string;
   slotId?: string;
 };
-
-function convertToTime(value: number) {
-  if (value === 48) {
-    return "24:00";
-  }
-
-  return new Date(new Date().setHours(0, 30 * value, 0, 0)).toLocaleTimeString("tr-TR", {
-    timeStyle: "short",
-  });
-}
-
-function convertToDate(value: number, date: Date, seconds: number) {
-  const result = date.setHours(0, value * 30, seconds, 0);
-  return new Date(result);
-}
 
 export function NewReservation() {
   const { classes } = useStyles();
@@ -102,18 +66,28 @@ export function NewReservation() {
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
 
-  const slotsQuery = useQuery<SlotType[]>({
+  const slotsQuery = useQuery({
     queryKey: ["slots", date, timeRangeEnd],
-    queryFn: () => {
-      if (!date) return [];
+    queryFn: async () => {
+      if (date) {
+        const startDate = convertNumberToDate(timeRangeEnd[0], new Date(date), 59);
+        const endDate = convertNumberToDate(timeRangeEnd[1], new Date(date), 1);
 
-      return fetchAvailableSlots(convertToDate(timeRangeEnd[0], new Date(date), 59), convertToDate(timeRangeEnd[1], new Date(date), 1));
+        return await fetchAvailableSlots(startDate, endDate);
+      }
+
+      return Promise.resolve<AxiosResponse<SlotView[], any>>([] as SlotView[] | any);
     },
+    select: (data) => data?.data,
     onSuccess: (data) => {
       // populate the locations from the slots query
       const tempLocations: SelectItem[] = [];
-      data.forEach((s) => {
-        if (tempLocations.some((x) => x.value === s.room.location.id.toString())) return;
+      data?.forEach((s) => {
+        if (!s.room || !s.room.location) {
+          return;
+        }
+
+        if (tempLocations.some((x) => x.value === s.room!.location!.id.toString())) return;
         tempLocations.push({ value: s.room.location.id.toString(), label: s.room.location.name });
       });
 
@@ -160,7 +134,11 @@ export function NewReservation() {
     // populate the slots
     const tempRooms: SelectItem[] = [];
     slotsQuery.data?.forEach((s) => {
-      if (tempRooms.some((x) => x.value === s.room.id.toString() || s.room.location.id.toString() !== locationId)) return;
+      if (!s.room || !s.room.location) {
+        return;
+      }
+
+      if (tempRooms.some((x) => x.value === s.room!.id.toString() || s.room!.location!.id.toString() !== locationId)) return;
       tempRooms.push({ value: s.room.id.toString(), label: s.room.name });
     });
 
@@ -175,6 +153,8 @@ export function NewReservation() {
 
     const tempSlots: SelectItem[] = [];
     slotsQuery.data?.forEach((s) => {
+      if (!s.room) return;
+
       if (s.room.id === parseInt(roomId)) {
         tempSlots.push({ value: s.id.toString(), label: s.name });
       }
@@ -187,14 +167,24 @@ export function NewReservation() {
   const reservationMutation = useMutation({
     mutationFn: () => {
       if (!selectedSlotId || !date || !timeRangeEnd[0] || !timeRangeEnd[1]) {
-        throw Error();
+        return Promise.reject();
       }
 
-      return createReservation(
-        parseInt(selectedSlotId),
-        convertToDate(timeRangeEnd[0], new Date(date), 59),
-        convertToDate(timeRangeEnd[1], new Date(date), 1),
-      );
+      const startDate = convertNumberToDate(timeRangeEnd[0], new Date(date), 59);
+      const endDate = convertNumberToDate(timeRangeEnd[1], new Date(date), 1);
+
+      if (dayjs(startDate).isBefore(new Date())) {
+        showNotification({
+          id: "reservation-create-error",
+          title: "Rezervasyon",
+          message: "Geçmişe dair rezervasyon yapamazsınız.",
+          color: "green",
+          autoClose: 5000,
+        });
+        return Promise.reject();
+      }
+
+      return createReservation(parseInt(selectedSlotId), startDate, endDate);
     },
     onSuccess: () => {
       showNotification({
@@ -204,18 +194,13 @@ export function NewReservation() {
         color: "green",
         autoClose: 5000,
       });
+      clearFormAll();
     },
-    onError(error: AxiosError<ApiErrorResponse>, variables, context) {
-      let message;
-
-      Object.values(error?.response?.data ?? {}).forEach((val) => {
-        message = val;
-      });
-
+    onError: (error: AxiosError<ApiErrorResponse>, variables, context) => {
       showNotification({
         id: "reservation-create-error",
         title: "Rezervasyon",
-        message: message ?? "Bilinmeyen bir hata oluştu!",
+        message: getErrorMessage(error) ?? "Bilinmeyen bir hata oluştu!",
         color: "red",
         autoClose: 5000,
       });
@@ -226,10 +211,9 @@ export function NewReservation() {
     <Paper withBorder p="xl">
       <Container size="xs">
         <Flex direction="column" gap="sm">
-          <Text size={32} weight={600}>
+          <Text size="xl" weight={600}>
             Rezervasyon Bilgileri
           </Text>
-          <Divider mb="xs" />
           <DatePicker
             placeholder="Rezervasyon yapmak istediğiniz gün"
             label="Tarih"
@@ -247,7 +231,7 @@ export function NewReservation() {
                 min={0}
                 max={48}
                 labelAlwaysOn
-                label={convertToTime}
+                label={convertNumberToShortTimeString}
                 value={timeRange}
                 onChange={setTimeRange}
                 onChangeEnd={handleTimeRangeChangeEnd}
@@ -294,7 +278,7 @@ export function NewReservation() {
                 Nerede oturmak istiyorsunuz?
               </Text>
               <Text className={classes.boxedText} weight={400} size="sm">
-                Masaları listelemek için oda seçin
+                Masaları listelemek için oda seçiniz
               </Text>
             </div>
           )}
@@ -304,12 +288,20 @@ export function NewReservation() {
             </Text>
             <ItemsTable items={slotsQuery.data?.find((s) => s.id.toString() === selectedSlotId)?.items} />
           </div>
-          <Divider mt="xs" />
-          <Group grow>
-            <Button variant="outline" style={{ color: "#ff6b6bcf", borderColor: "#ff6b6bcf" }} onClick={clearFormAll} disabled={reservationMutation.isLoading}>
+          <Group position="right" mt="xs">
+            <Button
+              variant="subtle"
+              color="red"
+              style={{ color: "#e94f4fd9" }}
+              onClick={clearFormAll}
+              disabled={reservationMutation.isLoading}>
               Sıfırla
             </Button>
-            <Button onClick={() => reservationMutation.mutate()} loading={reservationMutation.isLoading} disabled={!selectedSlotId}>
+            <Button
+              onClick={() => reservationMutation.mutate()}
+              loading={reservationMutation.isLoading}
+              disabled={!selectedSlotId || reservationMutation.isSuccess}
+              px="xl">
               Rezerve Et
             </Button>
           </Group>
@@ -319,7 +311,7 @@ export function NewReservation() {
   );
 }
 
-function ItemsTable({ items }: { items: ItemType[] | undefined }) {
+function ItemsTable({ items }: { items: ItemView[] | undefined }) {
   const { classes } = useStyles();
 
   if (!items) {

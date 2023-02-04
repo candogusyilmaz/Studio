@@ -1,6 +1,5 @@
 import { AxiosError } from "axios";
-import dayjs from "dayjs";
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { getUserFromLocalStorage, removeUserFromLocalStorage, setUserToLocalStorage } from "../helper/helper";
@@ -27,14 +26,7 @@ interface AuthContextProps {
   refresh: () => void;
 }
 
-export const AuthContext = createContext<AuthContextProps>({
-  isClientError: false,
-  isLoggingIn: false,
-  getUser: () => null,
-  login: (u, p) => {},
-  logout: () => {},
-  refresh: () => {},
-});
+export const AuthContext = createContext<AuthContextProps>(null!);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthProps | null>(null);
@@ -111,5 +103,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     navigate("/login");
   }
 
-  return <AuthContext.Provider value={{ isClientError, isLoggingIn, getUser, login, logout, refresh }}>{children}</AuthContext.Provider>;
+  const value = useMemo(() => {
+    return {
+      isClientError,
+      isLoggingIn,
+      getUser,
+      login,
+      logout,
+      refresh,
+    };
+  }, []);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

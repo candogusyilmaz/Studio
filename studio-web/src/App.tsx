@@ -15,6 +15,7 @@ import darkTheme from "./themes/darkTheme";
 import lightTheme from "./themes/lightTheme";
 import { NewReservation } from "./pages/reservations/NewReservation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { History } from "./pages/reservations/History";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,7 +23,7 @@ const queryClient = new QueryClient({
       cacheTime: 5000,
       staleTime: 5000,
       refetchOnWindowFocus: false,
-      retry: 0,
+      retry: 1,
     },
   },
 });
@@ -36,6 +37,7 @@ function AxiosProvider() {
             <Route element={<RequireAuth allowedRoles={["per 1"]} />}>
               <Route path="/" element={<div>This is dashboard</div>} />
               <Route path="/reservations/new" element={<NewReservation />} />
+              <Route path="/reservations/history" element={<History />} />
             </Route>
             <Route element={<RequireAuth allowedRoles={["dd"]} />}>
               <Route path="/protected" element={<div>hello</div>} />
