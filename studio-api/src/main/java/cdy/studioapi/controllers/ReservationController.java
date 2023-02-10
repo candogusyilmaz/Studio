@@ -9,6 +9,8 @@ import cdy.studioapi.views.ReservationView;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,8 +41,8 @@ public class ReservationController {
     }
 
     @GetMapping("/history")
-    public List<ReservationView> getReservationsHistoryByUser() {
-        return reservationService.getAll(Auth.asUser().getId());
+    public Page<List<ReservationView>> getReservationsHistoryByUser(Pageable page) {
+        return reservationService.getAll(Auth.asUser().getId(), page);
     }
 
     @GetMapping("/all")

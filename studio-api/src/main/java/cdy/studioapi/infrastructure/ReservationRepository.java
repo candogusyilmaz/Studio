@@ -2,6 +2,8 @@ package cdy.studioapi.infrastructure;
 
 import cdy.studioapi.models.Reservation;
 import cdy.studioapi.views.ReservationView;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
 
 import java.util.List;
@@ -19,7 +21,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 
     @Query("select r from Reservation r where r.user.id = :userId")
     @EntityGraph(attributePaths = {"user", "slot.items", "slot.room.location", "lastAction"})
-    List<ReservationView> findAllAsReservationView(int userId);
+    Page<List<ReservationView>> findAllAsReservationView(int userId, Pageable page);
 
     @Query("select r from Reservation r " +
             "join r.slot " +

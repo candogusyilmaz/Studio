@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { Group, createStyles, Anchor, Text, Collapse } from "@mantine/core";
 import { IconChevronDown } from "@tabler/icons";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -40,13 +40,13 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function CustomNavLink({ href, label, permission, icon, links }: HeaderLinkProps) {
+export function MobileHeaderLink({ href, label, permission, icon, links }: HeaderLinkProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [opened, { toggle }] = useDisclosure(false);
   const { cx, classes } = useStyles();
   const { getUser } = useContext(AuthContext);
-  
+
   const user = getUser();
 
   if (permission && !user?.permissions.includes(permission)) {

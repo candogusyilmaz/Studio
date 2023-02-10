@@ -13,10 +13,12 @@ import {
   Collapse,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconCalendarEvent, IconHome, IconList, IconLogout, IconMoonStars, IconPlus, IconSettings, IconSun } from "@tabler/icons";
-import { ReactElement, useContext } from "react";
+import { IconLogout, IconMoonStars, IconSettings, IconSun } from "@tabler/icons";
+import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { CustomNavLink } from "./CustomNavLink";
+import { headerRoutes } from "../../router";
+import { getInitials } from "../../utils/TextUtils";
+import { MobileHeaderLink } from "./MobileHeaderLink";
 import { HeaderLink } from "./HeaderLink";
 
 const useStyles = createStyles((theme) => ({
@@ -92,53 +94,6 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-type RouteLink = {
-  href?: string;
-  label: string;
-  permission?: string;
-  icon?: ReactElement;
-  links?: RouteLink[];
-};
-
-const routeLinks: RouteLink[] = [
-  {
-    href: "/",
-    label: "Anasayfa",
-    icon: <IconHome size={16} />,
-  },
-  {
-    href: "/reservations",
-    label: "Rezervasyon",
-    icon: <IconCalendarEvent size={16} />,
-    links: [
-      {
-        href: "/reservations/new",
-        label: "Yeni",
-        icon: <IconPlus size={16} />,
-      },
-      {
-        href: "/reservations/history",
-        label: "Geçmiş",
-        icon: <IconList size={16} />,
-      },
-    ],
-  },
-];
-
-function getInitials(text: string | undefined | null) {
-  if (!text) {
-    return "S";
-  }
-
-  const textSplit = text.toLocaleUpperCase().split(" ");
-
-  if (textSplit.length === 1) {
-    return textSplit[0][0];
-  }
-
-  return textSplit[0][0] + textSplit[textSplit.length - 1][0];
-}
-
 export function HeaderMenu() {
   const [opened, { toggle }] = useDisclosure(false);
   const { classes } = useStyles();
@@ -192,7 +147,7 @@ export function HeaderMenu() {
       <nav className={classes.navbar}>
         <Container className={classes.navbarContainer} size="xl">
           <Group>
-            {routeLinks.map((link) => (
+            {headerRoutes.map((link) => (
               <HeaderLink {...link} key={link.href} />
             ))}
           </Group>
@@ -201,8 +156,8 @@ export function HeaderMenu() {
       <Collapse in={opened}>
         <nav className={classes.navbarMobile}>
           <div className={classes.navbarContainerMobile}>
-            {routeLinks.map((link) => (
-              <CustomNavLink {...link} key={link.href} />
+            {headerRoutes.map((link) => (
+              <MobileHeaderLink {...link} key={link.href} />
             ))}
           </div>
         </nav>

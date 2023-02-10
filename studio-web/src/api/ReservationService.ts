@@ -1,14 +1,18 @@
 import api from "./api";
-import { ReservationView } from "./types";
+import { Page, ReservationView } from "./types";
 
-export async function createReservation(slotId: number, startDate: Date, endDate: Date) {
-  return await api.post("reservations", {
+export function createReservation(slotId: number, startDate: Date, endDate: Date) {
+  return api.post("reservations", {
     slotId,
     startDate,
     endDate,
   });
 }
 
-export async function fetchReservationHistory() {
-  return await api.get<ReservationView[]>("reservations/history");
+export function fetchReservationHistory(page: number) {
+  const query = new URL(api.defaults.baseURL + "reservations/history");
+
+  query.searchParams.set("page", page.toString());
+
+  return api.get<Page<ReservationView>>(query.toString());
 }

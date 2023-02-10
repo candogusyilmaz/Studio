@@ -2,7 +2,7 @@ import { showNotification } from "@mantine/notifications";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { getAccessTokenFromLocalStorage, setUserToLocalStorage } from "../helper/helper";
+import { getAccessTokenFromLocalStorage, setUserToLocalStorage } from "../utils/LocalStorageUtils";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/api/",
