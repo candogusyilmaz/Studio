@@ -9,6 +9,7 @@ export function convertNumberToShortTimeString(value: number) {
 
   return new Date(new Date().setHours(0, 30 * value, 0, 0)).toLocaleTimeString(navigator.language, {
     timeStyle: "short",
+    hour12: false
   });
 }
 
@@ -21,10 +22,6 @@ export function convertNumberToDate(value: number, date: Date, seconds: number) 
   return new Date(result);
 }
 
-/**
- * Converts a date to a string by using the current or specified locale.
- * dd-
- */
 export function convertDatesToString(startDate: Date | string, endDate: Date | string) {
   const dateString = new Date(startDate).toLocaleDateString(navigator.language, {
     day: "2-digit",

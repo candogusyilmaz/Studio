@@ -13,7 +13,7 @@ import {
   Table,
   Text,
 } from "@mantine/core";
-import { DatePicker } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import { showNotification } from "@mantine/notifications";
 import { IconCalendarEvent, IconHome, IconLocation } from "@tabler/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -208,13 +208,13 @@ export function NewReservation() {
   });
 
   return (
-    <Paper withBorder p="xl">
-      <Container size="xs">
+    <Container size="xs" mt="xl">
+      <Paper withBorder p="xl">
         <Flex direction="column" gap="sm">
           <Text size="xl" weight={600}>
             Rezervasyon Bilgileri
           </Text>
-          <DatePicker
+          <DatePickerInput
             placeholder="Rezervasyon yapmak istediğiniz gün"
             label="Tarih"
             icon={<IconCalendarEvent size={16} />}
@@ -268,9 +268,11 @@ export function NewReservation() {
           />
           {slots.length > 0 ? (
             <Radio.Group name="whereToSit" label="Nerede oturmak istiyorsunuz?" value={selectedSlotId ?? "-1"} onChange={setSelectedSlotId}>
-              {slots?.map((slot) => (
-                <Radio value={slot.value} label={slot.label} key={slot.value} disabled={!selectedRoomId} />
-              ))}
+              <Group mt="xs">
+                {slots?.map((slot) => (
+                  <Radio value={slot.value} label={slot.label} key={slot.value} disabled={!selectedRoomId} />
+                ))}
+              </Group>
             </Radio.Group>
           ) : (
             <div>
@@ -306,8 +308,8 @@ export function NewReservation() {
             </Button>
           </Group>
         </Flex>
-      </Container>
-    </Paper>
+      </Paper>
+    </Container>
   );
 }
 

@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # Sonarqube
-.scannerwork
+#.scannerwork

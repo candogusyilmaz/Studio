@@ -17,6 +17,8 @@ import cdy.studioapi.views.ReservationView;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Service;
 
@@ -83,8 +85,8 @@ public class ReservationService {
         return reservationRepository.findAllAsReservationView();
     }
 
-    public List<ReservationView> getAll(int userId) {
-        return reservationRepository.findAllAsReservationView(userId);
+    public Page<List<ReservationView>> getAll(int userId, Pageable page) {
+        return reservationRepository.findAllAsReservationView(userId, page);
     }
 
     public boolean conflictingWithOthers(int slotId, LocalDateTime startDate, LocalDateTime endDate) {

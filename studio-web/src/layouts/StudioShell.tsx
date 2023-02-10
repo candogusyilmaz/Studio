@@ -2,7 +2,7 @@ import { AppShell, useMantineTheme, Container } from "@mantine/core";
 import { Outlet } from "react-router-dom";
 import { HeaderMenu } from "../components/header/HeaderMenu";
 
-export default function DashboardLayout() {
+export default function StudioShell() {
   const theme = useMantineTheme();
 
   return (

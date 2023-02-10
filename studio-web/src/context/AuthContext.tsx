@@ -1,8 +1,8 @@
 import { AxiosError } from "axios";
-import React, { createContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../api/api";
-import { getUserFromLocalStorage, removeUserFromLocalStorage, setUserToLocalStorage } from "../helper/helper";
+import { getUserFromLocalStorage, removeUserFromLocalStorage, setUserToLocalStorage } from "../utils/LocalStorageUtils";
 
 export interface AuthProps {
   email: string;
@@ -103,16 +103,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     navigate("/login");
   }
 
-  const value = useMemo(() => {
-    return {
-      isClientError,
-      isLoggingIn,
-      getUser,
-      login,
-      logout,
-      refresh,
-    };
-  }, []);
+  const value = {
+    isClientError,
+    isLoggingIn,
+    getUser,
+    login,
+    logout,
+    refresh,
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
