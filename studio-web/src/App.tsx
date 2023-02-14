@@ -33,7 +33,7 @@ function AxiosProvider() {
 
 function App() {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
-    key: "preferred-color-scheme",
+    key: "theme",
     defaultValue: "light",
     getInitialValueInEffect: true,
   });

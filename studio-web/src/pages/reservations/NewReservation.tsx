@@ -68,12 +68,12 @@ export function NewReservation() {
 
   const slotsQuery = useQuery({
     queryKey: ["slots", date, timeRangeEnd],
-    queryFn: async () => {
+    queryFn: () => {
       if (date) {
         const startDate = convertNumberToDate(timeRangeEnd[0], new Date(date), 59);
         const endDate = convertNumberToDate(timeRangeEnd[1], new Date(date), 1);
 
-        return await fetchAvailableSlots(startDate, endDate);
+        return fetchAvailableSlots(startDate, endDate);
       }
 
       return Promise.resolve<AxiosResponse<SlotView[], any>>([] as SlotView[] | any);
