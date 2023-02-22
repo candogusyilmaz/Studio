@@ -14,7 +14,7 @@ public class ReservationActionView implements Serializable {
     private final String description;
     private final ReservationStatus status;
     private final LocalDateTime actionDate;
-    private SimpleUserView actionBy;
+    private UserBasicView actionBy;
 
     public ReservationActionView(ReservationAction res) {
         this.id = res.getId();
@@ -22,8 +22,8 @@ public class ReservationActionView implements Serializable {
         this.status = res.getStatus();
         this.actionDate = res.getActionDate();
 
-        if(Hibernate.isInitialized(res.getActionBy())) {
-            this.actionBy = new SimpleUserView(res.getActionBy());
+        if (Hibernate.isInitialized(res.getActionBy())) {
+            this.actionBy = new UserBasicView(res.getActionBy());
         }
     }
 }

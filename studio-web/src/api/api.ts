@@ -15,25 +15,24 @@ function responseInterceptorSuccess(response: AxiosResponse<any, any>) {
   return response;
 }
 
-export default api;
+api.interceptors.request.use((config) => {
+  if (!config?.headers) {
+    throw new Error("Expected 'config' and 'config.headers' not to be undefined");
+  }
+
+  if (config.url === "auth/token" || config.url === "auth/refresh-token") {
+    delete config.headers["Authorization"];
+  } else {
+    config.headers["Authorization"] = "Bearer " + getAccessTokenFromLocalStorage();
+  }
+
+  return config;
+});
 
 export const AxiosInterceptor = ({ children }: any) => {
   const { logout } = useContext(AuthContext);
 
   useEffect(() => {
-    const reqInterceptor = api.interceptors.request.use((config) => {
-      if (!config?.headers) {
-        throw new Error("Expected 'config' and 'config.headers' not to be undefined");
-      }
-
-      if (config.url === "auth/token" || config.url === "auth/refresh-token") {
-        delete config.headers["Authorization"];
-      } else {
-        config.headers["Authorization"] = "Bearer " + getAccessTokenFromLocalStorage();
-      }
-
-      return config;
-    });
     const respInterceptor = api.interceptors.response.use(responseInterceptorSuccess, (error: AxiosError<unknown, any>) => {
       if (
         error.response?.status === 401 &&
@@ -75,15 +74,12 @@ export const AxiosInterceptor = ({ children }: any) => {
     });
 
     return () => {
-      api.interceptors.request.eject(reqInterceptor);
       api.interceptors.response.eject(respInterceptor);
     };
   }, []);
 
   return children;
 };
-
-
 
 export function getErrorMessage(axiosError: AxiosError) {
   let message;
@@ -94,3 +90,5 @@ export function getErrorMessage(axiosError: AxiosError) {
 
   return message ?? "Bilinmeyen bir hata oluştu!";
 }
+
+export default api;

@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,12 +42,18 @@ public class ReservationController {
     }
 
     @GetMapping("/history")
-    public Page<List<ReservationView>> getReservationsHistoryByUser(Pageable page) {
+    public Page<List<ReservationView>> getReservationsHistoryByUser(@PageableDefault Pageable page) {
         return reservationService.getAll(Auth.asUser().getId(), page);
     }
 
     @GetMapping("/all")
     public List<ReservationView> getReservations() {
         return reservationService.getAll();
+    }
+
+    @PatchMapping("/cancel/{id}")
+    @Transactional
+    public void cancelReservation(@PathVariable int id) {
+        reservationService.cancelReservation(id);
     }
 }

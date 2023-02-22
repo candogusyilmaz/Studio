@@ -1,8 +1,10 @@
 package cdy.studioapi.services;
 
+import cdy.studioapi.config.Auth;
 import cdy.studioapi.dtos.ReservationCreateDto;
 import cdy.studioapi.dtos.ReservationUpdateDto;
 import cdy.studioapi.events.ReservationActionCreateEvent;
+import cdy.studioapi.events.ReservationCancellationEvent;
 import cdy.studioapi.events.ReservationCreateEvent;
 import cdy.studioapi.events.ReservationUpdateEvent;
 import cdy.studioapi.exceptions.BadRequestException;
@@ -41,8 +43,7 @@ public class ReservationService {
             throw new BadRequestException("Belirtilen tarihler arasında bir rezervasyonunuz bulunmaktadır.");
         }
 
-        var slot = slotRepository.findBy(SlotSpecifications.slotIdEquals(dto.getSlotId()), FluentQuery.FetchableFluentQuery::first)
-                .orElseThrow(() -> new NotFoundException("Slot bulunamadı."));
+        var slot = slotRepository.findBy(SlotSpecifications.slotIdEquals(dto.getSlotId()), FluentQuery.FetchableFluentQuery::first).orElseThrow(() -> new NotFoundException("Slot bulunamadı."));
 
         var user = new User(userId);
 
@@ -57,8 +58,7 @@ public class ReservationService {
     }
 
     public void update(int reservationId, ReservationUpdateDto dto) {
-        var res = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new NotFoundException("Rezervasyon bulunamadı."));
+        var res = reservationRepository.findById(reservationId).orElseThrow(() -> new NotFoundException("Rezervasyon bulunamadı."));
 
         if (conflictingWithOthers(res.getId(), dto.getSlotId(), dto.getStartDate(), dto.getEndDate())) {
             throw new BadRequestException("Seçilen slot belirtilen tarihler arasında rezerve edilmiştir.");
@@ -69,8 +69,7 @@ public class ReservationService {
         }
 
         if (dto.getSlotId() != res.getSlot().getId()) {
-            var slot = slotRepository.findBy(SlotSpecifications.slotIdEquals(dto.getSlotId()), FluentQuery.FetchableFluentQuery::first)
-                    .orElseThrow(() -> new NotFoundException("Slot bulunamadı."));
+            var slot = slotRepository.findBy(SlotSpecifications.slotIdEquals(dto.getSlotId()), FluentQuery.FetchableFluentQuery::first).orElseThrow(() -> new NotFoundException("Slot bulunamadı."));
             res.setSlot(slot);
         }
 
@@ -89,6 +88,18 @@ public class ReservationService {
         return reservationRepository.findAllAsReservationView(userId, page);
     }
 
+    public void cancelReservation(int id) {
+        var spec = ReservationSpecifications.getUserReservationById(Auth.asUser().getId(), id);
+        var reservation = reservationRepository.findBy(spec, r -> r.project("lastAction").first())
+                .orElseThrow(() -> new NotFoundException("Rezervasyon bulunamadı."));
+
+        if (!reservation.getLastAction().getStatus().isCancellable()) {
+            throw new BadRequestException("Rezervasyon iptal edilebilir bir durumda değil!");
+        }
+
+        eventPublisher.publishEvent(new ReservationCancellationEvent(reservation));
+    }
+
     public boolean conflictingWithOthers(int slotId, LocalDateTime startDate, LocalDateTime endDate) {
         var spec = ReservationSpecifications.conflictingWithOthers(slotId, startDate, endDate);
 
@@ -96,8 +107,7 @@ public class ReservationService {
     }
 
     public boolean conflictingWithOthers(int reservationId, int slotId, LocalDateTime startDate, LocalDateTime endDate) {
-        var spec = ReservationSpecifications.conflictingWithOthers(slotId, startDate, endDate)
-                .and(ReservationSpecifications.reservationIdNotEqual(reservationId));
+        var spec = ReservationSpecifications.conflictingWithOthers(slotId, startDate, endDate).and(ReservationSpecifications.reservationIdNotEqual(reservationId));
 
         return reservationRepository.findBy(spec, FluentQuery.FetchableFluentQuery::exists);
     }
@@ -109,12 +119,10 @@ public class ReservationService {
     }
 
     public boolean conflictingWithSelf(int reservationId, int userId, LocalDateTime startDate, LocalDateTime endDate) {
-        var spec = ReservationSpecifications.conflictingWithSelf(userId, startDate, endDate)
-                .and(ReservationSpecifications.reservationIdNotEqual(reservationId));
+        var spec = ReservationSpecifications.conflictingWithSelf(userId, startDate, endDate).and(ReservationSpecifications.reservationIdNotEqual(reservationId));
 
         return reservationRepository.findBy(spec, FluentQuery.FetchableFluentQuery::exists);
     }
-
 
     @EventListener
     public void updateLastActionWhenReservationActionCreated(ReservationActionCreateEvent event) {

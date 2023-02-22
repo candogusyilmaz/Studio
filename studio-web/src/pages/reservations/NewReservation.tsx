@@ -44,11 +44,8 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-type ApiErrorResponse = {
-  message?: string;
-  startDate?: string;
-  endDate?: string;
-  slotId?: string;
+const queryKey = {
+  availableSlots: "availableSlots",
 };
 
 export function NewReservation() {
@@ -67,17 +64,14 @@ export function NewReservation() {
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
 
   const slotsQuery = useQuery({
-    queryKey: ["slots", date, timeRangeEnd],
+    queryKey: [queryKey.availableSlots, date, timeRangeEnd],
     queryFn: () => {
-      if (date) {
-        const startDate = convertNumberToDate(timeRangeEnd[0], new Date(date), 59);
-        const endDate = convertNumberToDate(timeRangeEnd[1], new Date(date), 1);
+      const startDate = convertNumberToDate(timeRangeEnd[0], new Date(date!), 59); // can't be null because query is enabled if date is not null
+      const endDate = convertNumberToDate(timeRangeEnd[1], new Date(date!), 1);
 
-        return fetchAvailableSlots(startDate, endDate);
-      }
-
-      return Promise.resolve<AxiosResponse<SlotView[], any>>([] as SlotView[] | any);
+      return fetchAvailableSlots(startDate, endDate);
     },
+    enabled: date !== null,
     select: (data) => data?.data,
     onSuccess: (data) => {
       // populate the locations from the slots query
@@ -196,7 +190,7 @@ export function NewReservation() {
       });
       clearFormAll();
     },
-    onError: (error: AxiosError<ApiErrorResponse>, variables, context) => {
+    onError: (error: AxiosError, variables, context) => {
       showNotification({
         id: "reservation-create-error",
         title: "Rezervasyon",

@@ -1,16 +1,20 @@
+export interface ApiErrorResponse {
+  message?: string;
+}
+
 export interface Page<T> {
   content: T[];
   pageable: {
-      sort: {
-          empty: boolean;
-          sorted: boolean;
-          unsorted: boolean;
-      };
-      offset: number;
-      pageSize: number;
-      pageNumber: number;
-      paged: boolean;
-      unpaged: boolean;
+    sort: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+    offset: number;
+    pageSize: number;
+    pageNumber: number;
+    paged: boolean;
+    unpaged: boolean;
   };
   last: boolean;
   totalPages: number;
@@ -18,9 +22,9 @@ export interface Page<T> {
   size: number;
   number: number;
   sort: {
-      empty: boolean;
-      sorted: boolean;
-      unsorted: boolean;
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
   };
   first: boolean;
   numberOfElements: number;
@@ -74,11 +78,11 @@ export interface RoomView {
 export interface LocationView {
   id: number;
   name: string;
-  parent?: LocationParentView;
+  parent?: LocationParentlessView;
   rooms?: RoomView[];
 }
 
-export interface LocationParentView {
+export interface LocationParentlessView {
   id: number;
   name: string;
 }
@@ -93,6 +97,18 @@ export const ReservationStatusList = {
 };
 
 export type ReservationStatus = keyof typeof ReservationStatusList;
+
+export function isStatusCancellable(status: ReservationStatus) {
+  const cancellableStatuses = [
+    ReservationStatusList.PENDING,
+    ReservationStatusList.UPDATED,
+    ReservationStatusList.ACTIVE,
+    ReservationStatusList.CONFIRMED,
+    ReservationStatusList.PENDING,
+  ];
+
+  return cancellableStatuses.includes(status);
+}
 
 export function getReservationStatus(status?: ReservationStatus) {
   switch (status) {

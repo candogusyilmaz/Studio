@@ -1,7 +1,17 @@
 package cdy.studioapi.dtos;
 
+import jakarta.validation.constraints.Positive;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
+
 import java.util.Optional;
 
-public record LocationCreateDto(String name, Optional<Integer> parentId) {
-
+@Getter
+@Setter
+public class LocationCreateDto {
+    @Length(min = 3, max = 27, message = "Lokasyon ismi 3 ila 27 karakter arasında olmalıdır.")
+    private String name;
+    @Positive(message = "Üst lokasyon bulunamadı.")
+    private Optional<Integer> parentId;
 }

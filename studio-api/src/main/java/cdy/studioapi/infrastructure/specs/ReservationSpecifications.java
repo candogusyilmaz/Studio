@@ -1,5 +1,6 @@
 package cdy.studioapi.infrastructure.specs;
 
+import cdy.studioapi.enums.ReservationStatus;
 import cdy.studioapi.models.Reservation;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -13,17 +14,34 @@ public class ReservationSpecifications {
         return (root, query, cb) -> cb.and(
                 cb.equal(root.get("slot").get("id"), slotId),
                 cb.lessThanOrEqualTo(root.get("startDate"), endDate),
-                cb.greaterThanOrEqualTo(root.get("endDate"), startDate));
+                cb.greaterThanOrEqualTo(root.get("endDate"), startDate),
+                cb.isFalse(root.get("lastAction").get("status")
+                        .in(ReservationStatus.COMPLETED,
+                                ReservationStatus.REJECTED,
+                                ReservationStatus.CANCELLED))
+        );
     }
 
     public static Specification<Reservation> conflictingWithSelf(int userId, LocalDateTime startDate, LocalDateTime endDate) {
         return (root, query, cb) -> cb.and(
                 cb.equal(root.get("user").get("id"), userId),
                 cb.lessThanOrEqualTo(root.get("startDate"), endDate),
-                cb.greaterThanOrEqualTo(root.get("endDate"), startDate));
+                cb.greaterThanOrEqualTo(root.get("endDate"), startDate),
+                cb.isFalse(root.get("lastAction").get("status")
+                        .in(ReservationStatus.COMPLETED,
+                                ReservationStatus.REJECTED,
+                                ReservationStatus.CANCELLED))
+        );
     }
 
     public static Specification<Reservation> reservationIdNotEqual(int reservationId) {
         return (root, query, cb) -> cb.notEqual(root.get("id"), reservationId);
+    }
+
+    public static Specification<Reservation> getUserReservationById(int userId, int reservationId) {
+        return (root, query, cb) -> cb.and(
+                cb.equal(root.get("id"), reservationId),
+                cb.equal(root.get("user").get("id"), userId)
+        );
     }
 }

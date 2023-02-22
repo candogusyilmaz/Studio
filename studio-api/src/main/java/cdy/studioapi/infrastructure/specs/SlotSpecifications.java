@@ -1,5 +1,6 @@
 package cdy.studioapi.infrastructure.specs;
 
+import cdy.studioapi.enums.ReservationStatus;
 import cdy.studioapi.models.Slot;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,8 +18,11 @@ public class SlotSpecifications {
             res.on(
                     cb.and(
                             cb.lessThanOrEqualTo(res.get("startDate"), endDate),
-                            cb.greaterThanOrEqualTo(res.get("endDate"), startDate)
-                    )
+                            cb.greaterThanOrEqualTo(res.get("endDate"), startDate),
+                            cb.isFalse(res.get("lastAction").get("status")
+                                    .in(ReservationStatus.COMPLETED,
+                                            ReservationStatus.REJECTED,
+                                            ReservationStatus.CANCELLED)))
             );
 
             return cb.and(

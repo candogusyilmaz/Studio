@@ -3,6 +3,7 @@ package cdy.studioapi.services;
 import cdy.studioapi.config.Auth;
 import cdy.studioapi.enums.ReservationStatus;
 import cdy.studioapi.events.ReservationActionCreateEvent;
+import cdy.studioapi.events.ReservationCancellationEvent;
 import cdy.studioapi.events.ReservationCreateEvent;
 import cdy.studioapi.events.ReservationUpdateEvent;
 import cdy.studioapi.infrastructure.jpa.ReservationActionJpaRepository;
@@ -41,6 +42,19 @@ public class ReservationActionService {
         action.setReservation(event.getReservation());
         action.setActionBy(Auth.asUser());
         action.setStatus(ReservationStatus.UPDATED);
+        action.setDescription(event.getReservation().toString());
+
+        actionRepository.save(action);
+        eventPublisher.publishEvent(new ReservationActionCreateEvent(action));
+    }
+
+    @EventListener
+    public void createActionWhenReservationCancelled(ReservationCancellationEvent event) {
+        var action = new ReservationAction();
+
+        action.setReservation(event.getReservation());
+        action.setActionBy(Auth.asUser());
+        action.setStatus(ReservationStatus.CANCELLED);
         action.setDescription(event.getReservation().toString());
 
         actionRepository.save(action);

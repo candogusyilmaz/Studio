@@ -12,7 +12,7 @@ public class ReservationView implements Serializable {
     private final int id;
     private final LocalDateTime startDate;
     private final LocalDateTime endDate;
-    private SimpleUserView user;
+    private UserBasicView user;
     private SlotView slot;
     private ReservationActionView lastAction;
 
@@ -21,15 +21,15 @@ public class ReservationView implements Serializable {
         this.startDate = res.getStartDate();
         this.endDate = res.getEndDate();
 
-        if(Hibernate.isInitialized(res.getUser())){
-            this.user = new SimpleUserView(res.getUser());
+        if (Hibernate.isInitialized(res.getUser())) {
+            this.user = new UserBasicView(res.getUser());
         }
 
-        if(Hibernate.isInitialized(res.getSlot())) {
+        if (Hibernate.isInitialized(res.getSlot())) {
             this.slot = new SlotView(res.getSlot());
         }
 
-        if(Hibernate.isInitialized(res.getLastAction())) {
+        if (Hibernate.isInitialized(res.getLastAction())) {
             this.lastAction = new ReservationActionView(res.getLastAction());
         }
     }

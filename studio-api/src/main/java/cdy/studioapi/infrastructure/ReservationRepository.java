@@ -29,4 +29,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "join r.lastAction " +
             "where r.id = :id")
     Optional<Reservation> findById(int id);
+
 }

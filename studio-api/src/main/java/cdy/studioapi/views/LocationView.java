@@ -11,7 +11,7 @@ import java.util.List;
 public class LocationView implements Serializable {
     private final int id;
     private final String name;
-    private LocationParentView parent;
+    private LocationParentlessView parent;
     private List<RoomView> rooms;
 
     public LocationView(Location location) {
@@ -19,7 +19,7 @@ public class LocationView implements Serializable {
         this.name = location.getName();
 
         if (Hibernate.isInitialized(location.getParent()) && location.getParent() != null) {
-            this.parent = new LocationParentView(location.getParent());
+            this.parent = new LocationParentlessView(location.getParent());
         }
 
         if (Hibernate.isInitialized(location.getRooms())) {

@@ -21,7 +21,6 @@ public class Location extends BaseEntity {
     private Location parent;
 
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("id")
     private List<Room> rooms;
 
     public Location(String name) {

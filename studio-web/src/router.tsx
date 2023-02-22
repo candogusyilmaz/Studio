@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { IconCalendarEvent, IconHome, IconList, IconPlus } from "@tabler/icons";
+import { IconCalendarEvent, IconHome, IconHomeCog, IconList, IconPlus, IconServerCog } from "@tabler/icons";
 import { Route, Routes } from "react-router-dom";
 import { Login } from "./pages/Login";
 import { Unauthorized } from "./pages/Unauthorized";
@@ -8,9 +8,10 @@ import StudioShell from "./layouts/StudioShell";
 import RequireAuth from "./components/shared/RequireAuth";
 import { NewReservation } from "./pages/reservations/NewReservation";
 import { ReservationHistory } from "./pages/reservations/ReservationHistory";
+import ReservationManagement from "./pages/management/reservations/ReservationManagement";
 
 interface RouteLink {
-  href?: string;
+  href: string;
   label: string;
   permission?: string;
   icon?: ReactElement;
@@ -24,7 +25,7 @@ export const headerRoutes: RouteLink[] = [
     icon: <IconHome size={16} />,
   },
   {
-    href: "/reservations",
+    href: "/reservations/", // Necessary in order to use it as a key prop
     label: "Rezervasyon",
     icon: <IconCalendarEvent size={16} />,
     links: [
@@ -37,6 +38,18 @@ export const headerRoutes: RouteLink[] = [
         href: "/reservations/history",
         label: "Geçmiş",
         icon: <IconList size={16} />,
+      },
+    ],
+  },
+  {
+    href: "/management/",
+    label: "Yönetim",
+    icon: <IconServerCog size={16} />,
+    links: [
+      {
+        href: "/management/reservations",
+        label: "Rezervasyon Tanımlamaları",
+        icon: <IconHomeCog size={16} />,
       },
     ],
   },
@@ -66,6 +79,14 @@ export const StudioRoutes = () => (
         element={
           <RequireAuth>
             <ReservationHistory />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/management/reservations"
+        element={
+          <RequireAuth>
+            <ReservationManagement />
           </RequireAuth>
         }
       />
