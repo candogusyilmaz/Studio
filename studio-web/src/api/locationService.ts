@@ -24,6 +24,11 @@ export function fetchLocationsByName(name: string) {
   return api.get<Page<LocationView>>(query.toString());
 }
 
+export function fetchLocationsAll() {
+  const query = new URL(locationsURL + "/all");
+  return api.get<LocationView[]>(query.toString());
+}
+
 export function createLocation(name: string, parentId?: number) {
   const query = new URL(locationsURL);
 

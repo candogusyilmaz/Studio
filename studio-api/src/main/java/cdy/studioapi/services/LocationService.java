@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,6 +35,10 @@ public class LocationService {
                 .ifPresent(location::setParent);
 
         locationRepository.save(location);
+    }
+
+    public List<LocationView> getAll() {
+        return locationRepository.findAll().stream().map(LocationView::new).toList();
     }
 
     @SafeVarargs

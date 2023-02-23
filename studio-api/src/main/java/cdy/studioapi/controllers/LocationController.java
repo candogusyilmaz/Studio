@@ -11,6 +11,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -29,6 +30,11 @@ public class LocationController {
     public Page<LocationView> getAll(@PageableDefault Pageable pageable, Optional<String> name) {
         var nameQuerySpec = name.map(LocationSpecifications::findByName).orElse(null);
         return locationService.getAll(pageable, nameQuerySpec);
+    }
+
+    @GetMapping("/all")
+    public List<LocationView> getAll() {
+        return locationService.getAll();
     }
 
     @GetMapping("/{id}")

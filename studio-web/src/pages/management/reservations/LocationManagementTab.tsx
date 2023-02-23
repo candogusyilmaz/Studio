@@ -1,4 +1,5 @@
 import { Button, Flex, Select, Modal, Pagination, Text, TextInput, SelectItem } from "@mantine/core";
+import { useForm, zodResolver } from "@mantine/form";
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
 import { IconLocation, IconPlus } from "@tabler/icons";
@@ -6,14 +7,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import { AxiosError } from "axios";
 import { useEffect, useMemo, useState } from "react";
+import { nullable, z } from "zod";
 import { getErrorMessage } from "../../../api/api";
-import { createLocation, fetchLocations, fetchLocationsByName } from "../../../api/locationService";
+import { createLocation, fetchLocations, fetchLocationsAll, fetchLocationsByName } from "../../../api/locationService";
 import { LocationView } from "../../../api/types";
 import BasicTable from "../../../components/BasicTable";
 
 const queryKey = {
   locationManagementList: "locationManagementList",
-  locationsQuery: "locationsQuery",
+  allLocationsQuery: "allLocationsQuery",
 };
 
 export default function LocationManagementTab() {
@@ -75,20 +77,14 @@ function NewLocationButton() {
   const queryClient = useQueryClient();
   const [opened, { open, close }] = useDisclosure(false);
 
-  const [name, setName] = useState("");
-  const [parent, setParent] = useState<SelectItem & LocationView>();
-
   useEffect(() => {
-    setName("");
-    setParent(undefined);
+    form.reset();
   }, [opened]);
 
-  const [searchQuery, setSearchQuery] = useDebouncedState("", 1000);
-
   const locationQuery = useQuery({
-    queryKey: [queryKey.locationsQuery, { searchQuery }],
-    queryFn: () => fetchLocationsByName(`%${searchQuery}%`),
-    select: (data) => data?.data?.content.map((s) => ({ ...s, value: s.id.toString(), label: s.name })),
+    queryKey: [queryKey.allLocationsQuery],
+    queryFn: () => fetchLocationsAll(),
+    select: (data) => data?.data?.map((s) => ({ ...s, value: s.id.toString(), label: s.name })),
     keepPreviousData: true,
     enabled: opened,
     cacheTime: 5 * 60 * 1000,
@@ -96,20 +92,7 @@ function NewLocationButton() {
   });
 
   const newLocationMutation = useMutation({
-    mutationFn: () => {
-      if (name.length < 3 || name.length > 27) {
-        showNotification({
-          id: "location-create-error",
-          title: "Lokasyon Oluşturulurken Hata",
-          message: "Lokasyon ismi 3 ila 27 karakter arasında olmalıdır",
-          color: "orange",
-          autoClose: 5000,
-        });
-        return Promise.reject();
-      }
-
-      return createLocation(name, parent?.id);
-    },
+    mutationFn: () => createLocation(form.values.name, form.values.parentId ? parseInt(form.values.parentId) : undefined),
     onSuccess: () => {
       showNotification({
         id: "location-create-success",
@@ -121,7 +104,7 @@ function NewLocationButton() {
       queryClient.invalidateQueries({ queryKey: [queryKey.locationManagementList] });
       close();
     },
-    onError: (error: AxiosError, variables, context) => {
+    onError: (error: AxiosError, _variables, _context) => {
       showNotification({
         id: "location-create-error",
         title: "Lokasyon Oluşturulurken Hata",
@@ -131,6 +114,20 @@ function NewLocationButton() {
       });
     },
   });
+
+  const schema = z.object({
+    name: z.string().min(3, "3 karakterden kısa olamaz.").max(27, "27 karakterden uzun olamaz."),
+  });
+
+  const form = useForm({
+    validate: zodResolver(schema),
+    initialValues: {
+      name: "",
+      parentId: undefined,
+    },
+  });
+
+  const handleSubmit = form.onSubmit((_values) => newLocationMutation.mutate());
 
   return (
     <>
@@ -142,42 +139,33 @@ function NewLocationButton() {
             <Modal.CloseButton />
           </Modal.Header>
           <Modal.Body>
-            <Flex direction="column" gap="sm">
-              <TextInput
-                label="Lokasyon Adı"
-                placeholder="Örn: Ankütek"
-                withAsterisk
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <Select
-                withinPortal
-                clearable
-                dropdownPosition="bottom"
-                label="Üst Lokasyon"
-                data={locationQuery.data ?? []}
-                placeholder="Bir lokasyona bağlı ise seçiniz"
-                searchable
-                onSearchChange={setSearchQuery}
-                nothingFound="Lokasyon bulunamadı"
-                maxDropdownHeight={150}
-                icon={<IconLocation size={16} />}
-                value={parent?.value ?? ""}
-                onChange={(value) => setParent(locationQuery.data?.find((s) => s.value === value))}
-                disabled={locationQuery.isLoading}
-              />
-              <Flex justify="end" gap="md" mt="xs">
-                <Button color="red" variant="subtle" onClick={close}>
-                  İptal
-                </Button>
-                <Button
-                  onClick={() => newLocationMutation.mutate()}
-                  loading={newLocationMutation.isLoading}
-                  disabled={newLocationMutation.isSuccess}>
-                  Oluştur
-                </Button>
+            <form onSubmit={handleSubmit}>
+              <Flex direction="column" gap="sm">
+                <TextInput label="Lokasyon Adı" placeholder="Örn: Ankütek" withAsterisk {...form.getInputProps("name")} />
+                <Select
+                  withinPortal
+                  clearable
+                  dropdownPosition="bottom"
+                  label="Üst Lokasyon"
+                  data={locationQuery.data ?? []}
+                  placeholder="Bir lokasyona bağlı ise seçiniz"
+                  searchable
+                  nothingFound="Lokasyon bulunamadı"
+                  maxDropdownHeight={150}
+                  icon={<IconLocation size={16} />}
+                  disabled={locationQuery.isLoading}
+                  {...form.getInputProps("parentId")}
+                />
+                <Flex justify="end" gap="md" mt="xs">
+                  <Button color="red" variant="subtle" onClick={close}>
+                    İptal
+                  </Button>
+                  <Button type="submit" loading={newLocationMutation.isLoading} disabled={newLocationMutation.isSuccess}>
+                    Oluştur
+                  </Button>
+                </Flex>
               </Flex>
-            </Flex>
+            </form>
           </Modal.Body>
         </Modal.Content>
       </Modal.Root>
