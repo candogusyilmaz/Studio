@@ -10,10 +10,10 @@ import cdy.studioapi.models.Room;
 import cdy.studioapi.views.RoomView;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -40,8 +40,9 @@ public class RoomService {
         eventPublisher.publishEvent(new RoomCreateEvent(room));
     }
 
-    public List<RoomView> getAll() {
-        return roomRepository.findBy((root, query, criteriaBuilder) -> null, r -> r.project("location").all().stream().map(RoomView::new).toList());
+    public Page<RoomView> getAll(Pageable pageable) {
+        return roomRepository.findBy((root, query, criteriaBuilder) -> null,
+                r -> r.project("location").sortBy(pageable.getSort()).page(pageable).map(RoomView::new));
     }
 
     public RoomView getById(int id) {

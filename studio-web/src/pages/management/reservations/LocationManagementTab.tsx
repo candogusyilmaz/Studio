@@ -1,35 +1,15 @@
-import {
-  Button,
-  createStyles,
-  Divider,
-  Flex,
-  Group,
-  Select,
-  Modal,
-  Pagination,
-  Paper,
-  Table,
-  Text,
-  TextInput,
-  SelectItem,
-} from "@mantine/core";
+import { Button, Flex, Select, Modal, Pagination, Text, TextInput, SelectItem } from "@mantine/core";
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
-import { IconArrowsSort, IconLocation, IconPlus, IconSortAscending, IconSortDescending } from "@tabler/icons";
+import { IconLocation, IconPlus } from "@tabler/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table";
-import { AxiosError, AxiosResponse } from "axios";
-import { useMemo, useState } from "react";
+import { createColumnHelper, SortingState } from "@tanstack/react-table";
+import { AxiosError } from "axios";
+import { useEffect, useMemo, useState } from "react";
 import { getErrorMessage } from "../../../api/api";
 import { createLocation, fetchLocations, fetchLocationsByName } from "../../../api/locationService";
-import { LocationView, Page } from "../../../api/types";
+import { LocationView } from "../../../api/types";
 import BasicTable from "../../../components/BasicTable";
-
-const useStyles = createStyles({
-  tableHeader: {
-    textTransform: "uppercase",
-  },
-});
 
 const queryKey = {
   locationManagementList: "locationManagementList",
@@ -98,6 +78,11 @@ function NewLocationButton() {
   const [name, setName] = useState("");
   const [parent, setParent] = useState<SelectItem & LocationView>();
 
+  useEffect(() => {
+    setName("");
+    setParent(undefined);
+  }, [opened]);
+
   const [searchQuery, setSearchQuery] = useDebouncedState("", 1000);
 
   const locationQuery = useQuery({
@@ -149,7 +134,7 @@ function NewLocationButton() {
 
   return (
     <>
-      <Modal.Root opened={opened} onClose={close}>
+      <Modal.Root opened={opened} onClose={close} keepMounted={false}>
         <Modal.Overlay />
         <Modal.Content>
           <Modal.Header>
@@ -185,7 +170,12 @@ function NewLocationButton() {
                 <Button color="red" variant="subtle" onClick={close}>
                   İptal
                 </Button>
-                <Button onClick={() => newLocationMutation.mutate()}>Oluştur</Button>
+                <Button
+                  onClick={() => newLocationMutation.mutate()}
+                  loading={newLocationMutation.isLoading}
+                  disabled={newLocationMutation.isSuccess}>
+                  Oluştur
+                </Button>
               </Flex>
             </Flex>
           </Modal.Body>

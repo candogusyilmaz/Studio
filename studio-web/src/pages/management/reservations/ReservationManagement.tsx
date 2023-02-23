@@ -1,6 +1,7 @@
 import { Flex, Tabs, Text } from "@mantine/core";
-import { IconLocation } from "@tabler/icons";
+import { IconHome, IconLocation } from "@tabler/icons";
 import LocationManagementTab from "./LocationManagementTab";
+import RoomManagementTab from "./RoomManagamentTab";
 
 export default function ReservationManagement() {
   return (
@@ -10,10 +11,12 @@ export default function ReservationManagement() {
       </Text>
       <Tabs orientation="horizontal" defaultValue="location" keepMounted={false}>
         <Tabs.List>
-          <Tabs.Tab value="location" icon={<IconLocation size={14}/>}>
+          <Tabs.Tab value="location" icon={<IconLocation size={14} />}>
             Lokasyon
           </Tabs.Tab>
-          <Tabs.Tab value="room">Oda</Tabs.Tab>
+          <Tabs.Tab value="room" icon={<IconHome size={14} />}>
+            Oda
+          </Tabs.Tab>
           <Tabs.Tab value="place">Yer</Tabs.Tab>
         </Tabs.List>
 
@@ -22,7 +25,7 @@ export default function ReservationManagement() {
         </Tabs.Panel>
 
         <Tabs.Panel value="room" mt="xs">
-          Messages tab content
+          <RoomManagementTab />
         </Tabs.Panel>
 
         <Tabs.Panel value="place" mt="xs">
