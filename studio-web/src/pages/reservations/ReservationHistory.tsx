@@ -106,7 +106,7 @@ function HistoryTable() {
   return (
     <>
       <BasicTable data={historyQuery.data?.content ?? []} columns={columns} sort={sort} setSort={setSort} />
-      <Pagination position="right" page={page + 1} onChange={(index) => setPage(index - 1)} total={historyQuery.data?.totalPages ?? 1} />
+      <Pagination position="right" value={page + 1} onChange={(index) => setPage(index - 1)} total={historyQuery.data?.totalPages ?? 1} />
     </>
   );
 }

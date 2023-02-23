@@ -26,7 +26,7 @@ const useStyles = createStyles((theme) => ({
     borderBottomColor: theme.colors[theme.primaryColor][theme.colorScheme === "dark" ? 5 : 6],
   },
 
-  subLinkActive : {
+  subLinkActive: {
     backgroundColor: "1px solid red"
   }
 }));
@@ -61,8 +61,8 @@ export function HeaderLink({ href, label, permission, icon, links }: HeaderLinkP
           event.preventDefault();
           if (subLink.href) navigate(subLink.href);
         }}
-        className={cx({[classes.subLinkActive]: subLink.href === location.pathname})}
-        >
+        className={cx({ [classes.subLinkActive]: subLink.href === location.pathname })}
+      >
         <Group spacing={6}>
           {subLink.icon}
           {subLink.label}
@@ -72,7 +72,7 @@ export function HeaderLink({ href, label, permission, icon, links }: HeaderLinkP
 
   return (
     <>
-      <Menu offset={-8} position="bottom-start" transition="fade" withArrow arrowOffset={40}>
+      <Menu offset={-8} position="bottom-start" transitionProps={{ transition: "fade" }} withArrow arrowOffset={40}>
         <Menu.Target>
           <Anchor<"a">
             key={href}

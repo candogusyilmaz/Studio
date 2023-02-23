@@ -39,11 +39,10 @@ const queryKey = {
 export default function LocationManagementTab() {
   return (
     <Flex direction="column" gap="xs">
-      <Flex align="center">
+      <Flex align="center" justify="space-between">
         <Text size="sm" mr="md">
           Lokasyon Listesi
         </Text>
-        <Divider orientation="vertical" size="xs" />
         <NewLocationButton />
       </Flex>
       <LocationTable />
@@ -87,7 +86,7 @@ function LocationTable() {
   return (
     <>
       <BasicTable data={locationQuery.data?.content ?? []} columns={columns} sort={sort} setSort={setSort} />
-      <Pagination position="right" page={page + 1} onChange={(index) => setPage(index - 1)} total={locationQuery.data?.totalPages ?? 1} />
+      <Pagination position="right" value={page + 1} onChange={(index) => setPage(index - 1)} total={locationQuery.data?.totalPages ?? 1} />
     </>
   );
 }
@@ -193,7 +192,7 @@ function NewLocationButton() {
         </Modal.Content>
       </Modal.Root>
 
-      <Button size="xs" variant="subtle" rightIcon={<IconPlus size={16} />} onClick={open}>
+      <Button size="xs" variant="default" leftIcon={<IconPlus size={16} />} onClick={open}>
         Yeni
       </Button>
     </>

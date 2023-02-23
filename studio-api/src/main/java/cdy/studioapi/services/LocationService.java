@@ -25,7 +25,7 @@ public class LocationService {
         }
 
         var location = new Location(dto.getName());
-        
+
         dto.getParentId()
                 .map(locationRepository::findById)
                 .filter(Optional::isPresent)
@@ -36,7 +36,8 @@ public class LocationService {
         locationRepository.save(location);
     }
 
-    public Page<LocationView> getAll(Pageable pageable, Specification<Location>... specs) {
+    @SafeVarargs
+    public final Page<LocationView> getAll(Pageable pageable, Specification<Location>... specs) {
         return locationRepository.findBy(Specification.allOf(specs),
                 r -> r.project("parent")
                         .sortBy(pageable.getSort()).page(pageable)).map(LocationView::new);

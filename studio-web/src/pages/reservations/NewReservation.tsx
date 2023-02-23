@@ -17,13 +17,13 @@ import { DatePickerInput } from "@mantine/dates";
 import { showNotification } from "@mantine/notifications";
 import { IconCalendarEvent, IconHome, IconLocation } from "@tabler/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosError } from "axios";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { getErrorMessage } from "../../api/api";
 import { createReservation } from "../../api/reservationService";
 import { fetchAvailableSlots } from "../../api/slotService";
-import { SlotView, ItemView } from "../../api/types";
+import { ItemView, LocationView } from "../../api/types";
 import { convertNumberToDate, convertNumberToShortTimeString } from "../../utils/DateTimeUtils";
 
 const useStyles = createStyles((theme) => ({
@@ -48,6 +48,32 @@ const queryKey = {
   availableSlots: "availableSlots",
 };
 
+function useSlotsQuery(date: Date | null, timeRange: [number, number]) {
+  const [locations, setLocations] = useState<(SelectItem & LocationView)[]>([]);
+
+  const slotsQuery = useQuery({
+    queryKey: [queryKey.availableSlots, date, timeRange],
+    queryFn: () => {
+      const startDate = convertNumberToDate(timeRange[0], new Date(date!), 59); // can't be null because query is enabled if date is not null
+      const endDate = convertNumberToDate(timeRange[1], new Date(date!), 1);
+
+      return fetchAvailableSlots(startDate, endDate);
+    },
+    enabled: date !== null,
+    select: (data) => data?.data,
+    onSuccess: (data) => {
+      const uniqueLocations: typeof locations = [];
+      data?.forEach((slot) => {
+        if (uniqueLocations.some((x) => x.value === slot.room!.location!.id.toString())) return;
+        uniqueLocations.push({ ...slot, value: slot.room!.location!.id.toString(), label: slot.room!.location!.name });
+      });
+      setLocations(uniqueLocations);
+    },
+  });
+
+  return { slotsQuery, locations, setLocations };
+}
+
 export function NewReservation() {
   const { classes } = useStyles();
 
@@ -55,7 +81,6 @@ export function NewReservation() {
   const [timeRange, setTimeRange] = useState<[number, number]>([17, 35]);
   const [timeRangeEnd, setTimeRangeEnd] = useState<[number, number]>([17, 35]);
 
-  const [locations, setLocations] = useState<SelectItem[]>([]);
   const [rooms, setRooms] = useState<SelectItem[]>([]);
   const [slots, setSlots] = useState<SelectItem[]>([]);
 
@@ -63,31 +88,7 @@ export function NewReservation() {
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
 
-  const slotsQuery = useQuery({
-    queryKey: [queryKey.availableSlots, date, timeRangeEnd],
-    queryFn: () => {
-      const startDate = convertNumberToDate(timeRangeEnd[0], new Date(date!), 59); // can't be null because query is enabled if date is not null
-      const endDate = convertNumberToDate(timeRangeEnd[1], new Date(date!), 1);
-
-      return fetchAvailableSlots(startDate, endDate);
-    },
-    enabled: date !== null,
-    select: (data) => data?.data,
-    onSuccess: (data) => {
-      // populate the locations from the slots query
-      const tempLocations: SelectItem[] = [];
-      data?.forEach((s) => {
-        if (!s.room || !s.room.location) {
-          return;
-        }
-
-        if (tempLocations.some((x) => x.value === s.room!.location!.id.toString())) return;
-        tempLocations.push({ value: s.room.location.id.toString(), label: s.room.location.name });
-      });
-
-      setLocations(tempLocations);
-    },
-  });
+  const { slotsQuery, locations, setLocations } = useSlotsQuery(date, timeRangeEnd);
 
   function handleDateChange(dateVal: Date) {
     setDate(dateVal);
@@ -190,7 +191,7 @@ export function NewReservation() {
       });
       clearFormAll();
     },
-    onError: (error: AxiosError, variables, context) => {
+    onError: (error: AxiosError, _variables, _context) => {
       showNotification({
         id: "reservation-create-error",
         title: "Rezervasyon",

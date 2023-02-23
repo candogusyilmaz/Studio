@@ -114,7 +114,7 @@ export function HeaderMenu() {
             <ActionIcon className={classes.toggler} onClick={() => toggleColorScheme()} size="lg">
               {colorScheme === "dark" ? <IconSun size={18} /> : <IconMoonStars size={18} />}
             </ActionIcon>
-            <Menu width={200} position="bottom-end" transition="fade">
+            <Menu width={200} position="bottom-end" transitionProps={{ transition: "fade" }}>
               <Menu.Target>
                 <UnstyledButton className={classes.user}>
                   <Group spacing={2}>
