@@ -170,8 +170,8 @@ function NewLocationButton() {
         </Modal.Content>
       </Modal.Root>
 
-      <Button size="xs" variant="default" leftIcon={<IconPlus size={16} />} onClick={open}>
-        Yeni
+      <Button size="xs" variant="outline" onClick={open}>
+        LOKASYON OLUŞTUR
       </Button>
     </>
   );

@@ -7,19 +7,22 @@ import {
   Paper,
   Radio,
   RangeSlider,
+  ScrollArea,
   Select,
   SelectItem,
+  SimpleGrid,
   Space,
   Table,
   Text,
 } from "@mantine/core";
-import { DatePickerInput } from "@mantine/dates";
+import { DatePickerInput, DatesProvider } from "@mantine/dates";
 import { showNotification } from "@mantine/notifications";
 import { IconCalendarEvent, IconHome, IconLocation } from "@tabler/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import dayjs from "dayjs";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getErrorMessage } from "../../api/api";
 import { createReservation } from "../../api/reservationService";
 import { fetchAvailableSlots } from "../../api/slotService";
@@ -65,7 +68,12 @@ function useSlotsQuery(date: Date | null, timeRange: [number, number]) {
       const uniqueLocations: typeof locations = [];
       data?.forEach((slot) => {
         if (uniqueLocations.some((x) => x.value === slot.room!.location!.id.toString())) return;
-        uniqueLocations.push({ ...slot, value: slot.room!.location!.id.toString(), label: slot.room!.location!.name });
+
+        uniqueLocations.push({
+          ...slot,
+          value: slot.room!.location!.id.toString(),
+          label: slot.room!.location!.name,
+        });
       });
       setLocations(uniqueLocations);
     },
@@ -76,6 +84,8 @@ function useSlotsQuery(date: Date | null, timeRange: [number, number]) {
 
 export function NewReservation() {
   const { classes } = useStyles();
+
+  const navigate = useNavigate();
 
   const [date, setDate] = useState<Date | null>(null);
   const [timeRange, setTimeRange] = useState<[number, number]>([17, 35]);
@@ -190,6 +200,7 @@ export function NewReservation() {
         autoClose: 5000,
       });
       clearFormAll();
+      navigate("/reservations/history");
     },
     onError: (error: AxiosError, _variables, _context) => {
       showNotification({
@@ -263,11 +274,26 @@ export function NewReservation() {
           />
           {slots.length > 0 ? (
             <Radio.Group name="whereToSit" label="Nerede oturmak istiyorsunuz?" value={selectedSlotId ?? "-1"} onChange={setSelectedSlotId}>
-              <Group mt="xs">
-                {slots?.map((slot) => (
-                  <Radio value={slot.value} label={slot.label} key={slot.value} disabled={!selectedRoomId} />
-                ))}
-              </Group>
+              <ScrollArea mah={320} type="auto">
+                <SimpleGrid
+                  mah={300}
+                  cols={4}
+                  mt="xs"
+                  breakpoints={[
+                    {
+                      maxWidth: "xs",
+                      cols: 2,
+                    },
+                    {
+                      maxWidth: "sm",
+                      cols: 3,
+                    },
+                  ]}>
+                  {slots?.map((slot) => (
+                    <Radio value={slot.value} label={slot.label} key={slot.value} disabled={!selectedRoomId} />
+                  ))}
+                </SimpleGrid>
+              </ScrollArea>
             </Radio.Group>
           ) : (
             <div>

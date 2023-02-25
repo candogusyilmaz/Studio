@@ -9,6 +9,7 @@ import RequireAuth from "./components/shared/RequireAuth";
 import { NewReservation } from "./pages/reservations/NewReservation";
 import { ReservationHistory } from "./pages/reservations/ReservationHistory";
 import ReservationManagement from "./pages/management/reservations/ReservationManagement";
+import Dashboard from "./pages/dashboard/Dashboard";
 
 interface RouteLink {
   href: string;
@@ -62,14 +63,14 @@ export const StudioRoutes = () => (
         path="/"
         element={
           <RequireAuth>
-            <div>This is dashboard</div>
+            <Dashboard />
           </RequireAuth>
         }
       />
       <Route
         path="/reservations/new"
         element={
-          <RequireAuth permissions={["per 1"]}>
+          <RequireAuth>
             <NewReservation />
           </RequireAuth>
         }

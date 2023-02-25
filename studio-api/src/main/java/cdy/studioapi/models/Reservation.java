@@ -14,11 +14,11 @@ import java.time.temporal.ChronoUnit;
 @Entity
 @Table(name = "reservations")
 public class Reservation extends BaseEntity {
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "slot_id", nullable = false)
     private Slot slot;
 

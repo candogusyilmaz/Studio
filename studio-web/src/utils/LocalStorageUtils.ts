@@ -25,3 +25,7 @@ export function getAccessTokenFromLocalStorage(): string | null {
 
   return user.accessToken;
 }
+
+export function getPreferredLanguage() {
+  return "tr";
+}

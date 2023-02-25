@@ -1,3 +1,6 @@
+import dayjs from "dayjs";
+import { getPreferredLanguage } from "./LocalStorageUtils";
+
 export function convertNumberToShortTimeString(value: number) {
   if (value < 0 || value > 48) {
     throw new Error("value 0-48 arasında olmalıdır");
@@ -7,10 +10,9 @@ export function convertNumberToShortTimeString(value: number) {
     return "24:00";
   }
 
-  return new Date(new Date().setHours(0, 30 * value, 0, 0)).toLocaleTimeString(navigator.language, {
-    timeStyle: "short",
-    hour12: false
-  });
+  return dayjs(new Date().setHours(0, 30 * value, 0, 0))
+    .locale(getPreferredLanguage())
+    .format("HH:mm");
 }
 
 export function convertNumberToDate(value: number, date: Date, seconds: number) {
@@ -23,23 +25,12 @@ export function convertNumberToDate(value: number, date: Date, seconds: number) 
 }
 
 export function convertDatesToString(startDate: Date | string, endDate: Date | string) {
-  const dateString = new Date(startDate).toLocaleDateString(navigator.language, {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
+  const start = dayjs(startDate).locale(getPreferredLanguage()).format("MMM D, YYYY HH:mm");
+  const end = dayjs(endDate).locale(getPreferredLanguage()).format("HH:mm");
 
-  const startDateTime = new Date(startDate).toLocaleTimeString(navigator.language, {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false
-  });
+  return `${start} - ${end}`;
+}
 
-  const endDateTime = new Date(endDate).toLocaleTimeString(navigator.language, {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false
-  });
-
-  return `${dateString} ${startDateTime} - ${endDateTime}`;
+export function convertDateToLocaleString(date: Date | string) {
+  return dayjs(date).locale(getPreferredLanguage()).format("MMM D, YYYY HH:mm");
 }

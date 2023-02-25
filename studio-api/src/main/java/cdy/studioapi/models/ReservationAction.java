@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "reservation_actions")
 public class ReservationAction extends BaseEntity {
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
@@ -30,7 +30,7 @@ public class ReservationAction extends BaseEntity {
     @Setter(AccessLevel.NONE)
     private LocalDateTime actionDate;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User actionBy;
 }

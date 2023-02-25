@@ -10,16 +10,19 @@ import {
   Avatar,
   UnstyledButton,
   Stack,
+  Image,
   Collapse,
+  Anchor,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLogout, IconMoonStars, IconSettings, IconSun } from "@tabler/icons";
+import { IconLogout, IconMoonStars, IconQuote, IconSettings, IconSun } from "@tabler/icons";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { headerRoutes } from "../../router";
 import { getInitials } from "../../utils/TextUtils";
 import { MobileHeaderLink } from "./MobileHeaderLink";
 import { HeaderLink } from "./HeaderLink";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -99,17 +102,23 @@ export function HeaderMenu() {
   const { classes } = useStyles();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const { getUser, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const user = getUser();
+
+  const logoUrl = colorScheme === "dark" ? "/images/studio-logo-white.png" : "/images/studio-logo-black.png";
 
   return (
     <>
       <header className={classes.header}>
         <Container className={classes.headerContainer} size="xl">
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
-          <Text weight={600} size={28}>
-            studio
-          </Text>
+          <Anchor onClick={(s) => {
+            s.preventDefault();
+            navigate("/", { replace: true });
+          }}>
+            <Image width="120px" src={logoUrl} alt="studio" />
+          </Anchor>
           <Group spacing="xs">
             <ActionIcon className={classes.toggler} onClick={() => toggleColorScheme()} size="lg">
               {colorScheme === "dark" ? <IconSun size={18} /> : <IconMoonStars size={18} />}
@@ -134,7 +143,10 @@ export function HeaderMenu() {
               </Menu.Target>
               <Menu.Dropdown>
                 <Menu.Label>Profil</Menu.Label>
-                <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>Hesap Ayarları</Menu.Item>
+                <Menu.Item icon={<IconQuote size={14} stroke={1.5} />}>Alıntılarım</Menu.Item>
+                <Menu.Item icon={<IconSettings size={14} stroke={1.5} />} disabled>
+                  Hesap Ayarları
+                </Menu.Item>
                 <Menu.Divider />
                 <Menu.Item color="red" icon={<IconLogout size={14} stroke={1.5} />} onClick={logout}>
                   Çıkış

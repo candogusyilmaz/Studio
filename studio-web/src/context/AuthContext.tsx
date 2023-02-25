@@ -1,4 +1,5 @@
 import { AxiosError } from "axios";
+import dayjs from "dayjs";
 import React, { createContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../api/api";
@@ -39,12 +40,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const userInLocalStorage = getUserFromLocalStorage();
 
-    if (!user && userInLocalStorage) {
-      setUser(userInLocalStorage);
-    }
-
     if (!user && !userInLocalStorage) {
       logout();
+    }
+
+    if (!user && userInLocalStorage) {
+      if (dayjs(userInLocalStorage.expiresAt).isBefore(dayjs(new Date()))) {
+        logout();
+        return;
+      } else {
+        navigate(from, { replace: true });
+      }
+
+      setUser(userInLocalStorage);
     }
   }, []);
 

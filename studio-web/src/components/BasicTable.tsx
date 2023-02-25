@@ -1,6 +1,6 @@
 import { createStyles, Group, Paper, Table } from "@mantine/core";
-import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons";
-import { flexRender, getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table";
+import { IconArrowNarrowDown, IconArrowNarrowUp, IconSelector } from "@tabler/icons";
+import { flexRender, getCoreRowModel, getSortedRowModel, SortDirection, SortingState, useReactTable } from "@tanstack/react-table";
 import { Dispatch, SetStateAction } from "react";
 
 interface BasicTableProps<T> {
@@ -29,6 +29,16 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
     getSortedRowModel: getSortedRowModel(),
   });
 
+  function getSortArrow(canSort: boolean, isSorted: false | SortDirection) {
+    if (canSort && isSorted) {
+      return (isSorted as string) === "asc" ? <IconArrowNarrowUp size={16} /> : <IconArrowNarrowDown size={16} />;
+    } else if (canSort && !isSorted) {
+      return <IconSelector size={16} />;
+    }
+
+    return null;
+  }
+
   return (
     <Paper>
       <Table horizontalSpacing="md" verticalSpacing="sm" withBorder>
@@ -39,11 +49,7 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
                 <th key={header.id} onClick={header.column.getToggleSortingHandler()} className={classes.tableHeader}>
                   <Group spacing={6}>
                     {flexRender(header.column.columnDef.header, header.getContext())}
-                    {{
-                      asc: <IconSortAscending size={16} />,
-                      desc: <IconSortDescending size={16} />,
-                    }[header.column.getIsSorted() as string] ?? null}
-                    {header.column.getCanSort() && !header.column.getIsSorted() ? <IconArrowsSort size={16} /> : null}
+                    {getSortArrow(header.column.getCanSort(), header.column.getIsSorted())}
                   </Group>
                 </th>
               ))}

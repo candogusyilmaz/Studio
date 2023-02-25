@@ -31,7 +31,7 @@ export interface Page<T> {
   empty: boolean;
 }
 
-export interface SimpleUserView {
+export interface UserBasicView {
   id: number;
   username: string;
   displayName: string;
@@ -42,7 +42,7 @@ export interface ReservationView {
   id: number;
   startDate: Date;
   endDate: Date;
-  user?: SimpleUserView;
+  user?: UserBasicView;
   slot?: SlotView;
   lastAction?: ReservationActionView;
 }
@@ -64,7 +64,7 @@ export interface ReservationActionView {
   description: string;
   status: ReservationStatus;
   actionDate: Date;
-  actionBy?: SimpleUserView;
+  actionBy?: UserBasicView;
 }
 
 export interface RoomView {
@@ -87,6 +87,17 @@ export interface LocationParentlessView {
   name: string;
 }
 
+export interface QuoteView {
+  id: number;
+  user?: UserBasicView;
+  content: string;
+  status: QuoteStatus;
+  lastShownDate: Date;
+  statusResetDate: Date;
+  shownTimes: number;
+  enabled: boolean;
+}
+
 export const ReservationStatusList = {
   ACTIVE: "ACTIVE",
   CANCELLED: "CANCELLED",
@@ -96,7 +107,14 @@ export const ReservationStatusList = {
   UPDATED: "UPDATED",
 };
 
+export const QuoteStatusList = {
+  ACTIVE: "ACTIVE",
+  PENDING: "PENDING",
+  SHOWN: "SHOWN",
+};
+
 export type ReservationStatus = keyof typeof ReservationStatusList;
+export type QuoteStatus = keyof typeof QuoteStatusList;
 
 export function isStatusCancellable(status: ReservationStatus) {
   const cancellableStatuses = [

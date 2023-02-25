@@ -1,28 +1,16 @@
-import { Badge, Box, Button, createStyles, Flex, Group, LoadingOverlay, Menu, Pagination, Paper, Table, Text } from "@mantine/core";
+import { Badge, Box, Button, Flex, LoadingOverlay, Menu, Pagination, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { showNotification } from "@mantine/notifications";
-import { IconArrowsSort, IconDotsVertical, IconSortAscending, IconSortDescending, IconX } from "@tabler/icons";
+import { IconDotsVertical, IconX } from "@tabler/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createColumnHelper, flexRender, getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table";
+import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import { AxiosError } from "axios";
 import { useState, useMemo } from "react";
 import { getErrorMessage } from "../../api/api";
 import { cancelReservation, fetchReservationHistory } from "../../api/reservationService";
-import {
-  getReservationStatus,
-  getReservationStatusColor,
-  isStatusCancellable,
-  ReservationStatusList,
-  ReservationView,
-} from "../../api/types";
+import { getReservationStatus, getReservationStatusColor, isStatusCancellable, ReservationView } from "../../api/types";
 import BasicTable from "../../components/BasicTable";
-import { convertDatesToString } from "../../utils/DateTimeUtils";
-
-const useStyles = createStyles({
-  tableHeader: {
-    textTransform: "uppercase",
-  },
-});
+import { convertDatesToString, convertDateToLocaleString } from "../../utils/DateTimeUtils";
 
 const queryKey = {
   reservationHistory: "reservationHistory",
@@ -40,9 +28,8 @@ export function ReservationHistory() {
 }
 
 function HistoryTable() {
-  const { classes } = useStyles();
   const [page, setPage] = useState(0);
-  const [sort, setSort] = useState<SortingState>([{ id: "startDate", desc: true }]);
+  const [sort, setSort] = useState<SortingState>([{ id: "lastAction.actionDate", desc: true }]);
 
   const historyQuery = useQuery({
     queryKey: [queryKey.reservationHistory, { page, sort }],
@@ -51,6 +38,7 @@ function HistoryTable() {
     },
     select: (data) => data.data,
     keepPreviousData: true,
+    staleTime: 10 * 60 * 1000,
   });
 
   const columnHelper = createColumnHelper<ReservationView>();
@@ -77,6 +65,11 @@ function HistoryTable() {
         id: "lastAction.status",
         header: "Durum",
         cell: (row) => <Badge color={getReservationStatusColor(row.getValue())}>{getReservationStatus(row.getValue())}</Badge>,
+      }),
+      columnHelper.accessor((row) => row.lastAction?.actionDate, {
+        id: "lastAction.actionDate",
+        header: "Son Güncelleme",
+        cell: (row) => convertDateToLocaleString(row.getValue()!),
       }),
       columnHelper.accessor((row) => row, {
         id: "actions",

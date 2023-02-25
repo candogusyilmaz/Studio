@@ -9,6 +9,8 @@ import lightTheme from "./themes/lightTheme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Notifications } from "@mantine/notifications";
 import { StudioRoutes } from "./router";
+import { DatesProvider } from "@mantine/dates";
+import "dayjs/locale/tr";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,7 +26,9 @@ function AxiosProvider() {
   return (
     <AxiosInterceptor>
       <QueryClientProvider client={queryClient}>
-        <StudioRoutes />
+        <DatesProvider settings={{ locale: "tr" }}>
+          <StudioRoutes />
+        </DatesProvider>
       </QueryClientProvider>
     </AxiosInterceptor>
   );

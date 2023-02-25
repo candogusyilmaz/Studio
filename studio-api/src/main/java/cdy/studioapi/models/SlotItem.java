@@ -1,13 +1,9 @@
 package cdy.studioapi.models;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
-
-import jakarta.persistence.Column;
-        import jakarta.persistence.Entity;
-        import jakarta.persistence.ManyToOne;
-        import jakarta.persistence.Table;
 
 @Getter
 @Setter
@@ -15,10 +11,10 @@ import jakarta.persistence.Column;
 @Table(name = "slot_items")
 @Where(clause = "deleted = false")
 public class SlotItem extends AuditableEntity {
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Slot slot;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Item item;
 
     @Column(nullable = false)
