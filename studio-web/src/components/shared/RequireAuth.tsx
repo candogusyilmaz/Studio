@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { useContext } from "react";
+import { Suspense, useContext } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
@@ -16,7 +16,7 @@ export default function RequireAuth({ children, permissions = [] }: { children: 
     if (permissions.length > 0 && user?.permissions.some((s) => permissions.includes(s)) === false) {
       return <Navigate to="/unauthorized" state={{ from: location }} replace />;
     }
-    return children;
+    return <Suspense>{children}</Suspense>;
   } else {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
