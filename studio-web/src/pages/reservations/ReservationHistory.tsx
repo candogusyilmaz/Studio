@@ -8,9 +8,9 @@ import { AxiosError } from "axios";
 import { useState, useMemo } from "react";
 import { getErrorMessage } from "../../api/api";
 import { cancelReservation, fetchReservationHistory } from "../../api/reservationService";
-import { getReservationStatus, getReservationStatusColor, isStatusCancellable, ReservationView } from "../../api/types";
+import { getReservationStatus, getReservationStatusColor, isReservationCancellable, ReservationView } from "../../api/types";
 import BasicTable from "../../components/BasicTable";
-import { convertDatesToString, convertDateToLocaleString } from "../../utils/DateTimeUtils";
+import { convertDatesToString, convertDateToLocaleDateTimeString } from "../../utils/DateTimeUtils";
 
 const queryKey = {
   reservationHistory: "reservationHistory",
@@ -67,7 +67,7 @@ function HistoryTable() {
       columnHelper.accessor((row) => row.lastAction?.actionDate, {
         id: "lastAction.actionDate",
         header: "Son Güncelleme",
-        cell: (row) => convertDateToLocaleString(row.getValue()!),
+        cell: (row) => convertDateToLocaleDateTimeString(row.getValue()!),
       }),
       columnHelper.accessor((row) => row, {
         id: "actions",
@@ -96,8 +96,13 @@ function HistoryTable() {
 
   return (
     <>
-      <BasicTable data={historyQuery.data?.content ?? []} columns={columns} sort={sort} setSort={setSort} />
-      <Pagination position="right" value={page + 1} onChange={(index) => setPage(index - 1)} total={historyQuery.data?.totalPages ?? 1} />
+      <BasicTable
+        data={historyQuery.data?.content ?? []}
+        columns={columns}
+        sort={sort}
+        setSort={setSort}
+        pagination={{ page, setPage, total: historyQuery.data?.totalPages ?? 1 }}
+      />
     </>
   );
 }
@@ -105,7 +110,7 @@ function HistoryTable() {
 function ReservationActions({ reservation }: { reservation: ReservationView }) {
   return (
     <Flex justify="end">
-      <Menu shadow="md" width={200} position="bottom-start" withArrow>
+      <Menu shadow="md" width={200} position="bottom">
         <Menu.Target>
           <Button
             compact
@@ -162,7 +167,7 @@ function ReservationCancellationMenuItem({ reservation }: { reservation: Reserva
       onConfirm: () => reservationCancelMutation.mutate(),
     });
 
-  const cancellable = reservation.lastAction && isStatusCancellable(reservation.lastAction?.status);
+  const cancellable = reservation.lastAction && isReservationCancellable(reservation.lastAction?.status);
 
   return (
     <Menu.Item color="red" icon={<IconX size={14} />} disabled={!cancellable} onClick={openModal}>

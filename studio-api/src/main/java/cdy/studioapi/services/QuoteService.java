@@ -10,6 +10,8 @@ import cdy.studioapi.models.Quote;
 import cdy.studioapi.views.QuoteView;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,6 +43,34 @@ public class QuoteService {
 
     public QuoteView getQuoteOfTheDay() {
         return quoteRepository.findBy(QuoteSpecifications.getQuoteOfTheDay(), r -> r.project("user").first().map(QuoteView::new)).orElse(null);
+    }
+
+    public Page<QuoteView> getMyQuotes(Pageable pageable) {
+        return quoteRepository.findBy(QuoteSpecifications.getQuotesByUserId(Auth.asUser().getId()),
+                r -> r.sortBy(pageable.getSort()).page(pageable).map(QuoteView::new));
+    }
+
+    public void enableOrDisableMyQuote(int quoteId) {
+        var quote = quoteRepository
+                .findBy(QuoteSpecifications.getQuotesByUserId(Auth.asUser().getId(), quoteId), FluentQuery.FetchableFluentQuery::first)
+                .orElseThrow(() -> new BadRequestException("Alıntı bulunamadı."));
+
+        if (quote.getStatus() == QuoteStatus.ACTIVE) {
+            throw new BadRequestException("Bugünün alıntısı değiştirilemez.");
+        }
+
+        if (quote.getStatus() == QuoteStatus.PENDING && !quote.isEnabled()) {
+            var pendingQuotesCount = quoteRepository
+                    .findBy(QuoteSpecifications.getQuotesByUserId(Auth.asUser().getId(), QuoteStatus.PENDING, true),
+                            FluentQuery.FetchableFluentQuery::count);
+
+            if (pendingQuotesCount >= MAX_NUMBER_OF_SIMULTANEOUS_PENDING_QUOTES) {
+                throw new BadRequestException("Aynı anda en fazla " + MAX_NUMBER_OF_SIMULTANEOUS_PENDING_QUOTES + " tane gösterilmek üzere olan alıntınız olabilir.");
+            }
+        }
+
+        quote.setEnabled(!quote.isEnabled());
+        quoteRepository.save(quote);
     }
 
     @Async

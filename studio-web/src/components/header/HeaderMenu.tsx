@@ -113,10 +113,11 @@ export function HeaderMenu() {
       <header className={classes.header}>
         <Container className={classes.headerContainer} size="xl">
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
-          <Anchor onClick={(s) => {
-            s.preventDefault();
-            navigate("/", { replace: true });
-          }}>
+          <Anchor
+            onClick={(s) => {
+              s.preventDefault();
+              navigate("/", { replace: true });
+            }}>
             <Image width="120px" src={logoUrl} alt="studio" />
           </Anchor>
           <Group spacing="xs">
@@ -143,7 +144,9 @@ export function HeaderMenu() {
               </Menu.Target>
               <Menu.Dropdown>
                 <Menu.Label>Profil</Menu.Label>
-                <Menu.Item icon={<IconQuote size={14} stroke={1.5} />}>Alıntılarım</Menu.Item>
+                <Menu.Item icon={<IconQuote size={14} stroke={1.5} />} onClick={() => navigate("/profile/quotes")}>
+                  Alıntılarım
+                </Menu.Item>
                 <Menu.Item icon={<IconSettings size={14} stroke={1.5} />} disabled>
                   Hesap Ayarları
                 </Menu.Item>

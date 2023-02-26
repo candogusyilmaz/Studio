@@ -92,7 +92,7 @@ function App() {
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider withGlobalStyles withNormalizeCSS theme={colorScheme === "dark" ? darkTheme : lightTheme}>
-        <Notifications position="top-center" />
+        <Notifications position="top-center" autoClose={5000} />
         <ModalsProvider>
           <AxiosProvider />
         </ModalsProvider>

@@ -1,4 +1,4 @@
-import { createStyles, Group, Paper, Table } from "@mantine/core";
+import { createStyles, Group, Pagination, PaginationProps, Paper, Table } from "@mantine/core";
 import { IconArrowNarrowDown, IconArrowNarrowUp, IconSelector } from "@tabler/icons";
 import { flexRender, getCoreRowModel, getSortedRowModel, SortDirection, SortingState, useReactTable } from "@tanstack/react-table";
 import { Dispatch, SetStateAction } from "react";
@@ -6,8 +6,13 @@ import { Dispatch, SetStateAction } from "react";
 interface BasicTableProps<T> {
   data: T[];
   columns: any[];
-  sort: SortingState;
-  setSort: Dispatch<SetStateAction<SortingState>>;
+  sort?: SortingState;
+  setSort?: Dispatch<SetStateAction<SortingState>>;
+  pagination?: {
+    page: number;
+    setPage: Dispatch<SetStateAction<number>>;
+    total: number;
+  } & PaginationProps;
 }
 
 const useStyles = createStyles({
@@ -16,7 +21,7 @@ const useStyles = createStyles({
   },
 });
 
-export default function BasicTable<T extends object>({ data, columns, sort, setSort }: BasicTableProps<T>) {
+export default function BasicTable<T extends object>({ data, columns, sort, setSort, pagination }: BasicTableProps<T>) {
   const { classes } = useStyles();
 
   const table = useReactTable({
@@ -40,7 +45,7 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
   }
 
   return (
-    <Paper>
+    <Paper shadow="sm">
       <Table horizontalSpacing="md" verticalSpacing="sm" withBorder>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -49,7 +54,7 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
                 <th key={header.id} onClick={header.column.getToggleSortingHandler()} className={classes.tableHeader}>
                   <Group spacing={6}>
                     {flexRender(header.column.columnDef.header, header.getContext())}
-                    {getSortArrow(header.column.getCanSort(), header.column.getIsSorted())}
+                    {sort && getSortArrow(header.column.getCanSort(), header.column.getIsSorted())}
                   </Group>
                 </th>
               ))}
@@ -64,6 +69,19 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
               ))}
             </tr>
           ))}
+          {pagination && (
+            <tr>
+              <td colSpan={table.getAllLeafColumns().length}>
+                <Pagination
+                  position="right"
+                  value={pagination.page + 1}
+                  onChange={(e) => pagination.setPage(e - 1)}
+                  size="sm"
+                  {...pagination}
+                />
+              </td>
+            </tr>
+          )}
         </tbody>
       </Table>
     </Paper>

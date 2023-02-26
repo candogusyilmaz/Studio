@@ -31,6 +31,10 @@ export function convertDatesToString(startDate: Date | string, endDate: Date | s
   return `${start} - ${end}`;
 }
 
-export function convertDateToLocaleString(date: Date | string) {
+export function convertDateToLocaleDateString(date: Date | string) {
+  return dayjs(date).locale(getPreferredLanguage()).format("D MMMM YYYY");
+}
+
+export function convertDateToLocaleDateTimeString(date: Date | string) {
   return dayjs(date).locale(getPreferredLanguage()).format("MMM D, YYYY HH:mm");
 }

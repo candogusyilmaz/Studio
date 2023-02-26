@@ -17,12 +17,13 @@ import {
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { showNotification } from "@mantine/notifications";
-import { IconCalendarEvent, IconHome, IconLocation } from "@tabler/icons";
+import { IconAlertCircle, IconCalendarEvent, IconCheck, IconExclamationMark, IconHome, IconLocation } from "@tabler/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import dayjs from "dayjs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getErrorMessage } from "../../api/api";
+import { getErrorMessage, showErrorNotification } from "../../api/api";
 import { createReservation } from "../../api/reservationService";
 import { fetchAvailableSlots } from "../../api/slotService";
 import { ItemView, LocationView } from "../../api/types";
@@ -169,48 +170,42 @@ export function NewReservation() {
   }
 
   const reservationMutation = useMutation({
-    mutationFn: () => {
-      if (!selectedSlotId || !date || !timeRangeEnd[0] || !timeRangeEnd[1]) {
-        return Promise.reject();
-      }
-
-      const startDate = convertNumberToDate(timeRangeEnd[0], new Date(date), 59);
-      const endDate = convertNumberToDate(timeRangeEnd[1], new Date(date), 1);
-
-      /* if (dayjs(startDate).isBefore(new Date())) {
-        showNotification({
-          id: "reservation-create-error",
-          title: "Rezervasyon",
-          message: "Geçmişe dair rezervasyon yapamazsınız.",
-          color: "red",
-          autoClose: 5000,
-        });
-        return Promise.reject();
-      } */
-
-      return createReservation(parseInt(selectedSlotId), startDate, endDate);
+    mutationFn: ({ slotId, start, end }: { slotId: number; start: Date; end: Date }) => {
+      return createReservation(slotId, start, end);
     },
     onSuccess: () => {
       showNotification({
         id: "reservation-create-success",
-        title: "Rezervasyon",
         message: "Rezervasyonunuz başarıyla oluşturuldu.",
         color: "green",
-        autoClose: 5000,
+        icon: <IconCheck />,
       });
       clearFormAll();
       navigate("/reservations/history");
     },
-    onError: (error: AxiosError, _variables, _context) => {
-      showNotification({
-        id: "reservation-create-error",
-        title: "Rezervasyon",
-        message: getErrorMessage(error) ?? "Bilinmeyen bir hata oluştu!",
-        color: "red",
-        autoClose: 5000,
-      });
+    onError: (error, _variables, _context) => {
+      showErrorNotification(error, { id: "reservation-create-error", icon: <IconExclamationMark /> });
     },
   });
+
+  function createNewReservation() {
+    if (!selectedSlotId || !date || !timeRangeEnd[0] || !timeRangeEnd[1]) {
+      return showErrorNotification("Lütfen tüm alanları doldurunuz!", { id: "reservation-create-error", icon: <IconExclamationMark /> });
+    }
+
+    const startDate = convertNumberToDate(timeRangeEnd[0], new Date(date), 59);
+    const endDate = convertNumberToDate(timeRangeEnd[1], new Date(date), 1);
+    const slotId = parseInt(selectedSlotId);
+
+    if (dayjs(startDate).isBefore(new Date())) {
+      return showErrorNotification("Geçmiş tarihler için rezervasyon oluşturamazsınız!", {
+        id: "reservation-create-error",
+        icon: <IconExclamationMark />,
+      });
+    }
+
+    reservationMutation.mutate({ slotId, start: startDate, end: endDate });
+  }
 
   return (
     <Container size="xs" mt="xl">
@@ -311,19 +306,10 @@ export function NewReservation() {
             <ItemsTable items={slotsQuery.data?.find((s) => s.id.toString() === selectedSlotId)?.items} />
           </div>
           <Group position="right" mt="xs">
-            <Button
-              variant="subtle"
-              color="red"
-              style={{ color: "#e94f4fd9" }}
-              onClick={clearFormAll}
-              disabled={reservationMutation.isLoading}>
+            <Button variant="subtle" onClick={clearFormAll} disabled={reservationMutation.isLoading}>
               Sıfırla
             </Button>
-            <Button
-              onClick={() => reservationMutation.mutate()}
-              loading={reservationMutation.isLoading}
-              disabled={!selectedSlotId || reservationMutation.isSuccess}
-              px="xl">
+            <Button onClick={createNewReservation} loading={reservationMutation.isLoading} disabled={reservationMutation.isSuccess} px="xl">
               Rezerve Et
             </Button>
           </Group>

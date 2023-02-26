@@ -10,6 +10,7 @@ import { NewReservation } from "./pages/reservations/NewReservation";
 import { ReservationHistory } from "./pages/reservations/ReservationHistory";
 import ReservationManagement from "./pages/management/reservations/ReservationManagement";
 import Dashboard from "./pages/dashboard/Dashboard";
+import MyQuotes from "./pages/profile/MyQuotes";
 
 interface RouteLink {
   href: string;
@@ -64,6 +65,14 @@ export const StudioRoutes = () => (
         element={
           <RequireAuth>
             <Dashboard />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/profile/quotes"
+        element={
+          <RequireAuth>
+            <MyQuotes />
           </RequireAuth>
         }
       />

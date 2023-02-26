@@ -92,8 +92,8 @@ export interface QuoteView {
   user?: UserBasicView;
   content: string;
   status: QuoteStatus;
-  lastShownDate: Date;
-  statusResetDate: Date;
+  lastShownDate?: Date;
+  statusResetDate?: Date;
   shownTimes: number;
   enabled: boolean;
 }
@@ -116,7 +116,7 @@ export const QuoteStatusList = {
 export type ReservationStatus = keyof typeof ReservationStatusList;
 export type QuoteStatus = keyof typeof QuoteStatusList;
 
-export function isStatusCancellable(status: ReservationStatus) {
+export function isReservationCancellable(status: ReservationStatus) {
   const cancellableStatuses = [
     ReservationStatusList.PENDING,
     ReservationStatusList.UPDATED,
@@ -160,6 +160,32 @@ export function getReservationStatusColor(status?: ReservationStatus) {
     case "REJECTED":
       return "red";
     case "UPDATED":
+      return "blue";
+    default:
+      return "gray";
+  }
+}
+
+export function getQuoteStatus(status?: QuoteStatus) {
+  switch (status) {
+    case "ACTIVE":
+      return "Aktif";
+    case "PENDING":
+      return "Bekliyor";
+    case "SHOWN":
+      return "Gösterildi";
+    default:
+      return "Bilinmiyor";
+  }
+}
+
+export function getQuoteStatusColor(status?: QuoteStatus) {
+  switch (status) {
+    case "ACTIVE":
+      return "green";
+    case "PENDING":
+      return "orange";
+    case "SHOWN":
       return "blue";
     default:
       return "gray";
