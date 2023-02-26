@@ -1,15 +1,10 @@
 import { IconCalendarEvent, IconHistory, IconHome, IconHomeCog, IconPlus, IconServerCog } from "@tabler/icons";
-import { ReactElement } from "react";
+import React, { ReactElement } from "react";
 import { Route, Routes } from "react-router-dom";
 import RequireAuth from "./components/shared/RequireAuth";
 import StudioShell from "./layouts/StudioShell";
-import Dashboard from "./pages/dashboard/Dashboard";
 import { Login } from "./pages/Login";
-import ReservationManagement from "./pages/management/reservations/ReservationManagement";
 import { NotFound } from "./pages/NotFound";
-import MyQuotes from "./pages/profile/MyQuotes";
-import { NewReservation } from "./pages/reservations/NewReservation";
-import { ReservationHistory } from "./pages/reservations/ReservationHistory";
 import { Unauthorized } from "./pages/Unauthorized";
 
 interface RouteLink {
@@ -56,6 +51,12 @@ export const headerRoutes: RouteLink[] = [
     ],
   },
 ];
+
+const Dashboard = React.lazy(() => import("./pages/dashboard/Dashboard"));
+const MyQuotes = React.lazy(() => import("./pages/profile/MyQuotes"));
+const NewReservation = React.lazy(() => import("./pages/reservations/NewReservation"));
+const ReservationHistory = React.lazy(() => import("./pages/reservations/ReservationHistory"));
+const ReservationManagement = React.lazy(() => import("./pages/management/reservations/ReservationManagement"));
 
 export const StudioRoutes = () => (
   <Routes>

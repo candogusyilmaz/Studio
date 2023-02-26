@@ -17,13 +17,12 @@ import {
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { showNotification } from "@mantine/notifications";
-import { IconAlertCircle, IconCalendarEvent, IconCheck, IconExclamationMark, IconHome, IconLocation } from "@tabler/icons";
+import { IconCalendarEvent, IconCheck, IconExclamationMark, IconHome, IconLocation } from "@tabler/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { AxiosError } from "axios";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getErrorMessage, showErrorNotification } from "../../api/api";
+import { showErrorNotification } from "../../api/api";
 import { createReservation } from "../../api/reservationService";
 import { fetchAvailableSlots } from "../../api/slotService";
 import { ItemView, LocationView } from "../../api/types";
@@ -82,7 +81,7 @@ function useSlotsQuery(date: Date | null, timeRange: [number, number]) {
   return { slotsQuery, locations, setLocations };
 }
 
-export function NewReservation() {
+export default function NewReservation() {
   const { classes } = useStyles();
 
   const navigate = useNavigate();

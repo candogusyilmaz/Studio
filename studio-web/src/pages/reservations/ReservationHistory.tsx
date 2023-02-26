@@ -17,7 +17,7 @@ const queryKey = {
   reservationHistory: "reservationHistory",
 };
 
-export function ReservationHistory() {
+export default function ReservationHistory() {
   return (
     <Flex my="xl" direction="column" gap="xs">
       <PageHeader>Geçmiş Rezervasyonlar</PageHeader>
