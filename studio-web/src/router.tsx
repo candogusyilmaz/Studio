@@ -1,16 +1,16 @@
+import { IconCalendarEvent, IconHistory, IconHome, IconHomeCog, IconPlus, IconServerCog } from "@tabler/icons";
 import { ReactElement } from "react";
-import { IconCalendarEvent, IconHome, IconHomeCog, IconList, IconPlus, IconServerCog } from "@tabler/icons";
 import { Route, Routes } from "react-router-dom";
-import { Login } from "./pages/Login";
-import { Unauthorized } from "./pages/Unauthorized";
-import { NotFound } from "./pages/NotFound";
-import StudioShell from "./layouts/StudioShell";
 import RequireAuth from "./components/shared/RequireAuth";
+import StudioShell from "./layouts/StudioShell";
+import Dashboard from "./pages/dashboard/Dashboard";
+import { Login } from "./pages/Login";
+import ReservationManagement from "./pages/management/reservations/ReservationManagement";
+import { NotFound } from "./pages/NotFound";
+import MyQuotes from "./pages/profile/MyQuotes";
 import { NewReservation } from "./pages/reservations/NewReservation";
 import { ReservationHistory } from "./pages/reservations/ReservationHistory";
-import ReservationManagement from "./pages/management/reservations/ReservationManagement";
-import Dashboard from "./pages/dashboard/Dashboard";
-import MyQuotes from "./pages/profile/MyQuotes";
+import { Unauthorized } from "./pages/Unauthorized";
 
 interface RouteLink {
   href: string;
@@ -39,7 +39,7 @@ export const headerRoutes: RouteLink[] = [
       {
         href: "/reservations/history",
         label: "Geçmiş",
-        icon: <IconList size={16} />,
+        icon: <IconHistory size={16} />,
       },
     ],
   },

@@ -1,4 +1,18 @@
-import { createStyles, Group, Pagination, PaginationProps, Paper, Table } from "@mantine/core";
+import {
+  Box,
+  Checkbox,
+  createStyles,
+  Divider,
+  Flex,
+  Group,
+  Pagination,
+  PaginationProps,
+  Paper,
+  Select,
+  Table,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { IconArrowNarrowDown, IconArrowNarrowUp, IconSelector } from "@tabler/icons";
 import { flexRender, getCoreRowModel, getSortedRowModel, SortDirection, SortingState, useReactTable } from "@tanstack/react-table";
 import { Dispatch, SetStateAction } from "react";
@@ -10,19 +24,24 @@ interface BasicTableProps<T> {
   setSort?: Dispatch<SetStateAction<SortingState>>;
   pagination?: {
     page: number;
-    setPage: Dispatch<SetStateAction<number>>;
+    onChange: Dispatch<SetStateAction<number>>;
     total: number;
-  } & PaginationProps;
+  } & Omit<PaginationProps, "total" | "value" | "onChange">;
+  tableHeader?: React.ReactNode;
 }
 
-const useStyles = createStyles({
-  tableHeader: {
-    textTransform: "uppercase",
+const useStyles = createStyles((theme) => ({
+  table: {
+    "& th": {
+      textTransform: "uppercase",
+      padding: "56px",
+    },
   },
-});
+}));
 
-export default function BasicTable<T extends object>({ data, columns, sort, setSort, pagination }: BasicTableProps<T>) {
+export default function BasicTable<T extends object>({ data, columns, sort, setSort, pagination, tableHeader }: BasicTableProps<T>) {
   const { classes } = useStyles();
+  const theme = useMantineTheme();
 
   const table = useReactTable({
     data: data,
@@ -45,15 +64,23 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
   }
 
   return (
-    <Paper shadow="sm">
-      <Table horizontalSpacing="md" verticalSpacing="sm" withBorder>
+    <Paper shadow="sm" withBorder radius="xs">
+      {tableHeader && (
+        <>
+          <Box bg={theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1]} p="md">
+            {tableHeader}
+          </Box>
+          <Divider />
+        </>
+      )}
+      <Table horizontalSpacing="md" verticalSpacing="md" striped className={classes.table}>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id} onClick={header.column.getToggleSortingHandler()} className={classes.tableHeader}>
+                <th key={header.id} onClick={header.column.getToggleSortingHandler()}>
                   <Group spacing={6}>
-                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    <Text size="xs">{flexRender(header.column.columnDef.header, header.getContext())}</Text>
                     {sort && getSortArrow(header.column.getCanSort(), header.column.getIsSorted())}
                   </Group>
                 </th>
@@ -65,7 +92,9 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                <td key={cell.id}>
+                  <Text size="sm">{flexRender(cell.column.columnDef.cell, cell.getContext())}</Text>
+                </td>
               ))}
             </tr>
           ))}
@@ -73,11 +102,11 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
             <tr>
               <td colSpan={table.getAllLeafColumns().length}>
                 <Pagination
+                  {...pagination}
                   position="right"
                   value={pagination.page + 1}
-                  onChange={(e) => pagination.setPage(e - 1)}
                   size="sm"
-                  {...pagination}
+                  onChange={(e) => pagination.onChange(e - 1)}
                 />
               </td>
             </tr>

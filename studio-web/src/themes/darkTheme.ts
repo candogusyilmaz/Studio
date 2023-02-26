@@ -7,7 +7,7 @@ const darkTheme: MantineThemeOverride = {
     gradientFrom: ["#a3caf5", "#8cbdf2", "#75b0f0", "#4d99eb", "#1a7ce5", "#176fce", "#1563b7", "#1257a0", "#0f4a8a", "#0a315c"],
     gradientTo: ["#adebeb", "#98e6e6", "#84e1e1", "#69dbdb", "#31cece", "#2cb9b9", "#27a5a5", "#239090", "#1e7b7b", "#145252"],
   },
-  primaryShade: 4,
+  primaryShade: 5,
   primaryColor: "primary",
   defaultRadius: "xs",
   other: {
@@ -50,7 +50,7 @@ const darkTheme: MantineThemeOverride = {
       },
     },
   },
-  fontFamily: "Inter",
+  fontFamily: "Public Sans",
   defaultGradient: {
     deg: 90,
     to: "gradientTo",

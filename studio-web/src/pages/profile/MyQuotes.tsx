@@ -8,6 +8,7 @@ import { showErrorNotification } from "../../api/api";
 import { fetchMyQuotes, toggleQuoteStatus } from "../../api/quoteService";
 import { getQuoteStatus, getQuoteStatusColor, QuoteView } from "../../api/types";
 import BasicTable from "../../components/BasicTable";
+import PageHeader from "../../components/PageHeader";
 import { convertDateToLocaleDateString } from "../../utils/DateTimeUtils";
 
 const queryKeys = {
@@ -97,15 +98,13 @@ export default function MyQuotes() {
 
   return (
     <Flex my="xl" direction="column" gap="xs">
-      <Text size="xl" weight={600} mb="sm">
-        Alıntılarım
-      </Text>
+      <PageHeader>Alıntılarım</PageHeader>
       <BasicTable
         data={quotes.data?.content ?? []}
         columns={columns}
         sort={sort}
         setSort={setSort}
-        pagination={{ page, setPage, total: quotes.data?.totalPages ?? 1 }}
+        pagination={{ page, onChange: setPage, total: quotes.data?.totalPages ?? 1 }}
       />
     </Flex>
   );

@@ -1,7 +1,7 @@
-import { Button, Flex, Select, Modal, Pagination, Text, TextInput, SelectItem, NumberInput } from "@mantine/core";
+import { Button, Flex, Select, Modal, Text, TextInput, SelectItem, NumberInput } from "@mantine/core";
 import { useDebouncedState, useDisclosure } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
-import { IconHome, IconLocation, IconMapPin, IconPlus, IconUsers } from "@tabler/icons";
+import { IconHome, IconLocation, IconPlus, IconUsers } from "@tabler/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import { AxiosError } from "axios";
@@ -18,17 +18,7 @@ const queryKey = {
 };
 
 export default function RoomManagementTab() {
-  return (
-    <Flex direction="column" gap="xs">
-      <Flex align="center" justify="space-between">
-        <Text size="sm" mr="md">
-          Oda Listesi
-        </Text>
-        <NewRoomButton />
-      </Flex>
-      <RoomTable />
-    </Flex>
-  );
+  return <RoomTable />;
 }
 
 function RoomTable() {
@@ -67,8 +57,21 @@ function RoomTable() {
 
   return (
     <>
-      <BasicTable data={roomQuery.data?.content ?? []} columns={columns} sort={sort} setSort={setSort} />
-      <Pagination position="right" value={page + 1} onChange={(index) => setPage(index - 1)} total={roomQuery.data?.totalPages ?? 1} />
+      <BasicTable
+        data={roomQuery.data?.content ?? []}
+        columns={columns}
+        sort={sort}
+        setSort={setSort}
+        pagination={{ page, onChange: setPage, total: roomQuery.data?.totalPages ?? 1 }}
+        tableHeader={
+          <Flex align="center" justify="space-between">
+            <Text size="sm" mr="md">
+              Oda Listesi
+            </Text>
+            <NewRoomButton />
+          </Flex>
+        }
+      />
     </>
   );
 }
@@ -206,8 +209,8 @@ function NewRoomButton() {
         </Modal.Content>
       </Modal.Root>
 
-      <Button size="xs" variant="outline" onClick={open}>
-        ODA OLUŞTUR
+      <Button uppercase size="xs" variant="default" onClick={open} leftIcon={<IconPlus size={16} />}>
+        Yeni
       </Button>
     </>
   );

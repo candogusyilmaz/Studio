@@ -10,6 +10,7 @@ import { getErrorMessage } from "../../api/api";
 import { cancelReservation, fetchReservationHistory } from "../../api/reservationService";
 import { getReservationStatus, getReservationStatusColor, isReservationCancellable, ReservationView } from "../../api/types";
 import BasicTable from "../../components/BasicTable";
+import PageHeader from "../../components/PageHeader";
 import { convertDatesToString, convertDateToLocaleDateTimeString } from "../../utils/DateTimeUtils";
 
 const queryKey = {
@@ -19,9 +20,7 @@ const queryKey = {
 export function ReservationHistory() {
   return (
     <Flex my="xl" direction="column" gap="xs">
-      <Text size="xl" weight={600} mb="sm">
-        Geçmiş Rezervasyonlar
-      </Text>
+      <PageHeader>Geçmiş Rezervasyonlar</PageHeader>
       <HistoryTable />
     </Flex>
   );
@@ -50,7 +49,7 @@ function HistoryTable() {
       }),
       columnHelper.accessor((row) => row.slot, {
         id: "slotId",
-        header: "Yer",
+        header: "Lokasyon",
         enableSorting: false,
         cell: (row) => <Text>{`${row.getValue()?.room?.location?.name}, ${row.getValue()?.room?.name}, ${row.getValue()?.name}`}</Text>,
       }),
@@ -101,7 +100,7 @@ function HistoryTable() {
         columns={columns}
         sort={sort}
         setSort={setSort}
-        pagination={{ page, setPage, total: historyQuery.data?.totalPages ?? 1 }}
+        pagination={{ page, onChange: setPage, total: historyQuery.data?.totalPages ?? 1 }}
       />
     </>
   );

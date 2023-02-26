@@ -1,8 +1,8 @@
-import { Button, Flex, Select, Modal, Pagination, Text, TextInput, SelectItem } from "@mantine/core";
+import { Button, Flex, Select, Modal, Text, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
-import { IconLocation } from "@tabler/icons";
+import { IconLocation, IconPlus } from "@tabler/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import { AxiosError } from "axios";
@@ -19,17 +19,7 @@ const queryKey = {
 };
 
 export default function LocationManagementTab() {
-  return (
-    <Flex direction="column" gap="xs">
-      <Flex align="center" justify="space-between">
-        <Text size="sm" mr="md">
-          Lokasyon Listesi
-        </Text>
-        <NewLocationButton />
-      </Flex>
-      <LocationTable />
-    </Flex>
-  );
+  return <LocationTable />;
 }
 
 function LocationTable() {
@@ -67,8 +57,21 @@ function LocationTable() {
 
   return (
     <>
-      <BasicTable data={locationQuery.data?.content ?? []} columns={columns} sort={sort} setSort={setSort} />
-      <Pagination position="right" value={page + 1} onChange={(index) => setPage(index - 1)} total={locationQuery.data?.totalPages ?? 1} />
+      <BasicTable
+        data={locationQuery.data?.content ?? []}
+        columns={columns}
+        sort={sort}
+        setSort={setSort}
+        pagination={{ page, onChange: setPage, total: locationQuery.data?.totalPages ?? 1 }}
+        tableHeader={
+          <Flex align="center" justify="space-between">
+            <Text size="sm" mr="md">
+              Lokasyon Listesi
+            </Text>
+            <NewLocationButton />
+          </Flex>
+        }
+      />
     </>
   );
 }
@@ -170,8 +173,8 @@ function NewLocationButton() {
         </Modal.Content>
       </Modal.Root>
 
-      <Button size="xs" variant="outline" onClick={open}>
-        LOKASYON OLUŞTUR
+      <Button uppercase size="xs" variant="default" onClick={open} leftIcon={<IconPlus size={16} />}>
+        Yeni
       </Button>
     </>
   );

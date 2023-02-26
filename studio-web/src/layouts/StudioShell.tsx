@@ -7,7 +7,7 @@ export default function StudioShell() {
     <AppShell
       styles={(theme) => ({
         main: {
-          background: theme.colorScheme === "dark" ? "#121212" : "#fafafb",
+          background: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[1],
           minHeight: "calc(100vh - 112px)",
           [theme.fn.smallerThan("sm")]: {
             minHeight: "calc(100vh - 56px)",
