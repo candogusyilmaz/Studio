@@ -33,9 +33,7 @@ function HistoryTable() {
 
   const historyQuery = useQuery({
     queryKey: [queryKey.reservationHistory, { page, sort }],
-    queryFn: () => {
-      return fetchReservationHistory(page, sort);
-    },
+    queryFn: ({ signal }) => fetchReservationHistory(page, sort, signal),
     select: (data) => data.data,
     keepPreviousData: true,
     staleTime: 10 * 60 * 1000,
@@ -109,7 +107,14 @@ function ReservationActions({ reservation }: { reservation: ReservationView }) {
     <Flex justify="end">
       <Menu shadow="md" width={200} position="bottom-start" withArrow>
         <Menu.Target>
-          <Button compact variant="default">
+          <Button
+            compact
+            variant="subtle"
+            styles={(theme) => ({
+              root: {
+                color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.gray[7],
+              },
+            })}>
             <IconDotsVertical size={14} />
           </Button>
         </Menu.Target>

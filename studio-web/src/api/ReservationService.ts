@@ -13,7 +13,7 @@ export function createReservation(slotId: number, startDate: Date, endDate: Date
   });
 }
 
-export function fetchReservationHistory(page: number, sort: SortingState) {
+export function fetchReservationHistory(page: number, sort: SortingState, signal?: AbortSignal) {
   const query = new URL(reservationsURL + "/history");
 
   query.searchParams.set("page", page.toString());
@@ -22,7 +22,7 @@ export function fetchReservationHistory(page: number, sort: SortingState) {
     query.searchParams.set("sort", `${sort[0].id},${sort[0].desc ? "desc" : "asc"}`);
   }
 
-  return api.get<Page<ReservationView>>(query.toString());
+  return api.get<Page<ReservationView>>(query.toString(), { signal });
 }
 
 export function cancelReservation(reservationId: number) {

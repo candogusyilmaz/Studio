@@ -29,17 +29,16 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+function isUnauthorizedResponse(error: AxiosError<unknown, any>) {
+  return error.response?.status === 401 && error.response?.headers["www-authenticate"]?.startsWith('Bearer error="invalid_token"');
+}
+
 export const AxiosInterceptor = ({ children }: any) => {
   const { logout } = useContext(AuthContext);
 
   useEffect(() => {
     const respInterceptor = api.interceptors.response.use(responseInterceptorSuccess, (error: AxiosError<unknown, any>) => {
-      if (
-        error.response?.status === 401 &&
-        error.response?.headers["www-authenticate"]?.startsWith(
-          'Bearer error="invalid_token", error_description="An error occurred while attempting to decode the Jwt: Jwt expired at',
-        )
-      ) {
+      if (isUnauthorizedResponse(error)) {
         return api
           .post("auth/refresh-token")
           .then((s) => {
@@ -50,27 +49,8 @@ export const AxiosInterceptor = ({ children }: any) => {
             logout();
             return s;
           });
-      } else {
-        if (!error.response) {
-          showNotification({
-            id: "server-error-no-response",
-            title: "Sunucu Hatası",
-            message: "Sunucularımıza bağlanırken bir problem oluştu. Lütfen daha sonra tekrar deneyin.",
-            color: "red",
-            autoClose: 5000,
-          });
-        } else if (error.response.status >= 500) {
-          showNotification({
-            id: "server-error-500",
-            title: "Sunucu Hatası",
-            message: "Sunucularımızda bir problem yaşıyoruz. Lütfen daha sonra tekrar deneyin.",
-            color: "red",
-            autoClose: 5000,
-          });
-        }
-
-        return Promise.reject(error);
       }
+      return Promise.reject(error);
     });
 
     return () => {

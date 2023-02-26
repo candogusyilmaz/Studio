@@ -15,12 +15,11 @@ import {
   Table,
   Text,
 } from "@mantine/core";
-import { DatePickerInput, DatesProvider } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import { showNotification } from "@mantine/notifications";
 import { IconCalendarEvent, IconHome, IconLocation } from "@tabler/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import dayjs from "dayjs";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getErrorMessage } from "../../api/api";
@@ -56,11 +55,11 @@ function useSlotsQuery(date: Date | null, timeRange: [number, number]) {
 
   const slotsQuery = useQuery({
     queryKey: [queryKey.availableSlots, date, timeRange],
-    queryFn: () => {
+    queryFn: ({ signal }) => {
       const startDate = convertNumberToDate(timeRange[0], new Date(date!), 59); // can't be null because query is enabled if date is not null
       const endDate = convertNumberToDate(timeRange[1], new Date(date!), 1);
 
-      return fetchAvailableSlots(startDate, endDate);
+      return fetchAvailableSlots(startDate, endDate, undefined, signal);
     },
     enabled: date !== null,
     select: (data) => data?.data,
@@ -178,16 +177,16 @@ export function NewReservation() {
       const startDate = convertNumberToDate(timeRangeEnd[0], new Date(date), 59);
       const endDate = convertNumberToDate(timeRangeEnd[1], new Date(date), 1);
 
-      if (dayjs(startDate).isBefore(new Date())) {
+      /* if (dayjs(startDate).isBefore(new Date())) {
         showNotification({
           id: "reservation-create-error",
           title: "Rezervasyon",
           message: "Geçmişe dair rezervasyon yapamazsınız.",
-          color: "green",
+          color: "red",
           autoClose: 5000,
         });
         return Promise.reject();
-      }
+      } */
 
       return createReservation(parseInt(selectedSlotId), startDate, endDate);
     },

@@ -49,7 +49,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         logout();
         return;
       } else {
-        navigate(from, { replace: true });
+        navigate(location, { replace: true });
       }
 
       setUser(userInLocalStorage);

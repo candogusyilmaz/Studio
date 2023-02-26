@@ -37,9 +37,7 @@ function RoomTable() {
 
   const roomQuery = useQuery({
     queryKey: [queryKey.roomManagementList, { page, sort }],
-    queryFn: () => {
-      return fetchRooms(page, sort);
-    },
+    queryFn: ({ signal }) => fetchRooms(page, sort, signal),
     select: (data) => data.data,
     keepPreviousData: true,
   });
@@ -93,7 +91,7 @@ function NewRoomButton() {
 
   const locationQuery = useQuery({
     queryKey: [queryKey.locationsQuery, { searchQuery }],
-    queryFn: () => fetchLocationsByName(`%${searchQuery}%`),
+    queryFn: ({ signal }) => fetchLocationsByName(`%${searchQuery}%`, signal),
     select: (data) => data?.data?.content.map((s) => ({ ...s, value: s.id.toString(), label: s.name })),
     keepPreviousData: true,
     enabled: opened,

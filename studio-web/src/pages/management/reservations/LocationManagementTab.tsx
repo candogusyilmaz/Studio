@@ -1,15 +1,15 @@
 import { Button, Flex, Select, Modal, Pagination, Text, TextInput, SelectItem } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import { useDebouncedState, useDisclosure } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
-import { IconLocation, IconPlus } from "@tabler/icons";
+import { IconLocation } from "@tabler/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import { AxiosError } from "axios";
 import { useEffect, useMemo, useState } from "react";
-import { nullable, z } from "zod";
+import { z } from "zod";
 import { getErrorMessage } from "../../../api/api";
-import { createLocation, fetchLocations, fetchLocationsAll, fetchLocationsByName } from "../../../api/locationService";
+import { createLocation, fetchLocations, fetchLocationsAll } from "../../../api/locationService";
 import { LocationView } from "../../../api/types";
 import BasicTable from "../../../components/BasicTable";
 
@@ -38,8 +38,8 @@ function LocationTable() {
 
   const locationQuery = useQuery({
     queryKey: [queryKey.locationManagementList, { page, sort }],
-    queryFn: () => {
-      return fetchLocations(page, sort);
+    queryFn: ({ signal }) => {
+      return fetchLocations(page, sort, signal);
     },
     select: (data) => data.data,
     keepPreviousData: true,
@@ -83,7 +83,7 @@ function NewLocationButton() {
 
   const locationQuery = useQuery({
     queryKey: [queryKey.allLocationsQuery],
-    queryFn: () => fetchLocationsAll(),
+    queryFn: ({ signal }) => fetchLocationsAll(signal),
     select: (data) => data?.data?.map((s) => ({ ...s, value: s.id.toString(), label: s.name })),
     keepPreviousData: true,
     enabled: opened,

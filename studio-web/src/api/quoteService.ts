@@ -8,7 +8,7 @@ export function createQuote(quote: string) {
   return api.post(query.toString(), { content: quote });
 }
 
-export function fetchQuoteOfTheDay() {
+export function fetchQuoteOfTheDay(signal?: AbortSignal) {
   const query = new URL(quotesURL + "/today");
-  return api.get<QuoteView>(query.toString());
+  return api.get<QuoteView>(query.toString(), { signal });
 }

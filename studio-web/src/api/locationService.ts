@@ -4,7 +4,7 @@ import { LocationView, Page } from "./types";
 
 const locationsURL = api.defaults.baseURL + "locations";
 
-export function fetchLocations(page: number, sort: SortingState) {
+export function fetchLocations(page: number, sort: SortingState, signal?: AbortSignal) {
   const query = new URL(locationsURL);
 
   query.searchParams.set("page", page.toString());
@@ -13,20 +13,20 @@ export function fetchLocations(page: number, sort: SortingState) {
     query.searchParams.set("sort", `${sort[0].id},${sort[0].desc ? "desc" : "asc"}`);
   }
 
-  return api.get<Page<LocationView>>(query.toString());
+  return api.get<Page<LocationView>>(query.toString(), { signal });
 }
 
-export function fetchLocationsByName(name: string) {
+export function fetchLocationsByName(name: string, signal?: AbortSignal) {
   const query = new URL(locationsURL);
 
   query.searchParams.set("name", name);
 
-  return api.get<Page<LocationView>>(query.toString());
+  return api.get<Page<LocationView>>(query.toString(), { signal });
 }
 
-export function fetchLocationsAll() {
+export function fetchLocationsAll(signal?: AbortSignal) {
   const query = new URL(locationsURL + "/all");
-  return api.get<LocationView[]>(query.toString());
+  return api.get<LocationView[]>(query.toString(), { signal });
 }
 
 export function createLocation(name: string, parentId?: number) {

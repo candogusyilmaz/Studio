@@ -4,7 +4,7 @@ import { Page, RoomView } from "./types";
 
 const roomsURL = api.defaults.baseURL + "rooms";
 
-export function fetchRooms(page: number, sort: SortingState) {
+export function fetchRooms(page: number, sort: SortingState, signal?: AbortSignal) {
     const query = new URL(roomsURL);
   
     query.searchParams.set("page", page.toString());
@@ -13,7 +13,7 @@ export function fetchRooms(page: number, sort: SortingState) {
       query.searchParams.set("sort", `${sort[0].id},${sort[0].desc ? "desc" : "asc"}`);
     }
   
-    return api.get<Page<RoomView>>(query.toString());
+    return api.get<Page<RoomView>>(query.toString(), { signal });
   }
 
 export function createRoom(name: string, capacity: number, locationId: number) {

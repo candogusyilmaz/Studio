@@ -7,7 +7,6 @@ import { AxiosError } from "axios";
 import { z } from "zod";
 import { getErrorMessage } from "../../api/api";
 import { createQuote, fetchQuoteOfTheDay } from "../../api/quoteService";
-import { QuoteStatusList, QuoteView } from "../../api/types";
 
 const useStyles = createStyles((theme) => ({
   container: {
@@ -61,7 +60,7 @@ const queryKeys = {
 function useQuoteOfTheDay() {
   const query = useQuery({
     queryKey: [queryKeys.quetoOfTheDay],
-    queryFn: () => fetchQuoteOfTheDay(),
+    queryFn: ({ signal }) => fetchQuoteOfTheDay(signal),
     select: (data) => data.data,
     keepPreviousData: true,
     cacheTime: 24 * 60 * 1000,

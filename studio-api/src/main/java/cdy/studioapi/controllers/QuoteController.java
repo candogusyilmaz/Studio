@@ -6,6 +6,7 @@ import cdy.studioapi.views.QuoteView;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,7 +22,11 @@ public class QuoteController {
     }
 
     @GetMapping("/today")
-    public QuoteView getQuoteOfTheDay() {
-        return quoteService.getQuoteOfTheDay();
+    public ResponseEntity<QuoteView> getQuoteOfTheDay() {
+        var quoteOfTheDay = quoteService.getQuoteOfTheDay();
+
+        if (quoteOfTheDay == null) return ResponseEntity.notFound().build();
+
+        return ResponseEntity.ok(quoteOfTheDay);
     }
 }
