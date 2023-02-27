@@ -27,11 +27,10 @@ public class SecurityUser implements UserDetails {
     private String timezone;
     private List<SimpleGrantedAuthority> authorities;
 
-    public SecurityUser(Integer id, String username, String email, String title, String timezone) {
+    public SecurityUser(Integer id, String username, String email, String timezone) {
         this.id = id;
         this.username = username;
         this.email = email;
-        this.title = title;
         this.timezone = timezone;
     }
 
