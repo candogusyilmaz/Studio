@@ -4,16 +4,17 @@ import cdy.studioapi.dtos.LocationCreateDto;
 import cdy.studioapi.exceptions.BadRequestException;
 import cdy.studioapi.exceptions.NotFoundException;
 import cdy.studioapi.infrastructure.LocationRepository;
+import cdy.studioapi.infrastructure.specs.LocationSpecifications;
 import cdy.studioapi.models.Location;
 import cdy.studioapi.views.LocationView;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -21,24 +22,35 @@ public class LocationService {
     private final LocationRepository locationRepository;
 
     public void create(LocationCreateDto dto) {
-        if (locationRepository.existsByNameIgnoreCase(dto.getName())) {
-            throw new BadRequestException("There is already a location with the same name.");
+        var locationAlreadyExists = false;
+
+        if (dto.getParentId() != null) {
+            locationAlreadyExists = locationRepository.findBy(
+                    LocationSpecifications.findByNameAndParentId(dto.getName(), dto.getParentId()),
+                    FluentQuery.FetchableFluentQuery::exists);
+        } else {
+            locationAlreadyExists = locationRepository.findBy(
+                    LocationSpecifications.findByName(dto.getName()),
+                    FluentQuery.FetchableFluentQuery::exists);
         }
+
+        if (locationAlreadyExists) throw new BadRequestException("Aynı isimde lokasyon zaten var.");
 
         var location = new Location(dto.getName());
 
-        dto.getParentId()
-                .map(locationRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .stream().findFirst()
-                .ifPresent(location::setParent);
+        if (dto.getParentId() != null) {
+            var parent = locationRepository.findById(dto.getParentId())
+                    .orElseThrow(() -> new NotFoundException("Üst lokasyon bulunamadı."));
+
+            location.setParent(parent);
+        }
 
         locationRepository.save(location);
     }
 
     public List<LocationView> getAll() {
-        return locationRepository.findAll().stream().map(LocationView::new).toList();
+        return locationRepository.findBy((root, query, criteriaBuilder) -> null,
+                r -> r.project("parent").all()).stream().map(LocationView::new).toList();
     }
 
     @SafeVarargs

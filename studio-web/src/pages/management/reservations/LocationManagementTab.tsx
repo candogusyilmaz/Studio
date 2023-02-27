@@ -87,7 +87,16 @@ function NewLocationButton() {
   const locationQuery = useQuery({
     queryKey: [queryKey.allLocationsQuery],
     queryFn: ({ signal }) => fetchLocationsAll(signal),
-    select: (data) => data?.data?.map((s) => ({ ...s, value: s.id.toString(), label: s.name })),
+    select: (data) =>
+      data?.data?.map((s) => {
+        let label = s.name;
+
+        if (s.parent) {
+          label = `${s.name}, ${s.parent.name}`;
+        }
+
+        return { ...s, value: s.id.toString(), label: label };
+      }),
     keepPreviousData: true,
     enabled: opened,
     cacheTime: 5 * 60 * 1000,
@@ -163,7 +172,7 @@ function NewLocationButton() {
                   <Button color="red" variant="subtle" onClick={close}>
                     İptal
                   </Button>
-                  <Button type="submit" loading={newLocationMutation.isLoading} disabled={newLocationMutation.isSuccess}>
+                  <Button type="submit" loading={newLocationMutation.isLoading}>
                     Oluştur
                   </Button>
                 </Flex>

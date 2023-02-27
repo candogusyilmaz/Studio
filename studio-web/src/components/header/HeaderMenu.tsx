@@ -1,28 +1,28 @@
 import {
-  createStyles,
-  Container,
-  Group,
-  Burger,
-  Text,
   ActionIcon,
-  useMantineColorScheme,
-  Menu,
-  Avatar,
-  UnstyledButton,
-  Stack,
-  Image,
-  Collapse,
   Anchor,
+  Avatar,
+  Burger,
+  Collapse,
+  Container,
+  createStyles,
+  Group,
+  Image,
+  Menu,
+  Stack,
+  Text,
+  UnstyledButton,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconLogout, IconMoonStars, IconQuote, IconSettings, IconSun } from "@tabler/icons";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { headerRoutes } from "../../router";
 import { getInitials } from "../../utils/TextUtils";
-import { MobileHeaderLink } from "./MobileHeaderLink";
 import { HeaderLink } from "./HeaderLink";
-import { useNavigate } from "react-router-dom";
+import { MobileHeaderLink } from "./MobileHeaderLink";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -135,9 +135,11 @@ export function HeaderMenu() {
                       <Text weight={400} size={14} sx={{ lineHeight: 1 }}>
                         {user?.displayName}
                       </Text>
-                      <Text c="dimmed" weight={300} size="xs" sx={{ lineHeight: 1 }}>
-                        test
-                      </Text>
+                      {user?.title && (
+                        <Text c="dimmed" weight={300} size="xs" sx={{ lineHeight: 1 }}>
+                          {user.title}
+                        </Text>
+                      )}
                     </Stack>
                   </Group>
                 </UnstyledButton>

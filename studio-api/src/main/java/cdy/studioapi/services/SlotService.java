@@ -47,7 +47,7 @@ public class SlotService {
 
         var availableSlots = repo.findBy(spec,
                 r -> r.sortBy(Sort.by("id"))
-                        .project("room.location", "items").all());
+                        .project("room.location.parent", "items").all());
 
         return availableSlots.stream().map(SlotView::new).toList();
     }

@@ -9,6 +9,7 @@ export interface AuthProps {
   email: string;
   username: string;
   displayName: string;
+  title?: string;
   accessToken: string;
   expiresAt: string;
   permissions: string[];

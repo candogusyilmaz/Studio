@@ -17,6 +17,8 @@ public class SecurityUser implements UserDetails {
     @Getter
     private String displayName;
     @Getter
+    private String title;
+    @Getter
     private String email;
     private boolean isEnabled;
     @Getter
@@ -25,10 +27,11 @@ public class SecurityUser implements UserDetails {
     private String timezone;
     private List<SimpleGrantedAuthority> authorities;
 
-    public SecurityUser(Integer id, String username, String email, String timezone) {
+    public SecurityUser(Integer id, String username, String email, String title, String timezone) {
         this.id = id;
         this.username = username;
         this.email = email;
+        this.title = title;
         this.timezone = timezone;
     }
 
@@ -39,6 +42,7 @@ public class SecurityUser implements UserDetails {
         this.isEnabled = user.isEnabled();
         this.tokenVersion = user.getTokenVersion();
         this.displayName = user.getDisplayName();
+        this.title = user.getTitle();
         this.email = user.getEmail();
         this.timezone = user.getTimezone();
 

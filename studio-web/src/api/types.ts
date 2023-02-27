@@ -35,6 +35,7 @@ export interface UserBasicView {
   id: number;
   username: string;
   displayName: string;
+  title?: string;
   email: string;
 }
 

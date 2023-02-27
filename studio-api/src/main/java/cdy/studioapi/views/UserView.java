@@ -13,6 +13,7 @@ public class UserView implements Serializable {
     private final String username;
     private final String password;
     private final String displayName;
+    private final String title;
     private final String email;
     private final boolean isEnabled;
     private final int tokenVersion;
@@ -24,12 +25,13 @@ public class UserView implements Serializable {
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.displayName = user.getDisplayName();
+        this.title = user.getTitle();
         this.email = user.getEmail();
         this.isEnabled = user.getIsEnabled();
         this.tokenVersion = user.getTokenVersion();
         this.timezone = user.getTimezone();
 
-        if(Hibernate.isInitialized(user.getRoles())) {
+        if (Hibernate.isInitialized(user.getRoles())) {
             this.roles = user.getRoles().stream().map(RoleView::new).toList();
         }
     }

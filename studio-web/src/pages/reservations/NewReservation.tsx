@@ -68,10 +68,16 @@ function useSlotsQuery(date: Date | null, timeRange: [number, number]) {
       data?.forEach((slot) => {
         if (uniqueLocations.some((x) => x.value === slot.room!.location!.id.toString())) return;
 
+        let label = slot.room?.location?.name;
+
+        if (slot.room?.location?.parent) {
+          label = `${slot.room?.location?.name}, ${slot.room?.location.parent?.name}`;
+        }
+
         uniqueLocations.push({
           ...slot,
           value: slot.room!.location!.id.toString(),
-          label: slot.room!.location!.name,
+          label: label,
         });
       });
       setLocations(uniqueLocations);

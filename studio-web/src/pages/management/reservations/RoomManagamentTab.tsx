@@ -1,20 +1,20 @@
-import { Button, Flex, Select, Modal, Text, TextInput, SelectItem, NumberInput } from "@mantine/core";
-import { useDebouncedState, useDisclosure } from "@mantine/hooks";
+import { Button, Flex, Modal, NumberInput, Select, SelectItem, Text, TextInput } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
 import { IconHome, IconLocation, IconPlus, IconUsers } from "@tabler/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import { AxiosError } from "axios";
 import { useEffect, useMemo, useState } from "react";
-import { getErrorMessage } from "../../../api/api";
-import { fetchLocationsByName } from "../../../api/locationService";
+import { showErrorNotification } from "../../../api/api";
+import { fetchLocationsAll } from "../../../api/locationService";
 import { createRoom, fetchRooms } from "../../../api/roomService";
 import { LocationView, RoomView } from "../../../api/types";
 import BasicTable from "../../../components/BasicTable";
 
 const queryKey = {
   roomManagementList: "roomManagementList",
-  locationsQuery: "locationsQuery",
+  locationsQueryAll: "locationsQueryAll",
 };
 
 export default function RoomManagementTab() {
@@ -90,12 +90,19 @@ function NewRoomButton() {
   const [capacity, setCapacity] = useState<number | "">("");
   const [location, setLocation] = useState<SelectItem & LocationView>();
 
-  const [searchQuery, setSearchQuery] = useDebouncedState("", 1000);
-
   const locationQuery = useQuery({
-    queryKey: [queryKey.locationsQuery, { searchQuery }],
-    queryFn: ({ signal }) => fetchLocationsByName(`%${searchQuery}%`, signal),
-    select: (data) => data?.data?.content.map((s) => ({ ...s, value: s.id.toString(), label: s.name })),
+    queryKey: [queryKey.locationsQueryAll],
+    queryFn: ({ signal }) => fetchLocationsAll(signal),
+    select: (data) =>
+      data?.data?.map((s) => {
+        let label = s.name;
+
+        if (s.parent) {
+          label = `${s.name}, ${s.parent.name}`;
+        }
+
+        return { ...s, value: s.id.toString(), label: label };
+      }),
     keepPreviousData: true,
     enabled: opened,
     cacheTime: 5 * 60 * 1000,
@@ -103,28 +110,8 @@ function NewRoomButton() {
   });
 
   const newRoomMutation = useMutation({
-    mutationFn: () => {
-      let error = null;
-
-      if (name.length < 3 || name.length > 27) {
-        error = "Oda ismi 3 ila 27 karakter arasında olmalıdır.";
-      } else if (!location || !location.id) {
-        error = "Bağlı olduğu lokasyonu seçiniz.";
-      }
-
-      if (error) {
-        showNotification({
-          id: "room-create-error",
-          title: "Oda Oluşturulurken Hata",
-          message: error,
-          color: "orange",
-          autoClose: 5000,
-        });
-        return Promise.reject();
-      }
-
-      return createRoom(name, parseInt(capacity.toString()), location!.id);
-    },
+    mutationFn: ({ name, capacity, locationId }: { name: string; capacity: number; locationId: number }) =>
+      createRoom(name, capacity, locationId),
     onSuccess: () => {
       showNotification({
         id: "room-create-success",
@@ -137,17 +124,29 @@ function NewRoomButton() {
       close();
     },
     onError: (error: AxiosError, _variables, _context) => {
-      if (error instanceof AxiosError) {
-        showNotification({
-          id: "oda-create-error",
-          title: "Oda Oluşturulurken Hata",
-          message: getErrorMessage(error) ?? "Bilinmeyen bir hata oluştu!",
-          color: "red",
-          autoClose: 5000,
-        });
-      }
+      showErrorNotification(error, { id: "room-create-error" });
     },
   });
+
+  function createNewRoom() {
+    let error = null;
+
+    if (name.length < 3 || name.length > 27) {
+      error = "Oda ismi 3 ila 27 karakter arasında olmalıdır.";
+    } else if (!location || !location.id) {
+      error = "Bağlı olduğu lokasyonu seçiniz.";
+    }
+
+    if (error) {
+      return showErrorNotification(error, { id: "room-create-error" });
+    }
+
+    newRoomMutation.mutate({
+      name,
+      capacity: parseInt(capacity.toString()),
+      locationId: location!.id,
+    });
+  }
 
   return (
     <>
@@ -188,7 +187,6 @@ function NewRoomButton() {
                 data={locationQuery.data ?? []}
                 placeholder="Bağlı olduğu lokasyonu seçiniz"
                 searchable
-                onSearchChange={setSearchQuery}
                 nothingFound="Lokasyon bulunamadı"
                 maxDropdownHeight={150}
                 icon={<IconLocation size={16} />}
@@ -200,7 +198,7 @@ function NewRoomButton() {
                 <Button color="red" variant="subtle" onClick={close}>
                   İptal
                 </Button>
-                <Button onClick={() => newRoomMutation.mutate()} loading={newRoomMutation.isLoading} disabled={newRoomMutation.isSuccess}>
+                <Button onClick={createNewRoom} loading={newRoomMutation.isLoading}>
                   Oluştur
                 </Button>
               </Flex>

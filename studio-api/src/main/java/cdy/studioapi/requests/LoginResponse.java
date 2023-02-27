@@ -12,6 +12,8 @@ public class LoginResponse {
     private String username;
     private String email;
     private String displayName;
+    private String title;
+    private String timezone;
     private String accessToken;
     private LocalDateTime expiresAt;
 

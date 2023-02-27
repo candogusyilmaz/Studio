@@ -11,7 +11,7 @@ import { Notifications, showNotification } from "@mantine/notifications";
 import { StudioRoutes } from "./router";
 import { DatesProvider } from "@mantine/dates";
 import "dayjs/locale/tr";
-import "dayjs/locale/tr";
+import "dayjs/locale/en";
 import { AxiosError } from "axios";
 import { getPreferredLanguage } from "./utils/LocalStorageUtils";
 
@@ -63,7 +63,7 @@ const queryClient = new QueryClient({
       onError: onQueryError,
     },
     mutations: {
-      retry,
+      retry: 0,
     },
   },
 });

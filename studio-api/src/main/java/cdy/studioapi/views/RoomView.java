@@ -12,7 +12,7 @@ public class RoomView implements Serializable {
     private final int id;
     private final String name;
     private final int capacity;
-    private LocationParentlessView location;
+    private LocationView location;
     private List<SlotView> slots;
 
     public RoomView(Room room) {
@@ -21,7 +21,7 @@ public class RoomView implements Serializable {
         this.capacity = room.getCapacity();
 
         if (Hibernate.isInitialized(room.getLocation())) {
-            this.location = new LocationParentlessView(room.getLocation());
+            this.location = new LocationView(room.getLocation());
         }
 
         if (Hibernate.isInitialized(room.getSlots())) {

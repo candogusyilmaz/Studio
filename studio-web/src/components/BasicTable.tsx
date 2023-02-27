@@ -1,18 +1,4 @@
-import {
-  Box,
-  Checkbox,
-  createStyles,
-  Divider,
-  Flex,
-  Group,
-  Pagination,
-  PaginationProps,
-  Paper,
-  Select,
-  Table,
-  Text,
-  useMantineTheme,
-} from "@mantine/core";
+import { Box, createStyles, Divider, Flex, Group, Pagination, PaginationProps, Paper, Table, Text, useMantineTheme } from "@mantine/core";
 import { IconArrowNarrowDown, IconArrowNarrowUp, IconSelector } from "@tabler/icons";
 import { flexRender, getCoreRowModel, getSortedRowModel, SortDirection, SortingState, useReactTable } from "@tanstack/react-table";
 import { Dispatch, SetStateAction } from "react";
@@ -98,6 +84,17 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
               ))}
             </tr>
           ))}
+          {data.length === 0 && (
+            <tr>
+              <td colSpan={table.getAllLeafColumns().length}>
+                <Flex align="center" justify="center">
+                  <Text size="md" weight={300} italic>
+                    Herhangi bir kayıt bulunamadı
+                  </Text>
+                </Flex>
+              </td>
+            </tr>
+          )}
           {pagination && (
             <tr>
               <td colSpan={table.getAllLeafColumns().length}>

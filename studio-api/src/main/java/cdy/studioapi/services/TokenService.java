@@ -71,7 +71,7 @@ public class TokenService {
 
         var token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-        return new LoginResponse(principal.getUsername(), principal.getEmail(), principal.getDisplayName(),
+        return new LoginResponse(principal.getUsername(), principal.getEmail(), principal.getDisplayName(), principal.getTitle(), principal.getTimezone(),
                 token, LocalDateTime.ofInstant(expiresAt, ZoneOffset.UTC), principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
     }
 }
