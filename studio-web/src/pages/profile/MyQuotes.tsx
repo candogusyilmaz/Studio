@@ -1,9 +1,7 @@
-import { Badge, Button, Flex, Menu, Pagination, Switch, Text, Tooltip } from "@mantine/core";
-import { IconDotsVertical } from "@tabler/icons";
+import { Badge, Flex, Switch, Text, Tooltip } from "@mantine/core";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
-import { AxiosError } from "axios";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { showErrorNotification } from "../../api/api";
 import { fetchMyQuotes, toggleQuoteStatus } from "../../api/quoteService";
 import { getQuoteStatus, getQuoteStatusColor, QuoteView } from "../../api/types";
@@ -84,13 +82,7 @@ export default function MyQuotes() {
       columnHelper.accessor((row) => row, {
         id: "enabled",
         header: "Etkin",
-        cell: (row) => (
-          <Switch
-            //disabled={row.getValue().status === "ACTIVE"}
-            checked={row.getValue().enabled}
-            onChange={() => toggleQuoteStatusMutation.mutate(row.getValue().id)}
-          />
-        ),
+        cell: (row) => <Switch checked={row.getValue().enabled} onChange={() => toggleQuoteStatusMutation.mutate(row.getValue().id)} />,
       }),
     ],
     [],
@@ -104,7 +96,8 @@ export default function MyQuotes() {
         columns={columns}
         sort={sort}
         setSort={setSort}
-        pagination={{ page, onChange: setPage, total: quotes.data?.totalPages ?? 1 }}
+        pagination={{ page, setPage, total: quotes.data?.totalPages ?? 1 }}
+        status={quotes.status}
       />
     </Flex>
   );

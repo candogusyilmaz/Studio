@@ -62,15 +62,17 @@ function RoomTable() {
         columns={columns}
         sort={sort}
         setSort={setSort}
-        pagination={{ page, onChange: setPage, total: roomQuery.data?.totalPages ?? 1 }}
-        tableHeader={
-          <Flex align="center" justify="space-between">
+        pagination={{ page, setPage, total: roomQuery.data?.totalPages ?? 1 }}
+        header={{
+          leftSection: (
             <Text size="sm" mr="md">
               Oda Listesi
             </Text>
-            <NewRoomButton />
-          </Flex>
-        }
+          ),
+          rightSection: <NewRoomButton />,
+          options: { showSortButton: true },
+        }}
+        status={roomQuery.status}
       />
     </>
   );

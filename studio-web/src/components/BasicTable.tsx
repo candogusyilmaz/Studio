@@ -1,6 +1,32 @@
-import { Box, createStyles, Divider, Flex, Group, Pagination, PaginationProps, Paper, Table, Text, useMantineTheme } from "@mantine/core";
-import { IconArrowNarrowDown, IconArrowNarrowUp, IconSelector } from "@tabler/icons";
-import { flexRender, getCoreRowModel, getSortedRowModel, SortDirection, SortingState, useReactTable } from "@tanstack/react-table";
+import {
+  Box,
+  Button,
+  Center,
+  createStyles,
+  Divider,
+  Flex,
+  Group,
+  LoadingOverlay,
+  Menu,
+  Overlay,
+  Pagination,
+  PaginationProps,
+  Paper,
+  Switch,
+  Table,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
+import { IconArrowNarrowDown, IconArrowNarrowUp, IconEye, IconEyeOff, IconLayoutColumns, IconSelector } from "@tabler/icons";
+import {
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  SortDirection,
+  SortingState,
+  Table as TanstackTable,
+  useReactTable,
+} from "@tanstack/react-table";
 import { Dispatch, SetStateAction } from "react";
 
 interface BasicTableProps<T> {
@@ -10,10 +36,18 @@ interface BasicTableProps<T> {
   setSort?: Dispatch<SetStateAction<SortingState>>;
   pagination?: {
     page: number;
-    onChange: Dispatch<SetStateAction<number>>;
+    setPage: Dispatch<SetStateAction<number>>;
     total: number;
   } & Omit<PaginationProps, "total" | "value" | "onChange">;
-  tableHeader?: React.ReactNode;
+  header?: {
+    leftSection?: React.ReactNode;
+    rightSection?: React.ReactNode;
+    options?: {
+      showDivider?: boolean;
+      showSortButton?: boolean;
+    };
+  };
+  status?: "loading" | "error" | "success";
 }
 
 const useStyles = createStyles((theme) => ({
@@ -25,7 +59,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export default function BasicTable<T extends object>({ data, columns, sort, setSort, pagination, tableHeader }: BasicTableProps<T>) {
+export default function BasicTable<T extends object>({ data, columns, sort, setSort, pagination, header, status }: BasicTableProps<T>) {
   const { classes } = useStyles();
   const theme = useMantineTheme();
 
@@ -41,21 +75,32 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
 
   function getSortArrow(canSort: boolean, isSorted: false | SortDirection) {
     if (canSort && isSorted) {
-      return (isSorted as string) === "asc" ? <IconArrowNarrowUp size={16} /> : <IconArrowNarrowDown size={16} />;
+      return (isSorted as string) === "asc" ? <IconArrowNarrowUp size={14} stroke={3} /> : <IconArrowNarrowDown size={14} stroke={3} />;
     } else if (canSort && !isSorted) {
-      return <IconSelector size={16} />;
+      return <IconSelector size={14} stroke={3} />;
     }
 
     return null;
   }
 
+  if (status && status !== "success") return <TableOverlay status={status} />;
+
   return (
     <Paper shadow="sm" withBorder radius="xs">
-      {tableHeader && (
+      {header && (
         <>
-          <Box bg={theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1]} p="md">
-            {tableHeader}
-          </Box>
+          <Flex
+            bg={theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1]}
+            p="md"
+            align="center"
+            justify="space-between">
+            <Group>{header.leftSection}</Group>
+            <Group spacing={12}>
+              {header.rightSection}
+              {header.options?.showDivider && <Divider orientation="vertical" size="xs" />}
+              {header.options?.showSortButton && <SortButton table={table} />}
+            </Group>
+          </Flex>
           <Divider />
         </>
       )}
@@ -66,7 +111,9 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
               {headerGroup.headers.map((header) => (
                 <th key={header.id} onClick={header.column.getToggleSortingHandler()}>
                   <Group spacing={6}>
-                    <Text size="xs">{flexRender(header.column.columnDef.header, header.getContext())}</Text>
+                    <Text size="xs" styles={{ lineHeight: 1 }}>
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </Text>
                     {sort && getSortArrow(header.column.getCanSort(), header.column.getIsSorted())}
                   </Group>
                 </th>
@@ -103,7 +150,7 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
                   position="right"
                   value={pagination.page + 1}
                   size="sm"
-                  onChange={(e) => pagination.onChange(e - 1)}
+                  onChange={(e) => pagination.setPage(e - 1)}
                 />
               </td>
             </tr>
@@ -111,5 +158,72 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
         </tbody>
       </Table>
     </Paper>
+  );
+}
+
+function TableOverlay({ status }: { status: "loading" | "error" }) {
+  switch (status) {
+    case "loading":
+      return (
+        <Box pos="relative" h="min(60vh, 600px)">
+          <LoadingOverlay loaderProps={{ variant: "bars" }} transitionDuration={6000} visible />
+        </Box>
+      );
+    case "error":
+      return (
+        <Box pos="relative" h="min(60vh, 600px)">
+          <Overlay
+            styles={(theme) => ({
+              root: {
+                backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+                border: "1px solid rgba(255,0,0,0.4)",
+              },
+            })}>
+            <Center h="min(60vh, 600px)">
+              <Text>Bir hata oluştu!</Text>
+            </Center>
+          </Overlay>
+        </Box>
+      );
+    default:
+      return null;
+  }
+}
+
+function SortButton<T>({ table }: { table: TanstackTable<T> }) {
+  return (
+    <Menu shadow="md" closeOnItemClick={false} styles={{ dropdown: { minWidth: 180 } }}>
+      <Menu.Target>
+        <Button size="xs" variant="default" px={6}>
+          <IconLayoutColumns size={16} />
+        </Button>
+      </Menu.Target>
+
+      <Menu.Dropdown>
+        <Menu.Label>Sütün Görünürlüğü</Menu.Label>
+        {table.getAllLeafColumns().map((column) => {
+          if (!column.columnDef.header) return null;
+
+          return (
+            <Menu.Item
+              key={column.id}
+              py={4}
+              rightSection={
+                <Switch
+                  checked={column.getIsVisible()}
+                  onChange={column.getToggleVisibilityHandler()}
+                  onLabel={<IconEye size={14} />}
+                  offLabel={<IconEyeOff size={14} />}
+                  size="xs"
+                />
+              }>
+              <Text size="xs" weight={500}>
+                {column.columnDef.header?.toString()}
+              </Text>
+            </Menu.Item>
+          );
+        })}
+      </Menu.Dropdown>
+    </Menu>
   );
 }

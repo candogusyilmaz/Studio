@@ -1,4 +1,4 @@
-import { Button, Flex, Select, Modal, Text, TextInput } from "@mantine/core";
+import { Button, Flex, Modal, Select, Text, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
@@ -62,15 +62,16 @@ function LocationTable() {
         columns={columns}
         sort={sort}
         setSort={setSort}
-        pagination={{ page, onChange: setPage, total: locationQuery.data?.totalPages ?? 1 }}
-        tableHeader={
-          <Flex align="center" justify="space-between">
+        pagination={{ page, setPage, total: locationQuery.data?.totalPages ?? 1 }}
+        header={{
+          leftSection: (
             <Text size="sm" mr="md">
               Lokasyon Listesi
             </Text>
-            <NewLocationButton />
-          </Flex>
-        }
+          ),
+          rightSection: <NewLocationButton />,
+        }}
+        status={locationQuery.status}
       />
     </>
   );

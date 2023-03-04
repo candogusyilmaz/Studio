@@ -1,11 +1,11 @@
-import { Badge, Box, Button, Flex, LoadingOverlay, Menu, Pagination, Text } from "@mantine/core";
+import { Badge, Button, Flex, Menu, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { showNotification } from "@mantine/notifications";
 import { IconDotsVertical, IconX } from "@tabler/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import { AxiosError } from "axios";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { getErrorMessage } from "../../api/api";
 import { cancelReservation, fetchReservationHistory } from "../../api/reservationService";
 import { getReservationStatus, getReservationStatusColor, isReservationCancellable, ReservationView } from "../../api/types";
@@ -78,21 +78,6 @@ function HistoryTable() {
     [],
   );
 
-  switch (historyQuery.status) {
-    case "loading":
-      return (
-        <Box pos="relative" h={600}>
-          <LoadingOverlay transitionDuration={6000} visible />
-        </Box>
-      );
-    case "error":
-      return <Text>Error!</Text>;
-  }
-
-  if (historyQuery.data.numberOfElements === 0) {
-    return <Text>No records found</Text>;
-  }
-
   return (
     <>
       <BasicTable
@@ -100,7 +85,9 @@ function HistoryTable() {
         columns={columns}
         sort={sort}
         setSort={setSort}
-        pagination={{ page, onChange: setPage, total: historyQuery.data?.totalPages ?? 1 }}
+        pagination={{ page, setPage, total: historyQuery.data?.totalPages ?? 1 }}
+        header={{ options: { showSortButton: true } }}
+        status={historyQuery.status}
       />
     </>
   );
