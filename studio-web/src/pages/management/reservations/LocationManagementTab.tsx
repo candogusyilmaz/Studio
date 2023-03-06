@@ -5,10 +5,9 @@ import { showNotification } from "@mantine/notifications";
 import { IconLocation, IconPlus } from "@tabler/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
-import { AxiosError } from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import { getErrorMessage } from "../../../api/api";
+import { showErrorNotification } from "../../../api/api";
 import { createLocation, fetchLocations, fetchLocationsAll } from "../../../api/locationService";
 import { LocationView } from "../../../api/types";
 import BasicTable from "../../../components/BasicTable";
@@ -117,14 +116,8 @@ function NewLocationButton() {
       queryClient.invalidateQueries({ queryKey: [queryKey.locationManagementList] });
       close();
     },
-    onError: (error: AxiosError, _variables, _context) => {
-      showNotification({
-        id: "location-create-error",
-        title: "Lokasyon Oluşturulurken Hata",
-        message: getErrorMessage(error) ?? "Bilinmeyen bir hata oluştu!",
-        color: "red",
-        autoClose: 5000,
-      });
+    onError: (error, _variables, _context) => {
+      showErrorNotification(error, { id: "location-create-error" });
     },
   });
 

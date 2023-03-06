@@ -4,7 +4,6 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { getAccessTokenFromLocalStorage, setUserToLocalStorage } from "../utils/LocalStorageUtils";
-import { IconAlertCircle } from "@tabler/icons";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/api/",
@@ -25,7 +24,13 @@ api.interceptors.request.use((config) => {
   if (config.url === "auth/token" || config.url === "auth/refresh-token") {
     delete config.headers["Authorization"];
   } else {
-    config.headers["Authorization"] = "Bearer " + getAccessTokenFromLocalStorage();
+    const token = getAccessTokenFromLocalStorage();
+
+    if (!token) {
+      throw new Error("TOKEN_NOT_FOUND");
+    }
+
+    config.headers["Authorization"] = "Bearer " + token;
   }
 
   return config;
@@ -40,6 +45,11 @@ export const AxiosInterceptor = ({ children }: any) => {
 
   useEffect(() => {
     const respInterceptor = api.interceptors.response.use(responseInterceptorSuccess, (error: AxiosError<unknown, any>) => {
+      if (error instanceof Error && error.message === "TOKEN_NOT_FOUND") {
+        logout();
+        return Promise.reject("Görünüşe göre oturumunuz sona ermiş. Lütfen tekrar giriş yapın.");
+      }
+
       if (isUnauthorizedResponse(error)) {
         return api
           .post("auth/refresh-token")
@@ -49,9 +59,10 @@ export const AxiosInterceptor = ({ children }: any) => {
           })
           .catch((s) => {
             logout();
-            return s;
+            return Promise.reject(s);
           });
       }
+
       return Promise.reject(error);
     });
 
@@ -63,13 +74,19 @@ export const AxiosInterceptor = ({ children }: any) => {
   return children;
 };
 
-export function getErrorMessage(error: any) {
+function getErrorMessage(error: any) {
   let message;
 
   if (error instanceof AxiosError) {
-    Object.values(error?.response?.data ?? {}).forEach((val) => {
-      message = val;
-    });
+    if (error.response?.data) {
+      Object.values(error.response.data).forEach((val) => {
+        message = val;
+      });
+    }
+
+    if (error.code === "ERR_NETWORK") {
+      message = "Sunucu ile bağlantı kurulamadı!";
+    }
   }
 
   if (typeof error === "string") {
@@ -86,7 +103,6 @@ export function showErrorNotification(error: any, props?: NotificationProps) {
     autoClose: 5000,
     styles: (theme) => ({
       root: {
-        // red border based on theme color less opaque
         border: `1px solid ${theme.colorScheme === "dark" ? theme.colors.red[6] : theme.colors.red[4]}`,
       },
     }),

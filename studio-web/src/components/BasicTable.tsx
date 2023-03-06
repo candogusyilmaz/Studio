@@ -54,7 +54,6 @@ const useStyles = createStyles((theme) => ({
   table: {
     "& th": {
       textTransform: "uppercase",
-      padding: "56px",
     },
   },
 }));
@@ -75,9 +74,13 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
 
   function getSortArrow(canSort: boolean, isSorted: false | SortDirection) {
     if (canSort && isSorted) {
-      return (isSorted as string) === "asc" ? <IconArrowNarrowUp size={14} stroke={3} /> : <IconArrowNarrowDown size={14} stroke={3} />;
+      return (isSorted as string) === "asc" ? (
+        <IconArrowNarrowUp style={{ paddingBottom: "0.05rem" }} size={14} stroke={3} />
+      ) : (
+        <IconArrowNarrowDown style={{ paddingBottom: "0.05rem" }} size={14} stroke={3} />
+      );
     } else if (canSort && !isSorted) {
-      return <IconSelector size={14} stroke={3} />;
+      return <IconSelector style={{ paddingBottom: "0.05rem" }} size={14} stroke={3} />;
     }
 
     return null;
@@ -91,7 +94,7 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
         <>
           <Flex
             bg={theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1]}
-            p="md"
+            p="xs"
             align="center"
             justify="space-between">
             <Group>{header.leftSection}</Group>
@@ -110,12 +113,17 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th key={header.id} onClick={header.column.getToggleSortingHandler()}>
-                  <Group spacing={6}>
-                    <Text size="xs" styles={{ lineHeight: 1 }}>
+                  <Flex
+                    gap={3}
+                    align="center"
+                    style={{
+                      cursor: header.column.getCanSort() ? "pointer" : "auto",
+                    }}>
+                    <Text size="xs" style={{ lineHeight: 1 }}>
                       {flexRender(header.column.columnDef.header, header.getContext())}
                     </Text>
                     {sort && getSortArrow(header.column.getCanSort(), header.column.getIsSorted())}
-                  </Group>
+                  </Flex>
                 </th>
               ))}
             </tr>
@@ -162,16 +170,18 @@ export default function BasicTable<T extends object>({ data, columns, sort, setS
 }
 
 function TableOverlay({ status }: { status: "loading" | "error" }) {
+  const h = "min(60vh, 600px)";
+
   switch (status) {
     case "loading":
       return (
-        <Box pos="relative" h="min(60vh, 600px)">
+        <Box pos="relative" h={h}>
           <LoadingOverlay loaderProps={{ variant: "bars" }} transitionDuration={6000} visible />
         </Box>
       );
     case "error":
       return (
-        <Box pos="relative" h="min(60vh, 600px)">
+        <Box pos="relative" h={h}>
           <Overlay
             styles={(theme) => ({
               root: {
@@ -179,7 +189,7 @@ function TableOverlay({ status }: { status: "loading" | "error" }) {
                 border: "1px solid rgba(255,0,0,0.4)",
               },
             })}>
-            <Center h="min(60vh, 600px)">
+            <Center h={h}>
               <Text>Bir hata oluştu!</Text>
             </Center>
           </Overlay>

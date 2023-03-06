@@ -1,12 +1,10 @@
 import { Badge, Button, Flex, Menu, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
-import { showNotification } from "@mantine/notifications";
 import { IconDotsVertical, IconX } from "@tabler/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
-import { AxiosError } from "axios";
 import { useMemo, useState } from "react";
-import { getErrorMessage } from "../../api/api";
+import { showErrorNotification } from "../../api/api";
 import { cancelReservation, fetchReservationHistory } from "../../api/reservationService";
 import { getReservationStatus, getReservationStatusColor, isReservationCancellable, ReservationView } from "../../api/types";
 import BasicTable from "../../components/BasicTable";
@@ -127,14 +125,8 @@ function ReservationCancellationMenuItem({ reservation }: { reservation: Reserva
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [queryKey.reservationHistory] });
     },
-    onError: (error: AxiosError<{ message: string }>, _variables, _context) => {
-      showNotification({
-        id: "reservation-cancellation-error",
-        title: "Rezervasyon İptali",
-        message: getErrorMessage(error) ?? "Bilinmeyen bir hata oluştu!",
-        color: "red",
-        autoClose: 5000,
-      });
+    onError: (error, _variables, _context) => {
+      showErrorNotification(error, { id: "reservation-cancellation-error" });
     },
   });
 

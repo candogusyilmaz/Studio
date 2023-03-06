@@ -5,7 +5,7 @@ import { IconBrandInertia, IconQuote } from "@tabler/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { z } from "zod";
-import { getErrorMessage } from "../../api/api";
+import { showErrorNotification } from "../../api/api";
 import { createQuote, fetchQuoteOfTheDay } from "../../api/quoteService";
 
 const useStyles = createStyles((theme) => ({
@@ -103,13 +103,7 @@ export default function Dashboard() {
       form.reset();
     },
     onError: (error: AxiosError, _variables, _context) => {
-      showNotification({
-        id: "quote-create-error",
-        title: "Alıntı Oluşturulurken Hata",
-        message: getErrorMessage(error) ?? "Bilinmeyen bir hata oluştu!",
-        color: "red",
-        autoClose: 5000,
-      });
+      showErrorNotification(error, { id: "quote-create-error" });
     },
   });
 

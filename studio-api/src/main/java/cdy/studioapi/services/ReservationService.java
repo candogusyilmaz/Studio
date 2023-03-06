@@ -93,6 +93,10 @@ public class ReservationService {
         var reservation = reservationRepository.findBy(spec, r -> r.project("lastAction").first())
                 .orElseThrow(() -> new NotFoundException("Rezervasyon bulunamadı."));
 
+        if (reservation.getEndDate().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Rezervasyon tarihi geçtiğinden dolayı iptal edilemez!");
+        }
+
         if (!reservation.getLastAction().getStatus().isCancellable()) {
             throw new BadRequestException("Rezervasyon iptal edilebilir bir durumda değil!");
         }
