@@ -1,10 +1,10 @@
 package cdy.studioapi.services;
 
-import cdy.studioapi.dtos.queries.SlotCriteria;
 import cdy.studioapi.events.RoomCreateEvent;
 import cdy.studioapi.infrastructure.SlotRepository;
 import cdy.studioapi.infrastructure.specs.SlotSpecifications;
 import cdy.studioapi.models.Slot;
+import cdy.studioapi.requests.queries.SlotCriteria;
 import cdy.studioapi.views.SlotView;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;

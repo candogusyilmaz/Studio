@@ -1,8 +1,5 @@
 package cdy.studioapi.services;
 
-import cdy.studioapi.config.Auth;
-import cdy.studioapi.dtos.ReservationCreateDto;
-import cdy.studioapi.dtos.ReservationUpdateDto;
 import cdy.studioapi.events.ReservationActionCreateEvent;
 import cdy.studioapi.events.ReservationCancellationEvent;
 import cdy.studioapi.events.ReservationCreateEvent;
@@ -15,6 +12,8 @@ import cdy.studioapi.infrastructure.specs.ReservationSpecifications;
 import cdy.studioapi.infrastructure.specs.SlotSpecifications;
 import cdy.studioapi.models.Reservation;
 import cdy.studioapi.models.User;
+import cdy.studioapi.requests.ReservationCreateRequest;
+import cdy.studioapi.requests.ReservationUpdateRequest;
 import cdy.studioapi.views.ReservationView;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -30,11 +29,12 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class ReservationService {
+    private final AuthenticationProvider authenticationProvider;
     private final ReservationRepository reservationRepository;
     private final SlotRepository slotRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public void create(ReservationCreateDto dto, int userId) {
+    public void create(ReservationCreateRequest dto, int userId) {
         if (conflictingWithOthers(dto.getSlotId(), dto.getStartDate(), dto.getEndDate())) {
             throw new BadRequestException("Seçilen slot belirtilen tarihler arasında rezerve edilmiştir.");
         }
@@ -57,7 +57,7 @@ public class ReservationService {
         eventPublisher.publishEvent(new ReservationCreateEvent(reservation));
     }
 
-    public void update(int reservationId, ReservationUpdateDto dto) {
+    public void update(int reservationId, ReservationUpdateRequest dto) {
         var res = reservationRepository.findById(reservationId).orElseThrow(() -> new NotFoundException("Rezervasyon bulunamadı."));
 
         if (conflictingWithOthers(res.getId(), dto.getSlotId(), dto.getStartDate(), dto.getEndDate())) {
@@ -89,7 +89,7 @@ public class ReservationService {
     }
 
     public void cancelReservation(int id) {
-        var spec = ReservationSpecifications.getUserReservationById(Auth.asUser().getId(), id);
+        var spec = ReservationSpecifications.getUserReservationById(authenticationProvider.getAuthentication().getId(), id);
         var reservation = reservationRepository.findBy(spec, r -> r.project("lastAction").first())
                 .orElseThrow(() -> new NotFoundException("Rezervasyon bulunamadı."));
 

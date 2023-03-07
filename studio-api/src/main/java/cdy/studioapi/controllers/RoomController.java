@@ -1,6 +1,6 @@
 package cdy.studioapi.controllers;
 
-import cdy.studioapi.dtos.RoomCreateDto;
+import cdy.studioapi.requests.RoomCreateRequest;
 import cdy.studioapi.services.RoomService;
 import cdy.studioapi.views.RoomView;
 import jakarta.transaction.Transactional;
@@ -21,7 +21,7 @@ public class RoomController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public void create(@RequestBody @Valid RoomCreateDto req) {
+    public void create(@RequestBody @Valid RoomCreateRequest req) {
         roomService.create(req);
     }
 

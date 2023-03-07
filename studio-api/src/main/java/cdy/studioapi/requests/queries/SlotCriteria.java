@@ -1,4 +1,4 @@
-package cdy.studioapi.dtos.queries;
+package cdy.studioapi.requests.queries;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

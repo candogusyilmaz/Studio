@@ -24,7 +24,9 @@ public class Role extends BaseEntity {
     protected Role() {
     }
 
-    public Role(String name) {
-        this.name = name;
+    public static Role create(String name) {
+        Role role = new Role();
+        role.setName(name);
+        return role;
     }
 }

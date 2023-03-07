@@ -1,9 +1,9 @@
 package cdy.studioapi.controllers;
 
-import cdy.studioapi.config.Auth;
-import cdy.studioapi.dtos.ReservationCreateDto;
-import cdy.studioapi.dtos.ReservationUpdateDto;
 import cdy.studioapi.exceptions.NotFoundException;
+import cdy.studioapi.requests.ReservationCreateRequest;
+import cdy.studioapi.requests.ReservationUpdateRequest;
+import cdy.studioapi.services.AuthenticationProvider;
 import cdy.studioapi.services.ReservationService;
 import cdy.studioapi.views.ReservationView;
 import jakarta.transaction.Transactional;
@@ -22,18 +22,19 @@ import java.util.List;
 @RequestMapping("/api/reservations")
 public class ReservationController {
     private final ReservationService reservationService;
+    private final AuthenticationProvider authenticationProvider;
 
     @PostMapping({"", "/"})
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
-    public void create(@RequestBody @Valid ReservationCreateDto req) {
-        reservationService.create(req, Auth.asUser().getId());
+    public void create(@RequestBody @Valid ReservationCreateRequest req) {
+        reservationService.create(req, authenticationProvider.getAuthentication().getId());
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public void update(@RequestBody @Valid ReservationUpdateDto req, @PathVariable int id) {
+    public void update(@RequestBody @Valid ReservationUpdateRequest req, @PathVariable int id) {
         if (id <= 0) {
             throw new NotFoundException("Rezervasyon bulunamadı.");
         }
@@ -43,7 +44,7 @@ public class ReservationController {
 
     @GetMapping("/history")
     public Page<List<ReservationView>> getReservationsHistoryByUser(@PageableDefault Pageable page) {
-        return reservationService.getAll(Auth.asUser().getId(), page);
+        return reservationService.getAll(authenticationProvider.getAuthentication().getId(), page);
     }
 
     @GetMapping("/all")

@@ -1,6 +1,6 @@
 package cdy.studioapi.controllers;
 
-import cdy.studioapi.dtos.queries.SlotCriteria;
+import cdy.studioapi.requests.queries.SlotCriteria;
 import cdy.studioapi.services.SlotService;
 import cdy.studioapi.views.SlotView;
 import jakarta.validation.Valid;

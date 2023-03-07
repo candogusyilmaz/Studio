@@ -1,4 +1,4 @@
-package cdy.studioapi.requests;
+package cdy.studioapi.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

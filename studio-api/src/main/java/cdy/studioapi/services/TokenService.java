@@ -1,7 +1,7 @@
 package cdy.studioapi.services;
 
-import cdy.studioapi.config.SecurityUser;
-import cdy.studioapi.requests.LoginResponse;
+import cdy.studioapi.models.User;
+import cdy.studioapi.responses.LoginResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,13 +23,13 @@ public class TokenService {
     private final JwtDecoder jwtDecoder;
     private final UserService userService;
 
-    public SecurityUser getSecurityUser(String refreshToken) {
+    public User getSecurityUser(String refreshToken) {
         var jwt = jwtDecoder.decode(refreshToken);
         var username = jwt.getClaimAsString("sub");
-        return (SecurityUser) userService.loadUserByUsername(username);
+        return (User) userService.loadUserByUsername(username);
     }
 
-    public String createRefreshTokenCookie(SecurityUser principal) {
+    public String createRefreshTokenCookie(User principal) {
         var now = Instant.now();
         var expireInSeconds = 60 * 60 * 24; // seconds * minutes * hours * (days)
         var expiresAt = now.plus(expireInSeconds, ChronoUnit.SECONDS);
@@ -54,7 +54,7 @@ public class TokenService {
                 .toString();
     }
 
-    public LoginResponse createAccessToken(SecurityUser principal) {
+    public LoginResponse createAccessToken(User principal) {
         var now = Instant.now();
         var expiresAt = now.plus(10, ChronoUnit.DAYS);
 

@@ -1,4 +1,4 @@
-package cdy.studioapi.dtos;
+package cdy.studioapi.requests;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @Setter
-public class QuoteCreateDto {
+public class QuoteCreateRequest {
     private String content;
 
     public String getContent() {

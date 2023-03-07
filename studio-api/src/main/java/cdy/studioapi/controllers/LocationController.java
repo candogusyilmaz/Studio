@@ -1,7 +1,7 @@
 package cdy.studioapi.controllers;
 
-import cdy.studioapi.dtos.LocationCreateDto;
 import cdy.studioapi.infrastructure.specs.LocationSpecifications;
+import cdy.studioapi.requests.LocationCreateRequest;
 import cdy.studioapi.services.LocationService;
 import cdy.studioapi.views.LocationView;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ public class LocationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody LocationCreateDto req) {
+    public void create(@RequestBody LocationCreateRequest req) {
         locationService.create(req);
     }
 

@@ -1,4 +1,4 @@
-package cdy.studioapi.dtos;
+package cdy.studioapi.requests;
 
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
-public class RoomCreateDto {
+public class RoomCreateRequest {
     @Length(min = 3, max = 27, message = "Oda ismi 3 ila 27 karakter arasında olmalıdır.")
     private String name;
 

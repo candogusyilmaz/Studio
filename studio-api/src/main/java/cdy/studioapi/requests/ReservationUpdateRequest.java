@@ -1,4 +1,4 @@
-package cdy.studioapi.dtos;
+package cdy.studioapi.requests;
 
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class ReservationCreateDto {
+public class ReservationUpdateRequest {
     @Positive(message = "Slot bulunamadı.")
     @NotNull(message = "Slot boş bırakılamaz.")
-    private int slotId;
+    private Integer slotId;
 
     @FutureOrPresent(message = "Başlangıç tarihi gelecekte olmalıdır.")
     @NotNull(message = "Başlangıç tarihi boş bırakılamaz.")

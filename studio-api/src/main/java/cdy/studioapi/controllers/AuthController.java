@@ -1,8 +1,8 @@
 package cdy.studioapi.controllers;
 
-import cdy.studioapi.config.SecurityUser;
+import cdy.studioapi.models.User;
 import cdy.studioapi.requests.LoginRequest;
-import cdy.studioapi.requests.LoginResponse;
+import cdy.studioapi.responses.LoginResponse;
 import cdy.studioapi.services.TokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -24,7 +24,7 @@ public class AuthController {
     public ResponseEntity<LoginResponse> token(@RequestBody LoginRequest login) {
         var token = new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword());
         var auth = authManager.authenticate(token);
-        var user = (SecurityUser) auth.getPrincipal();
+        var user = (User) auth.getPrincipal();
 
         var body = tokenService.createAccessToken(user);
         var cookie = tokenService.createRefreshTokenCookie(user);

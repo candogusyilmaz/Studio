@@ -1,11 +1,11 @@
 package cdy.studioapi.services;
 
-import cdy.studioapi.dtos.LocationCreateDto;
 import cdy.studioapi.exceptions.BadRequestException;
 import cdy.studioapi.exceptions.NotFoundException;
 import cdy.studioapi.infrastructure.LocationRepository;
 import cdy.studioapi.infrastructure.specs.LocationSpecifications;
 import cdy.studioapi.models.Location;
+import cdy.studioapi.requests.LocationCreateRequest;
 import cdy.studioapi.views.LocationView;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,7 @@ import java.util.List;
 public class LocationService {
     private final LocationRepository locationRepository;
 
-    public void create(LocationCreateDto dto) {
+    public void create(LocationCreateRequest dto) {
         var locationAlreadyExists = false;
 
         if (dto.getParentId() != null) {
@@ -44,7 +44,7 @@ public class LocationService {
 
             location.setParent(parent);
         }
-        
+
         locationRepository.save(location);
     }
 

@@ -1,12 +1,11 @@
 package cdy.studioapi.services;
 
-import cdy.studioapi.config.Auth;
-import cdy.studioapi.dtos.QuoteCreateDto;
 import cdy.studioapi.enums.QuoteStatus;
 import cdy.studioapi.exceptions.BadRequestException;
 import cdy.studioapi.infrastructure.QuoteRepository;
 import cdy.studioapi.infrastructure.specs.QuoteSpecifications;
 import cdy.studioapi.models.Quote;
+import cdy.studioapi.requests.QuoteCreateRequest;
 import cdy.studioapi.views.QuoteView;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -25,16 +24,17 @@ import java.util.concurrent.ThreadLocalRandom;
 public class QuoteService {
     private static final int MAX_NUMBER_OF_SIMULTANEOUS_PENDING_QUOTES = 3;
     private final QuoteRepository quoteRepository;
+    private final AuthenticationProvider authenticationProvider;
 
-    public void create(QuoteCreateDto dto) {
-        var pendingQuotesCount = quoteRepository.findBy(QuoteSpecifications.getQuotesByUserId(Auth.asUser().getId(), QuoteStatus.PENDING, true), FluentQuery.FetchableFluentQuery::count);
+    public void create(QuoteCreateRequest dto) {
+        var pendingQuotesCount = quoteRepository.findBy(QuoteSpecifications.getQuotesByUserId(authenticationProvider.getAuthentication().getId(), QuoteStatus.PENDING, true), FluentQuery.FetchableFluentQuery::count);
 
         if (pendingQuotesCount >= MAX_NUMBER_OF_SIMULTANEOUS_PENDING_QUOTES) {
             throw new BadRequestException("Aynı anda en fazla " + MAX_NUMBER_OF_SIMULTANEOUS_PENDING_QUOTES + " tane gösterilmek üzere olan alıntınız olabilir.");
         }
 
         var quote = new Quote();
-        quote.setUser(Auth.asUser());
+        quote.setUser(authenticationProvider.getAuthentication());
         quote.setContent(dto.getContent());
         quote.setEnabled(true);
 
@@ -46,13 +46,13 @@ public class QuoteService {
     }
 
     public Page<QuoteView> getMyQuotes(Pageable pageable) {
-        return quoteRepository.findBy(QuoteSpecifications.getQuotesByUserId(Auth.asUser().getId()),
+        return quoteRepository.findBy(QuoteSpecifications.getQuotesByUserId(authenticationProvider.getAuthentication().getId()),
                 r -> r.sortBy(pageable.getSort()).page(pageable).map(QuoteView::new));
     }
 
     public void enableOrDisableMyQuote(int quoteId) {
         var quote = quoteRepository
-                .findBy(QuoteSpecifications.getQuotesByUserId(Auth.asUser().getId(), quoteId), FluentQuery.FetchableFluentQuery::first)
+                .findBy(QuoteSpecifications.getQuotesByUserId(authenticationProvider.getAuthentication().getId(), quoteId), FluentQuery.FetchableFluentQuery::first)
                 .orElseThrow(() -> new BadRequestException("Alıntı bulunamadı."));
 
         if (quote.getStatus() == QuoteStatus.ACTIVE) {
@@ -61,7 +61,7 @@ public class QuoteService {
 
         if (quote.getStatus() == QuoteStatus.PENDING && !quote.isEnabled()) {
             var pendingQuotesCount = quoteRepository
-                    .findBy(QuoteSpecifications.getQuotesByUserId(Auth.asUser().getId(), QuoteStatus.PENDING, true),
+                    .findBy(QuoteSpecifications.getQuotesByUserId(authenticationProvider.getAuthentication().getId(), QuoteStatus.PENDING, true),
                             FluentQuery.FetchableFluentQuery::count);
 
             if (pendingQuotesCount >= MAX_NUMBER_OF_SIMULTANEOUS_PENDING_QUOTES) {

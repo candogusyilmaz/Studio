@@ -1,6 +1,6 @@
 package cdy.studioapi.controllers;
 
-import cdy.studioapi.dtos.QuoteCreateDto;
+import cdy.studioapi.requests.QuoteCreateRequest;
 import cdy.studioapi.services.QuoteService;
 import cdy.studioapi.views.QuoteView;
 import jakarta.validation.Valid;
@@ -20,7 +20,7 @@ public class QuoteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody @Valid QuoteCreateDto dto) {
+    public void create(@RequestBody @Valid QuoteCreateRequest dto) {
         quoteService.create(dto);
     }
 

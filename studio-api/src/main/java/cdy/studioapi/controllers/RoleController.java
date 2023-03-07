@@ -1,6 +1,6 @@
 package cdy.studioapi.controllers;
 
-import cdy.studioapi.dtos.RoleCreateDto;
+import cdy.studioapi.requests.RoleCreateRequest;
 import cdy.studioapi.services.RoleService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +15,7 @@ public class RoleController {
     private final RoleService roleService;
 
     @PostMapping
-    public void create(@RequestBody RoleCreateDto req) {
+    public void create(@RequestBody RoleCreateRequest req) {
         roleService.createRole(req);
     }
 }

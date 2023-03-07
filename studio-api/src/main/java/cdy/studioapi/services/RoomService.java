@@ -1,12 +1,12 @@
 package cdy.studioapi.services;
 
-import cdy.studioapi.dtos.RoomCreateDto;
 import cdy.studioapi.events.RoomCreateEvent;
 import cdy.studioapi.exceptions.BadRequestException;
 import cdy.studioapi.exceptions.NotFoundException;
 import cdy.studioapi.infrastructure.LocationRepository;
-import cdy.studioapi.infrastructure.jpa.RoomJpaRepository;
+import cdy.studioapi.infrastructure.RoomRepository;
 import cdy.studioapi.models.Room;
+import cdy.studioapi.requests.RoomCreateRequest;
 import cdy.studioapi.views.RoomView;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -19,11 +19,11 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class RoomService {
 
-    private final RoomJpaRepository roomRepository;
+    private final RoomRepository roomRepository;
     private final LocationRepository locationRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public void create(RoomCreateDto dto) {
+    public void create(RoomCreateRequest dto) {
         var location = locationRepository.findById(dto.getLocationId())
                 .orElseThrow(() -> new NotFoundException("Lokasyon bulunamadı!"));
 
