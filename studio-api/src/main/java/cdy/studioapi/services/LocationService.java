@@ -44,7 +44,7 @@ public class LocationService {
 
             location.setParent(parent);
         }
-
+        
         locationRepository.save(location);
     }
 

@@ -46,6 +46,7 @@ public class SecurityConfig {
         // .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         http.cors(Customizer.withDefaults());
         http.authorizeHttpRequests(auth -> auth.shouldFilterAllDispatcherTypes(true)
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/api/auth/token").permitAll()
                 .requestMatchers("/api/auth/refresh-token").permitAll()
                 .anyRequest().authenticated());
