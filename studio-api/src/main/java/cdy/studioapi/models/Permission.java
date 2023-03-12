@@ -11,7 +11,7 @@ import java.util.List;
 public class Permission extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String name;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String displayName;
 
     @ManyToMany
@@ -24,12 +24,10 @@ public class Permission extends BaseEntity {
 
     }
 
-    public Permission(String name, String displayName) {
-        this.name = name;
-        this.displayName = displayName;
-    }
-
-    public void updateDisplayName(String displayName) {
-        this.displayName = displayName;
+    public static Permission create(String name, String displayName) {
+        var permission = new Permission();
+        permission.name = name;
+        permission.displayName = displayName;
+        return permission;
     }
 }
