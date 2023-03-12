@@ -68,7 +68,7 @@ public class ReservationService {
             throw new BadRequestException("Belirtilen tarihler arasında bir rezervasyonunuz bulunmaktadır.");
         }
 
-        if (dto.getSlotId() != res.getSlot().getId()) {
+        if (!dto.getSlotId().equals(res.getSlot().getId())) {
             var slot = slotRepository.findBy(SlotSpecifications.slotIdEquals(dto.getSlotId()), FluentQuery.FetchableFluentQuery::first).orElseThrow(() -> new NotFoundException("Slot bulunamadı."));
             res.setSlot(slot);
         }
@@ -84,7 +84,7 @@ public class ReservationService {
         return reservationRepository.findAllAsReservationView();
     }
 
-    public Page<List<ReservationView>> getAll(int userId, Pageable page) {
+    public Page<ReservationView> getAll(int userId, Pageable page) {
         return reservationRepository.findAllAsReservationView(userId, page);
     }
 

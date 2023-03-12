@@ -5,10 +5,13 @@ import cdy.studioapi.exceptions.BadRequestException;
 import cdy.studioapi.infrastructure.QuoteRepository;
 import cdy.studioapi.infrastructure.specs.QuoteSpecifications;
 import cdy.studioapi.models.Quote;
+import cdy.studioapi.models.User;
 import cdy.studioapi.requests.QuoteCreateRequest;
 import cdy.studioapi.views.QuoteView;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.FluentQuery;
@@ -41,12 +44,13 @@ public class QuoteService {
         quoteRepository.save(quote);
     }
 
+    @Cacheable(value = "quoteOfTheDay")
     public QuoteView getQuoteOfTheDay() {
         return quoteRepository.findBy(QuoteSpecifications.getQuoteOfTheDay(), r -> r.project("user").first().map(QuoteView::new)).orElse(null);
     }
 
-    public Page<QuoteView> getMyQuotes(Pageable pageable) {
-        return quoteRepository.findBy(QuoteSpecifications.getQuotesByUserId(authenticationProvider.getAuthentication().getId()),
+    public Page<QuoteView> getQuotes(Pageable pageable, User user) {
+        return quoteRepository.findBy(QuoteSpecifications.getQuotesByUserId(user.getId()),
                 r -> r.sortBy(pageable.getSort()).page(pageable).map(QuoteView::new));
     }
 
@@ -76,6 +80,7 @@ public class QuoteService {
     @Async
     @Scheduled(cron = "0 0 21 * * MON-FRI")
     @Transactional
+    @CacheEvict(value = "quoteOfTheDay", allEntries = true)
     public void changeQuoteOfTheDay() {
         // get the active quote and set it to shown then save it to the database
         quoteRepository

@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 
+@Repository
 public interface QuoteRepository extends JpaRepository<Quote, Integer>, JpaSpecificationExecutor<Quote> {
 
     @Query("UPDATE Quote q SET q.status = cdy.studioapi.enums.QuoteStatus.PENDING, q.statusResetDate = null " +

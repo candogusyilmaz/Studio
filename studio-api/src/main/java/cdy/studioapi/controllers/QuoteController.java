@@ -1,6 +1,7 @@
 package cdy.studioapi.controllers;
 
 import cdy.studioapi.requests.QuoteCreateRequest;
+import cdy.studioapi.services.AuthenticationProvider;
 import cdy.studioapi.services.QuoteService;
 import cdy.studioapi.views.QuoteView;
 import jakarta.validation.Valid;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/quotes")
 public class QuoteController {
     private final QuoteService quoteService;
+    private final AuthenticationProvider authenticationProvider;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -24,7 +26,7 @@ public class QuoteController {
         quoteService.create(dto);
     }
 
-    @GetMapping("/today")
+    @GetMapping("/quoteOfTheDay")
     public ResponseEntity<QuoteView> getQuoteOfTheDay() {
         var quoteOfTheDay = quoteService.getQuoteOfTheDay();
 
@@ -33,9 +35,9 @@ public class QuoteController {
         return ResponseEntity.ok(quoteOfTheDay);
     }
 
-    @GetMapping({"", "/"})
+    @GetMapping
     public Page<QuoteView> getMyQuotes(@PageableDefault Pageable pageable) {
-        return quoteService.getMyQuotes(pageable);
+        return quoteService.getQuotes(pageable, authenticationProvider.getAuthentication());
     }
 
     @PatchMapping("/toggle/{id}")

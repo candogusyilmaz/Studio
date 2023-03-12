@@ -24,7 +24,7 @@ public class ReservationController {
     private final ReservationService reservationService;
     private final AuthenticationProvider authenticationProvider;
 
-    @PostMapping({"", "/"})
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public void create(@RequestBody @Valid ReservationCreateRequest req) {
@@ -43,7 +43,7 @@ public class ReservationController {
     }
 
     @GetMapping("/history")
-    public Page<List<ReservationView>> getReservationsHistoryByUser(@PageableDefault Pageable page) {
+    public Page<ReservationView> getReservationsHistoryByUser(@PageableDefault Pageable page) {
         return reservationService.getAll(authenticationProvider.getAuthentication().getId(), page);
     }
 

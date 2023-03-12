@@ -26,7 +26,7 @@ public class LocationController {
         locationService.create(req);
     }
 
-    @GetMapping({"", "/"})
+    @GetMapping
     public Page<LocationView> getAll(@PageableDefault Pageable pageable, Optional<String> name) {
         var nameQuerySpec = name.map(LocationSpecifications::findByName).orElse(null);
         return locationService.getAll(pageable, nameQuerySpec);

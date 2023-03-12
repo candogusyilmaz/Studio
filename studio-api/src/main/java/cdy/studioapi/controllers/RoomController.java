@@ -25,7 +25,7 @@ public class RoomController {
         roomService.create(req);
     }
 
-    @GetMapping({"", "/"})
+    @GetMapping
     public Page<RoomView> getAll(@PageableDefault Pageable pageable) {
         return roomService.getAll(pageable);
     }

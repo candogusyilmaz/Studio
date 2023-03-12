@@ -17,7 +17,7 @@ import java.util.List;
 public class SlotController {
     private final SlotService slotService;
 
-    @GetMapping({"", "/"})
+    @GetMapping
     public List<SlotView> getAll() {
         return slotService.getAll();
     }
