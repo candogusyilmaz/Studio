@@ -11,7 +11,6 @@ import java.util.List;
 public class UserView implements Serializable {
     private final int id;
     private final String username;
-    private final String password;
     private final String displayName;
     private final String title;
     private final String email;
@@ -23,7 +22,6 @@ public class UserView implements Serializable {
     public UserView(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
-        this.password = user.getPassword();
         this.displayName = user.getDisplayName();
         this.title = user.getTitle();
         this.email = user.getEmail();

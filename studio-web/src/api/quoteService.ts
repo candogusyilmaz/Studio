@@ -10,7 +10,7 @@ export function createQuote(quote: string) {
 }
 
 export function fetchQuoteOfTheDay(signal?: AbortSignal) {
-  const query = new URL(quotesURL + "/today");
+  const query = new URL(quotesURL + "/quoteOfTheDay");
   return api.get<QuoteView>(query.toString(), { signal });
 }
 
