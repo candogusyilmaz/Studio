@@ -1,6 +1,6 @@
 import { Badge, Button, Flex, Menu, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
-import { IconDotsVertical, IconX } from "@tabler/icons";
+import { IconDotsVertical, IconX } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import { useMemo, useState } from "react";

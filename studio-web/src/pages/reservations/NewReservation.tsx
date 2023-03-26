@@ -17,7 +17,7 @@ import {
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { showNotification } from "@mantine/notifications";
-import { IconCalendarEvent, IconCheck, IconExclamationMark, IconHome, IconLocation } from "@tabler/icons";
+import { IconCalendarEvent, IconCheck, IconExclamationMark, IconHome, IconLocation } from "@tabler/icons-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useState } from "react";

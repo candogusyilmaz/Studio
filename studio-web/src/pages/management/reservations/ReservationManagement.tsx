@@ -1,5 +1,5 @@
-import { Flex, Tabs, Text } from "@mantine/core";
-import { IconHome, IconLocation } from "@tabler/icons";
+import { Flex, Tabs } from "@mantine/core";
+import { IconHome, IconLocation } from "@tabler/icons-react";
 import PageHeader from "../../../components/PageHeader";
 import LocationManagementTab from "./LocationManagementTab";
 import RoomManagementTab from "./RoomManagamentTab";

@@ -1,6 +1,6 @@
 import { ReactElement, useContext } from "react";
 import { Group, createStyles, Anchor, Menu, SimpleGrid } from "@mantine/core";
-import { IconChevronDown } from "@tabler/icons";
+import { IconChevronDown } from "@tabler/icons-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
@@ -27,8 +27,8 @@ const useStyles = createStyles((theme) => ({
   },
 
   subLinkActive: {
-    backgroundColor: "1px solid red"
-  }
+    backgroundColor: "1px solid red",
+  },
 }));
 
 export interface HeaderLinkProps {
@@ -61,8 +61,7 @@ export function HeaderLink({ href, label, permission, icon, links }: HeaderLinkP
           event.preventDefault();
           if (subLink.href) navigate(subLink.href);
         }}
-        className={cx({ [classes.subLinkActive]: subLink.href === location.pathname })}
-      >
+        className={cx({ [classes.subLinkActive]: subLink.href === location.pathname })}>
         <Group spacing={6}>
           {subLink.icon}
           {subLink.label}

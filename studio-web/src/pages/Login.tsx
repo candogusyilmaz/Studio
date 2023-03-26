@@ -1,6 +1,6 @@
 import { Paper, createStyles, TextInput, PasswordInput, Button, Title, Alert } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
-import { IconAlertCircle } from "@tabler/icons";
+import { IconAlertCircle } from "@tabler/icons-react";
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";

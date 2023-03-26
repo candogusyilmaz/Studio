@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Group, Box, Collapse, Text, UnstyledButton, createStyles } from "@mantine/core";
-import { TablerIcon, IconChevronLeft, IconChevronRight } from "@tabler/icons";
+import { Icon, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
@@ -41,7 +41,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface LinksGroupProps {
-  icon: TablerIcon;
+  icon: Icon;
   label: string;
   initiallyOpened?: boolean;
   links?: { label: string; link: string }[];
@@ -81,7 +81,7 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links }: LinksG
               size={14}
               stroke={1.5}
               style={{
-                transform: opened ? `rotate(${theme.dir === "rtl" ? -90 : 90}deg)` : "none",
+                transform: opened ? `rotate(90deg)` : "none",
               }}
             />
           )}

@@ -1,4 +1,4 @@
-import { IconCalendarEvent, IconHistory, IconHome, IconHomeCog, IconPlus, IconServerCog } from "@tabler/icons";
+import { IconCalendarEvent, IconHistory, IconHome, IconHomeCog, IconPlus, IconServerCog } from "@tabler/icons-react";
 import React, { ReactElement } from "react";
 import { Route, Routes } from "react-router-dom";
 import RequireAuth from "./components/shared/RequireAuth";

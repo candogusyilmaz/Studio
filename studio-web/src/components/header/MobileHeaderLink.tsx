@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Group, createStyles, Anchor, Text, Collapse } from "@mantine/core";
-import { IconChevronDown } from "@tabler/icons";
+import { IconChevronDown } from "@tabler/icons-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { HeaderLinkProps } from "./HeaderLink";

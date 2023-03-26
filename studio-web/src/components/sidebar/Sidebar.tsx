@@ -1,12 +1,4 @@
-import {
-  Navbar,
-  Group,
-  ScrollArea,
-  createStyles,
-  MediaQuery,
-  Burger,
-  useMantineTheme,
-} from "@mantine/core";
+import { Navbar, Group, ScrollArea, createStyles, MediaQuery, Burger, useMantineTheme } from "@mantine/core";
 import {
   IconCalendarStats,
   IconGauge,
@@ -15,7 +7,7 @@ import {
   IconAdjustments,
   IconLock,
   Icon123,
-} from "@tabler/icons";
+} from "@tabler/icons-react";
 import { ColorSchemeToggler } from "./ColorSchemeToggler";
 import { LinksGroup } from "./LinksGroup";
 import { UserButton } from "./UserButton";
@@ -58,20 +50,16 @@ const mockdata = [
 
 const useStyles = createStyles((theme) => ({
   navbar: {
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
   },
 
   header: {
     padding: theme.spacing.md,
     color: theme.colorScheme === "dark" ? theme.white : theme.black,
-    borderBottom: `1px solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
-    }`,
+    borderBottom: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]}`,
   },
 
-  links: {
-  },
+  links: {},
 
   linksInner: {
     paddingTop: theme.spacing.xl,
@@ -79,37 +67,22 @@ const useStyles = createStyles((theme) => ({
   },
 
   footer: {
-    borderTop: `1px solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
-    }`,
+    borderTop: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]}`,
   },
 }));
 
 export function Sidebar({ opened, setOpened }: SidebarProps) {
   const theme = useMantineTheme();
   const { classes } = useStyles();
-  const links = mockdata.map((item) => (
-    <LinksGroup {...item} key={item.label} />
-  ));
+  const links = mockdata.map((item) => <LinksGroup {...item} key={item.label} />);
 
   return (
-    <Navbar
-      width={{ sm: 275 }}
-      className={classes.navbar}
-      hiddenBreakpoint="sm"
-      hidden={!opened}
-    >
+    <Navbar width={{ sm: 275 }} className={classes.navbar} hiddenBreakpoint="sm" hidden={!opened}>
       <Navbar.Section className={classes.header}>
         <Group position="apart">
           Studio
           <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-            <Burger
-              opened={opened}
-              onClick={() => setOpened()}
-              size="sm"
-              color={theme.colors.gray[6]}
-              mr="xl"
-            />
+            <Burger opened={opened} onClick={() => setOpened()} size="sm" color={theme.colors.gray[6]} mr="xl" />
           </MediaQuery>
           <ColorSchemeToggler />
         </Group>
@@ -129,4 +102,4 @@ export function Sidebar({ opened, setOpened }: SidebarProps) {
 interface SidebarProps {
   opened: boolean;
   setOpened: Function;
-};
+}

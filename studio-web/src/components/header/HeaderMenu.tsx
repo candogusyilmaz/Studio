@@ -15,7 +15,7 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLogout, IconMoonStars, IconQuote, IconSettings, IconSun } from "@tabler/icons";
+import { IconLogout, IconMoonStars, IconQuote, IconSettings, IconSun } from "@tabler/icons-react";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";

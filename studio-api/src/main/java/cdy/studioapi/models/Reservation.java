@@ -34,13 +34,15 @@ public class Reservation extends BaseEntity {
 
     @Override
     public String toString() {
-        return "Reservation{" +
-                "user=" + user.getId() +
-                ", slot=" + slot.getId() +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", lastAction=" + (lastAction == null ? "null" : lastAction.getId()) +
-                '}';
+        return """
+                {
+                      "userId": %d,
+                      "slotId": %d,
+                      "startDate": "%s",
+                      "endDate": "%s",
+                      "lastActionId": %s
+                }
+                """.formatted(user.getId(), slot.getId(), startDate, endDate, lastAction == null ? "none" : lastAction.getId());
     }
 
     public void setStartDate(LocalDateTime startDate) {

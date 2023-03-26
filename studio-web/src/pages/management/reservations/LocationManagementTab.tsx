@@ -2,7 +2,7 @@ import { Button, Flex, Modal, Select, Text, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
-import { IconLocation, IconPlus } from "@tabler/icons";
+import { IconLocation, IconPlus } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";

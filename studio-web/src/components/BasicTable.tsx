@@ -17,7 +17,7 @@ import {
   Text,
   useMantineTheme,
 } from "@mantine/core";
-import { IconArrowNarrowDown, IconArrowNarrowUp, IconEye, IconEyeOff, IconLayoutColumns, IconSelector } from "@tabler/icons";
+import { IconArrowNarrowDown, IconArrowNarrowUp, IconEye, IconEyeOff, IconLayoutColumns, IconSelector } from "@tabler/icons-react";
 import {
   flexRender,
   getCoreRowModel,

@@ -1,7 +1,7 @@
 import { Button, Flex, Modal, NumberInput, Select, SelectItem, Text, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
-import { IconHome, IconLocation, IconPlus, IconUsers } from "@tabler/icons";
+import { IconHome, IconLocation, IconPlus, IconUsers } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import { AxiosError } from "axios";

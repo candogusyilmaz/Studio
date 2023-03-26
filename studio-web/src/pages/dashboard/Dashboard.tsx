@@ -1,7 +1,7 @@
 import { ActionIcon, Blockquote, Center, createStyles, Text, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
-import { IconBrandInertia, IconQuote } from "@tabler/icons";
+import { IconBrandInertia, IconQuote } from "@tabler/icons-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { z } from "zod";
