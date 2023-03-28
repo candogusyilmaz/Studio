@@ -50,7 +50,7 @@ const lightTheme: MantineThemeOverride = {
       },
     },
   },
-  fontFamily: "Inter",
+  fontFamily: "Public Sans",
   defaultGradient: {
     deg: 90,
     to: "gradientTo",

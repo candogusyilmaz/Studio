@@ -9,12 +9,6 @@ import { showErrorNotification } from "../../api/api";
 import { createQuote, fetchQuoteOfTheDay } from "../../api/quoteService";
 
 const useStyles = createStyles((theme) => ({
-  container: {
-    minHeight: "calc(100vh - 112px - 1rem - 70px)",
-    [theme.fn.smallerThan("sm")]: {
-      minHeight: "calc(100vh - 56px - 1rem - 70px)",
-    },
-  },
   blockquote: {
     paddingTop: "3rem",
     paddingBottom: "3rem",
@@ -109,7 +103,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <Center className={classes.container}>
+      <Center>
         {!isLoading && (
           <Blockquote color="blue" cite={`- ${quoteOfTheDay?.user?.displayName ?? "Sistem"}`} className={classes.blockquote}>
             <Text className={classes.quote}>{quoteOfTheDay?.content ?? "Buralar biraz ıssız gibi bir şeyler eklemeye ne dersin?"}</Text>
