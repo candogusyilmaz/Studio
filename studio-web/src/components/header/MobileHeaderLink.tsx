@@ -45,9 +45,7 @@ export function MobileHeaderLink({ href, label, permission, icon, links }: Heade
   const location = useLocation();
   const [opened, { toggle }] = useDisclosure(false);
   const { cx, classes } = useStyles();
-  const { getUser } = useContext(AuthContext);
-
-  const user = getUser();
+  const { user } = useContext(AuthContext);
 
   if (permission && !user?.permissions.includes(permission)) {
     return <></>;

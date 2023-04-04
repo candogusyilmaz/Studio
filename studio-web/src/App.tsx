@@ -68,18 +68,6 @@ const queryClient = new QueryClient({
   },
 });
 
-function AxiosProvider() {
-  return (
-    <AxiosInterceptor>
-      <QueryClientProvider client={queryClient}>
-        <DatesProvider settings={{ locale: getPreferredLanguage() }}>
-          <StudioRoutes />
-        </DatesProvider>
-      </QueryClientProvider>
-    </AxiosInterceptor>
-  );
-}
-
 function App() {
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: "theme",
@@ -93,8 +81,13 @@ function App() {
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider withGlobalStyles withNormalizeCSS theme={colorScheme === "dark" ? darkTheme : lightTheme}>
         <Notifications position="top-center" autoClose={5000} />
+        <AxiosInterceptor />
         <ModalsProvider>
-          <AxiosProvider />
+          <QueryClientProvider client={queryClient}>
+            <DatesProvider settings={{ locale: getPreferredLanguage() }}>
+              <StudioRoutes />
+            </DatesProvider>
+          </QueryClientProvider>
         </ModalsProvider>
       </MantineProvider>
     </ColorSchemeProvider>

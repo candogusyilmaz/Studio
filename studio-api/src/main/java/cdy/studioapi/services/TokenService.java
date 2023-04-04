@@ -1,5 +1,6 @@
 package cdy.studioapi.services;
 
+import cdy.studioapi.config.JwtProperties;
 import cdy.studioapi.models.User;
 import cdy.studioapi.responses.LoginResponse;
 import lombok.AllArgsConstructor;
@@ -12,8 +13,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
 @Service
@@ -21,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 public class TokenService {
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
+    private final JwtProperties jwtProperties;
     private final UserService userService;
 
     public User getSecurityUser(String refreshToken) {
@@ -31,8 +31,7 @@ public class TokenService {
 
     public String createRefreshTokenCookie(User principal) {
         var now = Instant.now();
-        var expireInSeconds = 60 * 60 * 24; // seconds * minutes * hours * (days)
-        var expiresAt = now.plus(expireInSeconds, ChronoUnit.SECONDS);
+        var expiresAt = now.plus(jwtProperties.getRefreshTokenExpirationInSeconds(), ChronoUnit.SECONDS);
 
         var claims = JwtClaimsSet.builder()
                 .issuer("studio-api")
@@ -46,7 +45,7 @@ public class TokenService {
 
         return ResponseCookie.from("refresh-token", token)
                 .path("/")
-                .maxAge(expireInSeconds)
+                .maxAge(jwtProperties.getRefreshTokenExpirationInSeconds())
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("none")
@@ -56,22 +55,25 @@ public class TokenService {
 
     public LoginResponse createAccessToken(User principal) {
         var now = Instant.now();
-        var expiresAt = now.plus(10, ChronoUnit.DAYS);
+        var expiresAt = now.plus(jwtProperties.getAccessTokenExpirationInSeconds(), ChronoUnit.SECONDS);
 
         var claims = JwtClaimsSet.builder()
                 .issuer("studio-api")
                 .issuedAt(now)
                 .expiresAt(expiresAt)
                 .subject(principal.getUsername())
-                .claim("id", principal.getId())
-                .claim("email", principal.getEmail())
                 .claim("timezone", principal.getTimezone())
-                .claim("scope", principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .build();
 
         var token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
-        return new LoginResponse(principal.getUsername(), principal.getEmail(), principal.getDisplayName(), principal.getTitle(), principal.getTimezone(),
-                token, LocalDateTime.ofInstant(expiresAt, ZoneOffset.UTC), principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
+        var permissions = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+
+        return new LoginResponse(
+                principal.getDisplayName(),
+                principal.getTitle(),
+                principal.getTimezone(),
+                token,
+                permissions);
     }
 }

@@ -101,10 +101,8 @@ export function HeaderMenu() {
   const [opened, { toggle }] = useDisclosure(false);
   const { classes } = useStyles();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const { getUser, logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
-
-  const user = getUser();
 
   const logoUrl = colorScheme === "dark" ? "/images/studio-logo-white.png" : "/images/studio-logo-black.png";
 
@@ -114,7 +112,7 @@ export function HeaderMenu() {
         <Container className={classes.headerContainer} size="xl">
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
           <Anchor
-            onClick={(s) => {
+            onClick={(s: any) => {
               s.preventDefault();
               navigate("/", { replace: true });
             }}>

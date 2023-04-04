@@ -3,7 +3,7 @@ import { showNotification } from "@mantine/notifications";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { getAccessTokenFromLocalStorage, setUserToLocalStorage } from "../utils/LocalStorageUtils";
+import { getAccessTokenFromLocalStorage } from "../utils/LocalStorageUtils";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/api/",
@@ -22,7 +22,7 @@ api.interceptors.request.use((config) => {
   }
 
   if (config.url === "auth/token" || config.url === "auth/refresh-token") {
-    delete config.headers["Authorization"];
+    delete config.headers.Authorization;
   } else {
     const token = getAccessTokenFromLocalStorage();
 
@@ -30,7 +30,7 @@ api.interceptors.request.use((config) => {
       throw new Error("TOKEN_NOT_FOUND");
     }
 
-    config.headers["Authorization"] = "Bearer " + token;
+    config.headers.Authorization = "Bearer " + token;
   }
 
   return config;
@@ -41,7 +41,7 @@ function isUnauthorizedResponse(error: AxiosError<unknown, any>) {
 }
 
 export const AxiosInterceptor = ({ children }: any) => {
-  const { logout } = useContext(AuthContext);
+  const { logout, setUser } = useContext(AuthContext);
 
   useEffect(() => {
     const respInterceptor = api.interceptors.response.use(responseInterceptorSuccess, (error: AxiosError<unknown, any>) => {
@@ -54,7 +54,7 @@ export const AxiosInterceptor = ({ children }: any) => {
         return api
           .post("auth/refresh-token")
           .then((s) => {
-            setUserToLocalStorage(s.data);
+            setUser(s.data);
             return api(error.config ?? {});
           })
           .catch((s) => {

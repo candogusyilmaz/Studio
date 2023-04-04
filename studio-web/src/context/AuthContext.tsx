@@ -1,17 +1,13 @@
 import { AxiosError } from "axios";
-import dayjs from "dayjs";
 import React, { createContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../api/api";
-import { getUserFromLocalStorage, removeUserFromLocalStorage, setUserToLocalStorage } from "../utils/LocalStorageUtils";
+import usePersistedState from "../hooks/usePersistedState";
 
 export interface AuthProps {
-  email: string;
-  username: string;
   displayName: string;
   title?: string;
-  accessToken: string;
-  expiresAt: string;
+  token: string;
   permissions: string[];
 }
 
@@ -20,18 +16,18 @@ interface AuthProviderProps {
 }
 
 interface AuthContextProps {
+  user: AuthProps | undefined;
   isClientError: boolean;
   isLoggingIn: boolean;
-  getUser: () => AuthProps | null;
+  setUser: (user: AuthProps | undefined) => void;
   login: (username: string, password: string) => void;
   logout: () => void;
-  refresh: () => void;
 }
 
 export const AuthContext = createContext<AuthContextProps>(null!);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<AuthProps | null>(null);
+  const [user, setUser] = usePersistedState<AuthProps | undefined>("juser");
   const [isClientError, setIsClientError] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
@@ -39,31 +35,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const from: string = location.state?.from?.pathname || "/";
 
   useEffect(() => {
-    const userInLocalStorage = getUserFromLocalStorage();
-
-    if (!user && !userInLocalStorage) {
+    if (!user) {
       logout();
     }
 
-    if (!user && userInLocalStorage) {
-      if (dayjs(userInLocalStorage.expiresAt).isBefore(dayjs(new Date()))) {
-        logout();
-        return;
-      } else {
-        navigate(location, { replace: true });
-      }
-
-      setUser(userInLocalStorage);
-    }
+    navigate(location, { replace: true });
   }, []);
-
-  function getUser() {
-    if (user) {
-      return user;
-    }
-
-    return getUserFromLocalStorage();
-  }
 
   function login(username: string, password: string) {
     setIsLoggingIn(true);
@@ -76,7 +53,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsLoggingIn(false);
         setUser(s.data);
         setIsClientError(false);
-        setUserToLocalStorage(s.data);
         navigate(from, { replace: true });
       })
       .catch((s: AxiosError) => {
@@ -93,32 +69,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
   }
 
-  function refresh() {
-    api
-      .post("auth/refresh-token")
-      .then((s) => {
-        setUser(s.data);
-        setUserToLocalStorage(s.data);
-      })
-      .catch(() => {
-        logout();
-      });
-  }
-
   function logout() {
-    setUser(null);
+    setUser(undefined);
     setIsClientError(false);
-    removeUserFromLocalStorage();
     navigate("/login");
   }
 
   const value = {
     isClientError,
     isLoggingIn,
-    getUser,
+    user,
+    setUser,
     login,
     logout,
-    refresh,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

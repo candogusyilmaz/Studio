@@ -43,9 +43,7 @@ export function HeaderLink({ href, label, permission, icon, links }: HeaderLinkP
   const navigate = useNavigate();
   const location = useLocation();
   const { cx, classes } = useStyles();
-  const { getUser } = useContext(AuthContext);
-
-  const user = getUser();
+  const { user } = useContext(AuthContext);
 
   if (permission && !user?.permissions.includes(permission)) {
     return <></>;
@@ -57,7 +55,7 @@ export function HeaderLink({ href, label, permission, icon, links }: HeaderLinkP
     .map((subLink) => (
       <Menu.Item
         key={subLink.href}
-        onClick={(event) => {
+        onClick={(event: any) => {
           event.preventDefault();
           if (subLink.href) navigate(subLink.href);
         }}

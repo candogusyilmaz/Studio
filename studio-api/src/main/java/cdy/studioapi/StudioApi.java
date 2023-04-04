@@ -1,6 +1,7 @@
 package cdy.studioapi;
 
 import cdy.studioapi.config.CorsProperties;
+import cdy.studioapi.config.JwtProperties;
 import cdy.studioapi.config.RsaKeyProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,13 +16,11 @@ import java.util.TimeZone;
 @EnableAsync
 @EnableScheduling
 @EnableCaching
-@EnableConfigurationProperties({RsaKeyProperties.class, CorsProperties.class})
+@EnableConfigurationProperties({RsaKeyProperties.class, CorsProperties.class, JwtProperties.class})
 public class StudioApi {
 
     public static void main(String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         SpringApplication.run(StudioApi.class, args);
     }
-
-
 }
