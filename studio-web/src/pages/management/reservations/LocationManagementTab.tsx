@@ -4,13 +4,13 @@ import { useDisclosure } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
 import { IconLocation, IconPlus } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createColumnHelper, SortingState } from "@tanstack/react-table";
+import { SortingState, createColumnHelper } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { showErrorNotification } from "../../../api/api";
 import { createLocation, fetchLocations, fetchLocationsAll } from "../../../api/locationService";
 import { LocationView } from "../../../api/types";
-import BasicTable from "../../../components/BasicTable";
+import StudioTable from "../../../components/shared/StudioTable/StudioTable";
 
 const queryKey = {
   locationManagementList: "locationManagementList",
@@ -56,7 +56,7 @@ function LocationTable() {
 
   return (
     <>
-      <BasicTable
+      <StudioTable
         data={locationQuery.data?.content ?? []}
         columns={columns}
         sort={sort}

@@ -1,4 +1,4 @@
-import { IconCalendarEvent, IconHistory, IconHome, IconHomeCog, IconPlus, IconServerCog } from "@tabler/icons-react";
+import { IconCalendarEvent, IconHistory, IconHome, IconHomeCog, IconPlus, IconServerCog, IconShieldCog } from "@tabler/icons-react";
 import React, { ReactElement } from "react";
 import { Route, Routes } from "react-router-dom";
 import RequireAuth from "./components/shared/RequireAuth";
@@ -6,6 +6,7 @@ import StudioShell from "./layouts/StudioShell";
 import { Login } from "./pages/Login";
 import { NotFound } from "./pages/NotFound";
 import { Unauthorized } from "./pages/Unauthorized";
+import { PERMISSIONS } from "./authorities";
 
 interface RouteLink {
   href: string;
@@ -48,6 +49,12 @@ export const headerRoutes: RouteLink[] = [
         label: "Rezervasyon Tanımlamaları",
         icon: <IconHomeCog size={16} />,
       },
+      {
+        href: "/management/permissions",
+        label: "Yetki Tanımlamaları",
+        icon: <IconShieldCog size={16} />,
+        permission: PERMISSIONS.LIST_PERMISSIONS,
+      },
     ],
   },
 ];
@@ -57,6 +64,7 @@ const MyQuotes = React.lazy(() => import("./pages/profile/MyQuotes"));
 const NewReservation = React.lazy(() => import("./pages/reservations/NewReservation"));
 const ReservationHistory = React.lazy(() => import("./pages/reservations/ReservationHistory"));
 const ReservationManagement = React.lazy(() => import("./pages/management/reservations/ReservationManagement"));
+const PermissionManagement = React.lazy(() => import("./pages/management/permissions/PermissionManagement"));
 
 export const StudioRoutes = () => (
   <Routes>
@@ -98,6 +106,14 @@ export const StudioRoutes = () => (
         element={
           <RequireAuth>
             <ReservationManagement />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/management/permissions"
+        element={
+          <RequireAuth permissions={[PERMISSIONS.LIST_PERMISSIONS]}>
+            <PermissionManagement />
           </RequireAuth>
         }
       />

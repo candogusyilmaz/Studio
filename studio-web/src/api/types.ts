@@ -32,11 +32,8 @@ export interface Page<T> {
 }
 
 export interface UserBasicView {
-  id: number;
-  username: string;
   displayName: string;
   title?: string;
-  email: string;
 }
 
 export interface ReservationView {
@@ -97,6 +94,19 @@ export interface QuoteView {
   statusResetDate?: Date;
   shownTimes: number;
   enabled: boolean;
+}
+
+export interface PermissionView {
+  id: number;
+  name: string;
+  displayName: string;
+  roles?: RoleView[]; // TODO: add RoleView[];
+}
+
+export interface RoleView {
+  id: number;
+  name: string;
+  permissions: PermissionView[];
 }
 
 export const ReservationStatusList = {

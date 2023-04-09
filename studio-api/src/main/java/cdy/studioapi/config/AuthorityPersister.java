@@ -4,6 +4,7 @@ import cdy.studioapi.StudioApi;
 import cdy.studioapi.infrastructure.PermissionRepository;
 import cdy.studioapi.models.Permission;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
@@ -32,10 +33,20 @@ public class AuthorityPersister implements ApplicationListener<ApplicationReadyE
                 .filter(p -> persistedPermissions.stream().noneMatch(pp -> p.getName().equals(pp.getName())))
                 .toList();
 
+        // Find the permissions that are not used in the controllers
+        var unusedPermissions = persistedPermissions.stream()
+                .filter(p -> controllerMethodPermissions.stream().noneMatch(pp -> p.getName().equals(pp.getName())))
+                .toList();
+
         // Persist the new permissions
         permissionRepository.saveAllAndFlush(newPermissions);
+
+        // Delete the unused permissions
+        permissionRepository.deleteAll(unusedPermissions);
     }
 
+    // TODO: Dosya yolunda eğer boşluk varsa hata fırlatıyor başka karakterlerde de aynı sorun çıkabilir
+    // TODO: Daha iyi bir yöntem bul!
     private static List<Class<?>> getControllers() {
         ClassLoader classLoader = StudioApi.class.getClassLoader();
         String packageName = "cdy.studioapi.controllers";
@@ -83,6 +94,12 @@ public class AuthorityPersister implements ApplicationListener<ApplicationReadyE
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
 
-        return permissions.stream().map(p -> Permission.create(p, p)).toList();
+        return permissions.stream()
+                .map(p -> {
+                    if (!StringUtils.isAlphanumeric(p.replace("_", "")))
+                        throw new IllegalArgumentException("Yetki adı alfanümerik olmalıdır.");
+                    return new Permission(p, p);
+                })
+                .toList();
     }
 }

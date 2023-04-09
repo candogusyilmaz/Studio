@@ -3,14 +3,14 @@ import { useDisclosure } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
 import { IconHome, IconLocation, IconPlus, IconUsers } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createColumnHelper, SortingState } from "@tanstack/react-table";
+import { SortingState, createColumnHelper } from "@tanstack/react-table";
 import { AxiosError } from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { showErrorNotification } from "../../../api/api";
 import { fetchLocationsAll } from "../../../api/locationService";
 import { createRoom, fetchRooms } from "../../../api/roomService";
 import { LocationView, RoomView } from "../../../api/types";
-import BasicTable from "../../../components/BasicTable";
+import StudioTable from "../../../components/shared/StudioTable/StudioTable";
 
 const queryKey = {
   roomManagementList: "roomManagementList",
@@ -57,7 +57,7 @@ function RoomTable() {
 
   return (
     <>
-      <BasicTable
+      <StudioTable
         data={roomQuery.data?.content ?? []}
         columns={columns}
         sort={sort}

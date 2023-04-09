@@ -1,7 +1,6 @@
 package cdy.studioapi.infrastructure;
 
 import cdy.studioapi.models.User;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -17,6 +16,6 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
 
     @Query("select u from User u where u.username = :username")
     @EntityGraph(attributePaths = {"roles.permissions"})
-    @Cacheable(value = "authentications", key = "#username", unless = "#result == null")
+        //@Cacheable(value = "authentications", key = "#username", unless = "#result == null")
     User findByUsernameIncludePermissions(String username);
 }

@@ -1,12 +1,12 @@
 import { Badge, Flex, Switch, Text, Tooltip } from "@mantine/core";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createColumnHelper, SortingState } from "@tanstack/react-table";
+import { SortingState, createColumnHelper } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { showErrorNotification } from "../../api/api";
 import { fetchMyQuotes, toggleQuoteStatus } from "../../api/quoteService";
-import { getQuoteStatus, getQuoteStatusColor, QuoteView } from "../../api/types";
-import BasicTable from "../../components/BasicTable";
+import { QuoteView, getQuoteStatus, getQuoteStatusColor } from "../../api/types";
 import PageHeader from "../../components/PageHeader";
+import StudioTable from "../../components/shared/StudioTable/StudioTable";
 import { convertDateToLocaleDateString } from "../../utils/DateTimeUtils";
 
 const queryKeys = {
@@ -91,7 +91,7 @@ export default function MyQuotes() {
   return (
     <Flex my="xl" direction="column" gap="xs">
       <PageHeader>Alıntılarım</PageHeader>
-      <BasicTable
+      <StudioTable
         data={quotes.data?.content ?? []}
         columns={columns}
         sort={sort}

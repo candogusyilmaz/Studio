@@ -2,14 +2,14 @@ import { Badge, Button, Flex, Menu, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { IconDotsVertical, IconX } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createColumnHelper, SortingState } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { SortingState, createColumnHelper } from "@tanstack/react-table";
+import { useState } from "react";
 import { showErrorNotification } from "../../api/api";
 import { cancelReservation, fetchReservationHistory } from "../../api/reservationService";
-import { getReservationStatus, getReservationStatusColor, isReservationCancellable, ReservationView } from "../../api/types";
-import BasicTable from "../../components/BasicTable";
-import PageHeader from "../../components/PageHeader";
-import { convertDatesToString, convertDateToLocaleDateTimeString } from "../../utils/DateTimeUtils";
+import { ReservationView, getReservationStatus, getReservationStatusColor, isReservationCancellable } from "../../api/types";
+import StudioTable from "../../components/shared/StudioTable/StudioTable";
+import Page1 from "../../layouts/Page1";
+import { convertDateToLocaleDateTimeString, convertDatesToString } from "../../utils/DateTimeUtils";
 
 const queryKey = {
   reservationHistory: "reservationHistory",
@@ -17,12 +17,48 @@ const queryKey = {
 
 export default function ReservationHistory() {
   return (
-    <Flex my="xl" direction="column" gap="xs">
-      <PageHeader>Geçmiş Rezervasyonlar</PageHeader>
+    <Page1 header="Geçmiş Rezervasyonlarım">
       <HistoryTable />
-    </Flex>
+    </Page1>
   );
 }
+
+const columnHelper = createColumnHelper<ReservationView>();
+const columns = [
+  columnHelper.accessor((row) => row.id, {
+    id: "id",
+    header: "#",
+    size: 20,
+    enableSorting: false,
+  }),
+  columnHelper.accessor((row) => row.slot, {
+    id: "slotId",
+    header: "Lokasyon",
+    enableSorting: false,
+    cell: (row) => <Text>{`${row.getValue()?.room?.location?.name}, ${row.getValue()?.room?.name}, ${row.getValue()?.name}`}</Text>,
+  }),
+  columnHelper.accessor((row) => [row.startDate, row.endDate], {
+    id: "startDate",
+    header: "Tarih",
+    cell: (row) => <Text>{convertDatesToString(row.getValue()[0], row.getValue()[1])}</Text>,
+  }),
+  columnHelper.accessor((row) => row.lastAction?.status, {
+    id: "lastAction.status",
+    header: "Durum",
+    cell: (row) => <Badge color={getReservationStatusColor(row.getValue())}>{getReservationStatus(row.getValue())}</Badge>,
+  }),
+  columnHelper.accessor((row) => row.lastAction?.actionDate, {
+    id: "lastAction.actionDate",
+    header: "Son Güncelleme",
+    cell: (row) => convertDateToLocaleDateTimeString(row.getValue()!),
+  }),
+  columnHelper.accessor((row) => row, {
+    id: "actions",
+    header: "",
+    enableSorting: false,
+    cell: (row) => <ReservationActions reservation={row.getValue()} />,
+  }),
+];
 
 function HistoryTable() {
   const [page, setPage] = useState(0);
@@ -36,58 +72,16 @@ function HistoryTable() {
     staleTime: 10 * 60 * 1000,
   });
 
-  const columnHelper = createColumnHelper<ReservationView>();
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor((row) => row.id, {
-        id: "id",
-        header: "#",
-        size: 20,
-        enableSorting: false,
-      }),
-      columnHelper.accessor((row) => row.slot, {
-        id: "slotId",
-        header: "Lokasyon",
-        enableSorting: false,
-        cell: (row) => <Text>{`${row.getValue()?.room?.location?.name}, ${row.getValue()?.room?.name}, ${row.getValue()?.name}`}</Text>,
-      }),
-      columnHelper.accessor((row) => [row.startDate, row.endDate], {
-        id: "startDate",
-        header: "Tarih",
-        cell: (row) => <Text>{convertDatesToString(row.getValue()[0], row.getValue()[1])}</Text>,
-      }),
-      columnHelper.accessor((row) => row.lastAction?.status, {
-        id: "lastAction.status",
-        header: "Durum",
-        cell: (row) => <Badge color={getReservationStatusColor(row.getValue())}>{getReservationStatus(row.getValue())}</Badge>,
-      }),
-      columnHelper.accessor((row) => row.lastAction?.actionDate, {
-        id: "lastAction.actionDate",
-        header: "Son Güncelleme",
-        cell: (row) => convertDateToLocaleDateTimeString(row.getValue()!),
-      }),
-      columnHelper.accessor((row) => row, {
-        id: "actions",
-        header: "",
-        enableSorting: false,
-        cell: (row) => <ReservationActions reservation={row.getValue()} />,
-      }),
-    ],
-    [],
-  );
-
   return (
-    <>
-      <BasicTable
-        data={historyQuery.data?.content ?? []}
-        columns={columns}
-        sort={sort}
-        setSort={setSort}
-        pagination={{ page, setPage, total: historyQuery.data?.totalPages ?? 1 }}
-        header={{ options: { showSortButton: true } }}
-        status={historyQuery.status}
-      />
-    </>
+    <StudioTable
+      data={historyQuery.data?.content ?? []}
+      columns={columns}
+      sort={sort}
+      setSort={setSort}
+      pagination={{ page, setPage, total: historyQuery.data?.totalPages ?? 1 }}
+      header={{ options: { showSortButton: true } }}
+      status={historyQuery.status}
+    />
   );
 }
 
