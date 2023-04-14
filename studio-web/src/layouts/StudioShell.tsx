@@ -26,7 +26,7 @@ export default function StudioShell() {
           minHeight: `calc(100vh - ${rem(footerHeight)})`,
         }}>
         <HeaderMenu />
-        <Container size="xl">
+        <Container size="xl" mt="md" mb="md">
           <Outlet />
         </Container>
       </Box>

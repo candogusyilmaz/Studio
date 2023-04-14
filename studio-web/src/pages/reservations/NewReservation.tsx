@@ -213,7 +213,7 @@ export default function NewReservation() {
   }
 
   return (
-    <Container size="xs" mt="xl">
+    <Container size="xs">
       <Paper withBorder p="xl">
         <Flex direction="column" gap="sm">
           <Text size="xl" weight={600}>
