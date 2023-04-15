@@ -1,7 +1,7 @@
 import { Box, Divider, Flex, Group, Pagination, Paper, Table, Text, createStyles, useMantineTheme } from "@mantine/core";
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import SortArrow from "./SortArrow";
-import ColumnVisibilityButton from "./SortButton";
+import ColumnVisibilityButton from "./ColumnVisibilityButton";
 import TableOverlay from "./TableOverlay";
 import { StudioTableProps } from "./types";
 

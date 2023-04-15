@@ -100,7 +100,7 @@ export interface PermissionView {
   id: number;
   name: string;
   displayName: string;
-  roles?: RoleView[]; // TODO: add RoleView[];
+  roles?: RoleView[];
 }
 
 export interface RoleView {
