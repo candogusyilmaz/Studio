@@ -70,7 +70,7 @@ function RoomTable() {
             </Text>
           ),
           rightSection: <NewRoomButton />,
-          options: { showSortButton: true },
+          options: { showColumnVisibilityButton: true },
         }}
         status={roomQuery.status}
       />

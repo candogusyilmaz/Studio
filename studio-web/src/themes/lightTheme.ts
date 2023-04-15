@@ -6,11 +6,6 @@ const lightTheme: MantineThemeOverride = {
   defaultRadius: "xs",
   fontFamily: "Public Sans",
   headings: { fontFamily: "Public Sans" },
-  globalStyles: (theme) => ({
-    body: {
-      WebkitFontSmoothing: "antialiased",
-    },
-  }),
 };
 
 export default lightTheme;

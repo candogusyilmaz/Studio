@@ -18,7 +18,7 @@ export interface StudioTableProps<T> {
     rightSection?: React.ReactNode;
     options?: {
       showDivider?: boolean;
-      showSortButton?: boolean;
+      showColumnVisibilityButton?: boolean;
     };
   };
   status?: "loading" | "error" | "success";

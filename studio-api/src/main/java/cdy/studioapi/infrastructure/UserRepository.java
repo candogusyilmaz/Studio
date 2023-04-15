@@ -16,6 +16,6 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
 
     @Query("select u from User u where u.username = :username")
     @EntityGraph(attributePaths = {"roles.permissions"})
-        //@Cacheable(value = "authentications", key = "#username", unless = "#result == null")
+        //@Cacheable(value = "auths", key = "#username", unless = "#result == null") TODO: Enable caching and find a way to invalidate the cache after a while
     User findByUsernameIncludePermissions(String username);
 }

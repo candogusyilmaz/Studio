@@ -2,7 +2,7 @@ import { Button, Menu, Switch, Text } from "@mantine/core";
 import { IconEye, IconEyeOff, IconLayoutColumns } from "@tabler/icons-react";
 import { Table as TanstackTable } from "@tanstack/react-table";
 
-export default function SortButton<T>({ table }: { table: TanstackTable<T> }) {
+export default function ColumnVisibilityButton<T>({ table }: { table: TanstackTable<T> }) {
   return (
     <Menu shadow="md" closeOnItemClick={false} styles={{ dropdown: { minWidth: 180 } }}>
       <Menu.Target>

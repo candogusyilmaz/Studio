@@ -79,7 +79,7 @@ function HistoryTable() {
       sort={sort}
       setSort={setSort}
       pagination={{ page, setPage, total: historyQuery.data?.totalPages ?? 1 }}
-      header={{ options: { showSortButton: true } }}
+      header={{ options: { showColumnVisibilityButton: true } }}
       status={historyQuery.status}
     />
   );
@@ -88,7 +88,7 @@ function HistoryTable() {
 function ReservationActions({ reservation }: { reservation: ReservationView }) {
   return (
     <Flex justify="end">
-      <Menu shadow="md" width={200} position="bottom">
+      <Menu shadow="md" width={200} position="bottom" withinPortal>
         <Menu.Target>
           <Button
             compact

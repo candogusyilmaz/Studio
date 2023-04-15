@@ -1,20 +1,25 @@
 import { Box, Divider, Flex, Group, Pagination, Paper, Table, Text, createStyles, useMantineTheme } from "@mantine/core";
 import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import SortArrow from "./SortArrow";
-import SortButton from "./SortButton";
+import ColumnVisibilityButton from "./SortButton";
 import TableOverlay from "./TableOverlay";
 import { StudioTableProps } from "./types";
 
 const useStyles = createStyles((theme) => ({
   table: {
-    width: "100%",
-    tableLayout: "fixed",
+    minWidth: "100%",
+
     "& th": {
       overflow: "hidden",
       textTransform: "uppercase",
     },
+
     "& td": {
       overflow: "hidden",
+    },
+
+    "& tr": {
+      width: "fit-content",
     },
   },
 }));
@@ -37,8 +42,8 @@ export default function StudioTable<T extends object>({ data, columns, sort, set
 
   return (
     <Paper shadow="sm" withBorder radius="xs">
-      {header && (
-        <>
+      <Box m={15}>
+        {header && (
           <Flex
             bg={theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[1]}
             p="xs"
@@ -48,14 +53,11 @@ export default function StudioTable<T extends object>({ data, columns, sort, set
             <Group spacing={12}>
               {header.rightSection}
               {header.options?.showDivider && <Divider orientation="vertical" size="xs" />}
-              {header.options?.showSortButton && <SortButton table={table} />}
+              {header.options?.showColumnVisibilityButton && <ColumnVisibilityButton table={table} />}
             </Group>
           </Flex>
-          <Divider />
-        </>
-      )}
-      <Box>
-        <Table horizontalSpacing="md" verticalSpacing="xs" striped className={classes.table}>
+        )}
+        <Table withBorder withColumnBorders horizontalSpacing="md" verticalSpacing="xs" striped className={classes.table}>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -81,9 +83,7 @@ export default function StudioTable<T extends object>({ data, columns, sort, set
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
-                    <Text size="sm">{flexRender(cell.column.columnDef.cell, cell.getContext())}</Text>
-                  </td>
+                  <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
                 ))}
               </tr>
             ))}
@@ -102,8 +102,7 @@ export default function StudioTable<T extends object>({ data, columns, sort, set
         </Table>
         {pagination && (
           <Pagination
-            sx={{ borderTop: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]}` }}
-            p="xs"
+            mt="xs"
             position="right"
             value={pagination.page + 1}
             size="sm"
