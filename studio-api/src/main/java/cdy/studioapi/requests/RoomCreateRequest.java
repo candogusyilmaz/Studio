@@ -18,7 +18,7 @@ public class RoomCreateRequest {
     @Positive(message = "Lokasyon bulunamadı.")
     private int locationId;
 
-    public String getName() {
-        return StringUtils.normalizeSpace(name);
+    public void setName(String name) {
+        this.name = StringUtils.normalizeSpace(name.trim());
     }
 }

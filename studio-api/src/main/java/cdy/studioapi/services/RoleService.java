@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 public class RoleService {
     private final RoleRepository roleRepository;
 
-    public void createRole(RoleCreateRequest req) {
-        if (roleRepository.exists(req.getName())) {
-            throw new BadRequestException("Role already exists");
-        }
+    public void create(RoleCreateRequest req) {
+        if (roleRepository.existsByName(req.getName()))
+            throw new BadRequestException("Bu isimde bir rol zaten var.");
 
-        roleRepository.save(Role.create(req.getName()));
+        var role = new Role(req.getName(), req.getLevel());
+        roleRepository.save(role);
     }
 }

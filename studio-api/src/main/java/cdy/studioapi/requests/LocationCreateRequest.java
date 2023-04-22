@@ -13,7 +13,7 @@ public class LocationCreateRequest {
 
     private Integer parentId;
 
-    public String getName() {
-        return StringUtils.normalizeSpace(name);
+    public void setName(String name) {
+        this.name = StringUtils.normalizeSpace(name.trim());
     }
 }

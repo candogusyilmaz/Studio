@@ -2,6 +2,7 @@ package cdy.studioapi.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.LinkedHashSet;
@@ -11,9 +12,13 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "roles")
+@NoArgsConstructor
 public class Role extends BaseEntity {
     @Column(nullable = false, unique = true, updatable = false)
     private String name;
+
+    @Column(nullable = false)
+    private int level;
 
     @ManyToMany
     @JoinTable(name = "role_permissions",
@@ -21,12 +26,8 @@ public class Role extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private Set<Permission> permissions = new LinkedHashSet<>();
 
-    protected Role() {
-    }
-
-    public static Role create(String name) {
-        Role role = new Role();
-        role.setName(name);
-        return role;
+    public Role(String name, int level) {
+        this.name = name;
+        this.level = level;
     }
 }
