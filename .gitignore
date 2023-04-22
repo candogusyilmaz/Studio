@@ -107,3 +107,5 @@ fabric.properties
 
 # SonarQube
 .scannerwork
+
+studio-api/.idea/
