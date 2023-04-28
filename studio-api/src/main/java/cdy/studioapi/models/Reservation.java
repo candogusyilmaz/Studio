@@ -3,6 +3,7 @@ package cdy.studioapi.models;
 import cdy.studioapi.exceptions.BadRequestException;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Duration;
@@ -13,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 @Setter
 @Entity
 @Table(name = "reservations")
+@NoArgsConstructor
 public class Reservation extends BaseEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

@@ -2,6 +2,7 @@ package cdy.studioapi.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
 
@@ -10,6 +11,7 @@ import org.hibernate.annotations.Where;
 @Entity
 @Table(name = "slot_items")
 @Where(clause = "deleted = false")
+@NoArgsConstructor
 public class SlotItem extends AuditableEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Slot slot;

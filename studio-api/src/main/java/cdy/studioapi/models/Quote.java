@@ -16,19 +16,25 @@ public class Quote extends AuditableEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private User user;
+
     @Column(nullable = false, updatable = false)
     private String content;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     @Setter(AccessLevel.NONE)
     private QuoteStatus status = QuoteStatus.PENDING;
+
     @Setter(AccessLevel.NONE)
     private LocalDate lastShownDate;
+
     @Setter(AccessLevel.NONE)
     private LocalDate statusResetDate;
+
     @Setter(AccessLevel.NONE)
     @Column(nullable = false)
     private int shownTimes = 0;
+
     @Column(nullable = false)
     private boolean enabled;
 

@@ -1,22 +1,22 @@
 package cdy.studioapi.models;
 
-import lombok.Getter;
-
 import jakarta.persistence.Entity;
-        import jakarta.persistence.ManyToOne;
-        import jakarta.persistence.Table;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "role_permissions")
+@NoArgsConstructor
 public class RolePermission extends BaseEntity {
+
     @ManyToOne(optional = false)
     private Role role;
+
     @ManyToOne(optional = false)
     private Permission permission;
-
-    protected RolePermission() {
-    }
 
     public RolePermission(Role role, Permission permission) {
         this.role = role;

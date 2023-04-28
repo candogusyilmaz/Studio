@@ -29,8 +29,8 @@ public class UserView implements Serializable {
         this.tokenVersion = user.getTokenVersion();
         this.timezone = user.getTimezone();
 
-        if (Hibernate.isInitialized(user.getRoles())) {
-            this.roles = user.getRoles().stream().map(RoleView::new).toList();
+        if (Hibernate.isInitialized(user.getUserRoles())) {
+            this.roles = user.getUserRoles().stream().map(s -> new RoleView(s.getRole())).toList();
         }
     }
 }

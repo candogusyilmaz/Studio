@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
     Optional<Integer> findTokenVersionByUsername(String username);
 
     @Query("select u from User u where u.username = :username")
-    @EntityGraph(attributePaths = {"roles.permissions"})
+    @EntityGraph(attributePaths = {"userRoles.role", "userRoles.role.rolePermissions.permission"})
         //@Cacheable(value = "auths", key = "#username", unless = "#result == null") TODO: Enable caching and find a way to invalidate the cache after a while
     User findByUsernameIncludePermissions(String username);
 }

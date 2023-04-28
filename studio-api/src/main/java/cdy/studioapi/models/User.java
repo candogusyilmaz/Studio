@@ -5,11 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
@@ -32,11 +30,8 @@ public class User extends BaseEntity implements UserDetails {
     private int tokenVersion;
     private String timezone;
 
-    @ManyToMany
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserRole> userRoles;
 
     public User(int id) {
         super(id);
@@ -51,9 +46,10 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.getRoles().stream()
-                .flatMap(r -> r.getPermissions().stream())
-                .map(p -> new SimpleGrantedAuthority(p.getName()))
+        // get userRoles -> get roles -> get rolePermissions -> get permissions -> get permission names
+        return this.getUserRoles().stream()
+                .flatMap(ur -> ur.getRole().getRolePermissions().stream())
+                .map(RolePermission::getPermission)
                 .toList();
     }
 
