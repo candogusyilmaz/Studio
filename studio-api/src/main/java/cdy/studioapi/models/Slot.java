@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Where;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,14 +20,11 @@ public class Slot extends AuditableEntity {
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @ManyToMany
-    @JoinTable(name = "slot_items",
-            joinColumns = @JoinColumn(name = "slot_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_id"))
-    private List<Item> items;
+    @OneToMany(mappedBy = "slot")
+    private Set<SlotItem> slotItems;
 
     @OneToMany(mappedBy = "slot")
-    private List<Reservation> reservations;
+    private Set<Reservation> reservations;
 
     @Column(nullable = false)
     private boolean deleted;

@@ -22,8 +22,8 @@ public class SlotView implements Serializable {
             this.room = new RoomView(slot.getRoom());
         }
 
-        if (Hibernate.isInitialized(slot.getItems())) {
-            this.items = slot.getItems().stream().map(ItemView::new).toList();
+        if (Hibernate.isInitialized(slot.getSlotItems())) {
+            this.items = slot.getSlotItems().stream().map(s -> new ItemView(s.getItem())).toList();
         }
     }
 }

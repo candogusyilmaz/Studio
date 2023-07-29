@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,7 +21,7 @@ public class Location extends BaseEntity {
     private Location parent;
 
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Room> rooms;
+    private Set<Room> rooms;
 
     public Location(String name) {
         this.name = name;
