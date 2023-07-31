@@ -19,18 +19,26 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @Column(nullable = false, unique = true)
     private String username;
+
     @Column(nullable = false)
     private String password;
+
     @Column(nullable = false)
     private String displayName;
+
     private String title;
+
     @Column(unique = true)
     private String email;
+
     @Column(nullable = false)
     private Boolean isEnabled = false;
+
     private int tokenVersion;
+
     private String timezone;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

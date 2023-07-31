@@ -14,7 +14,11 @@ import java.time.temporal.ChronoUnit;
 @Entity
 @Table(name = "reservations")
 @NoArgsConstructor
-public class Reservation extends BaseEntity {
+public class Reservation {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

@@ -16,7 +16,11 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "reservation_actions")
 @NoArgsConstructor
-public class ReservationAction extends BaseEntity {
+public class ReservationAction {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;

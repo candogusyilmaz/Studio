@@ -3,8 +3,11 @@ package cdy.studio.core.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -12,7 +15,11 @@ import java.util.Set;
 @Entity
 @Table(name = "slots")
 @Where(clause = "deleted = false")
-public class Slot extends AuditableEntity {
+public class Slot {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @Column(nullable = false)
     private String name;
 
@@ -28,4 +35,10 @@ public class Slot extends AuditableEntity {
 
     @Column(nullable = false)
     private boolean deleted;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

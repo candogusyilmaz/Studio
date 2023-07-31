@@ -13,9 +13,14 @@ import java.util.Set;
 @Entity
 @Table(name = "permissions")
 @NoArgsConstructor
-public class Permission extends BaseEntity implements GrantedAuthority {
+public class Permission implements GrantedAuthority {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @Column(nullable = false, unique = true)
     private String name;
+
     @Column(nullable = false)
     private String displayName;
 

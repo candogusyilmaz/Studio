@@ -1,8 +1,6 @@
 package cdy.studio.core.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +8,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "role_permissions")
 @NoArgsConstructor
-public class RolePermission extends BaseEntity {
+public class RolePermission {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @ManyToOne(optional = false)
     private Role role;

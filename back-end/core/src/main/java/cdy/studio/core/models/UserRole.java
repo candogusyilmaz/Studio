@@ -1,8 +1,6 @@
 package cdy.studio.core.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,9 +8,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "user_roles")
 @NoArgsConstructor
-public class UserRole extends BaseEntity {
+public class UserRole {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @ManyToOne(optional = false)
     private User user;
+
     @ManyToOne(optional = false)
     private Role role;
 

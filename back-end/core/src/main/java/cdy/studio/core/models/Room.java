@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -14,7 +17,11 @@ import java.util.Set;
 @Table(name = "rooms")
 @Where(clause = "deleted = false")
 @NoArgsConstructor
-public class Room extends AuditableEntity {
+public class Room {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @Column(nullable = false)
     private String name;
 
@@ -29,4 +36,10 @@ public class Room extends AuditableEntity {
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Slot> slots;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }

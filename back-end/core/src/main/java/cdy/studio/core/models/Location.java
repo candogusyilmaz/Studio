@@ -12,7 +12,11 @@ import java.util.Set;
 @Entity
 @Table(name = "locations")
 @NoArgsConstructor
-public class Location extends BaseEntity {
+public class Location {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @Column(nullable = false)
     private String name;
 
