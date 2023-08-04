@@ -1,12 +1,11 @@
 package cdy.studio.api.controllers;
 
+import cdy.studio.service.AuthenticationProvider;
+import cdy.studio.service.ReservationService;
 import cdy.studio.service.exceptions.NotFoundException;
 import cdy.studio.service.requests.ReservationCreateRequest;
 import cdy.studio.service.requests.ReservationUpdateRequest;
-import cdy.studio.service.AuthenticationProvider;
-import cdy.studio.service.ReservationService;
 import cdy.studio.service.views.ReservationView;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,14 +25,12 @@ public class ReservationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Transactional
     public void create(@RequestBody @Valid ReservationCreateRequest req) {
         reservationService.create(req, authenticationProvider.getAuthentication().getId());
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Transactional
     public void update(@RequestBody @Valid ReservationUpdateRequest req, @PathVariable int id) {
         if (id <= 0) {
             throw new NotFoundException("Rezervasyon bulunamadı.");
@@ -53,7 +50,6 @@ public class ReservationController {
     }
 
     @PatchMapping("/cancel/{id}")
-    @Transactional
     public void cancelReservation(@PathVariable int id) {
         reservationService.cancelReservation(id);
     }

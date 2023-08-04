@@ -1,9 +1,8 @@
 package cdy.studio.api.controllers;
 
-import cdy.studio.service.requests.RoomCreateRequest;
 import cdy.studio.service.RoomService;
+import cdy.studio.service.requests.RoomCreateRequest;
 import cdy.studio.service.views.RoomView;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +19,6 @@ public class RoomController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Transactional
     public void create(@RequestBody @Valid RoomCreateRequest req) {
         roomService.create(req);
     }

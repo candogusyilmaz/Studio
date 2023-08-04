@@ -1,10 +1,11 @@
 package cdy.studio.api.controllers;
 
-import cdy.studio.service.requests.queries.SlotCriteria;
 import cdy.studio.service.SlotService;
+import cdy.studio.service.requests.queries.SlotCriteria;
 import cdy.studio.service.views.SlotView;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ public class SlotController {
     private final SlotService slotService;
 
     @GetMapping
+    @Cacheable(value = "slot154s")
     public List<SlotView> getAll() {
         return slotService.getAll();
     }

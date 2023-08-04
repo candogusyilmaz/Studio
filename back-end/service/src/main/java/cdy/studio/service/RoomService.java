@@ -1,13 +1,14 @@
 package cdy.studio.service;
 
-import cdy.studio.service.exceptions.BadRequestException;
-import cdy.studio.service.exceptions.NotFoundException;
-import cdy.studio.service.requests.RoomCreateRequest;
-import cdy.studio.service.views.RoomView;
 import cdy.studio.core.events.RoomCreateEvent;
 import cdy.studio.core.models.Room;
 import cdy.studio.infrastructure.repositories.LocationRepository;
 import cdy.studio.infrastructure.repositories.RoomRepository;
+import cdy.studio.service.exceptions.BadRequestException;
+import cdy.studio.service.exceptions.NotFoundException;
+import cdy.studio.service.requests.RoomCreateRequest;
+import cdy.studio.service.views.RoomView;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ public class RoomService {
     private final LocationRepository locationRepository;
     private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     public void create(RoomCreateRequest dto) {
         var location = locationRepository.findById(dto.getLocationId())
                 .orElseThrow(() -> new NotFoundException("Lokasyon bulunamadı!"));

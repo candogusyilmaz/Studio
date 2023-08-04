@@ -1,7 +1,7 @@
 package cdy.studio.service;
 
-import cdy.studio.service.views.UserView;
 import cdy.studio.infrastructure.repositories.UserRepository;
+import cdy.studio.service.views.UserView;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

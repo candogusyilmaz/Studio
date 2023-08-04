@@ -1,10 +1,5 @@
 package cdy.studio.service;
 
-import cdy.studio.service.exceptions.BadRequestException;
-import cdy.studio.service.exceptions.NotFoundException;
-import cdy.studio.service.requests.ReservationCreateRequest;
-import cdy.studio.service.requests.ReservationUpdateRequest;
-import cdy.studio.service.views.ReservationView;
 import cdy.studio.core.events.ReservationActionCreateEvent;
 import cdy.studio.core.events.ReservationCancellationEvent;
 import cdy.studio.core.events.ReservationCreateEvent;
@@ -15,6 +10,12 @@ import cdy.studio.infrastructure.repositories.ReservationRepository;
 import cdy.studio.infrastructure.repositories.SlotRepository;
 import cdy.studio.infrastructure.specifications.ReservationSpecifications;
 import cdy.studio.infrastructure.specifications.SlotSpecifications;
+import cdy.studio.service.exceptions.BadRequestException;
+import cdy.studio.service.exceptions.NotFoundException;
+import cdy.studio.service.requests.ReservationCreateRequest;
+import cdy.studio.service.requests.ReservationUpdateRequest;
+import cdy.studio.service.views.ReservationView;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -35,6 +36,7 @@ public class ReservationService {
     private final SlotRepository slotRepository;
     private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     public void create(ReservationCreateRequest dto, int userId) {
         if (conflictingWithOthers(dto.getSlotId(), dto.getStartDate(), dto.getEndDate())) {
             throw new BadRequestException("Seçilen slot belirtilen tarihler arasında rezerve edilmiştir.");
@@ -58,6 +60,7 @@ public class ReservationService {
         eventPublisher.publishEvent(new ReservationCreateEvent(reservation));
     }
 
+    @Transactional
     public void update(int reservationId, ReservationUpdateRequest dto) {
         var res = reservationRepository.findById(reservationId).orElseThrow(() -> new NotFoundException("Rezervasyon bulunamadı."));
 
@@ -89,6 +92,7 @@ public class ReservationService {
         return reservationRepository.findAllAsReservationView(userId, page).map(ReservationView::new);
     }
 
+    @Transactional
     public void cancelReservation(int id) {
         var spec = ReservationSpecifications.getUserReservationById(authenticationProvider.getAuthentication().getId(), id);
         var reservation = reservationRepository.findBy(spec, r -> r.project("lastAction").first())

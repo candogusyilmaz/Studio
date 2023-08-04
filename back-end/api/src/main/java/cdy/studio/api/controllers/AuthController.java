@@ -1,9 +1,9 @@
 package cdy.studio.api.controllers;
 
+import cdy.studio.core.models.User;
+import cdy.studio.service.TokenService;
 import cdy.studio.service.requests.LoginRequest;
 import cdy.studio.service.responses.LoginResponse;
-import cdy.studio.service.TokenService;
-import cdy.studio.core.models.User;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
