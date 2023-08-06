@@ -8,11 +8,17 @@
         <artifactId>back-end</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>api</artifactId>
+    <artifactId>application</artifactId>
     <dependencies>
         <dependency>
             <groupId>cdy.studio</groupId>
-            <artifactId>application</artifactId>
+            <artifactId>domain</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cdy.studio</groupId>
+            <artifactId>infrastructure</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

@@ -18,10 +18,10 @@
         <springframework.version>3.1.2</springframework.version>
     </properties>
     <modules>
-        <module>core</module>
+        <module>domain</module>
         <module>api</module>
         <module>infrastructure</module>
-        <module>service</module>
+        <module>application</module>
     </modules>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
