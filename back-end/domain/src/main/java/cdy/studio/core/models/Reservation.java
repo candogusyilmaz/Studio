@@ -1,9 +1,13 @@
 package cdy.studio.core.models;
 
+import cdy.studio.core.events.ReservationCreated;
+import cdy.studio.core.events.ReservationUpdated;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -14,7 +18,7 @@ import java.time.temporal.ChronoUnit;
 @Entity
 @Table(name = "reservations")
 @NoArgsConstructor
-public class Reservation {
+public class Reservation extends AbstractAggregateRoot<Reservation> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -28,9 +32,11 @@ public class Reservation {
     private Slot slot;
 
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private LocalDateTime startDate;
 
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private LocalDateTime endDate;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -50,17 +56,20 @@ public class Reservation {
                 """.formatted(user.getId(), slot.getId(), startDate, endDate, lastAction == null ? "none" : lastAction.getId());
     }
 
-    public void setStartDate(LocalDateTime startDate) {
-        this.startDate = startDate.withSecond(59).truncatedTo(ChronoUnit.SECONDS);
-    }
-
-    public void setEndDate(LocalDateTime endDate) {
-        this.endDate = endDate.withSecond(1).truncatedTo(ChronoUnit.SECONDS);
+    @PrePersist
+    private void prePersist() {
+        this.registerEvent(new ReservationCreated(this));
     }
 
     @PreUpdate
-    @PrePersist
-    private void upsertPreChecks() {
+    private void preUpdate() {
+        this.registerEvent(new ReservationUpdated(this));
+    }
+
+    public void setDate(LocalDateTime startDate, LocalDateTime endDate) {
+        this.startDate = startDate.truncatedTo(ChronoUnit.MINUTES);
+        this.endDate = endDate.truncatedTo(ChronoUnit.MINUTES);
+
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Başlangıç tarihi bitiş tarihinden sonra olmalıdır.");
         }

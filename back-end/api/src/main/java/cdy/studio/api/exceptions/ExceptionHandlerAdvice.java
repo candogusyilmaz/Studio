@@ -16,16 +16,21 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<ErrorResponse> handleApiException(DomainException exception) {
+        return new ResponseEntity<>(exception.errorResponse, exception.httpStatus);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception exception) {
+        var response = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.name(), exception.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(HttpMessageConversionException.class)
     public ResponseEntity<ErrorResponse> handleJSONException(HttpMessageConversionException exception) {
         var errorResponse = new ErrorResponse(exception.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(DomainException.class)
-    public ResponseEntity<ErrorResponse> handleApiException(DomainException exception) {
-        return new ResponseEntity<>(exception.errorResponse, exception.httpStatus);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

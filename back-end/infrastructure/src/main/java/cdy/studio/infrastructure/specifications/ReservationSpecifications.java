@@ -38,7 +38,7 @@ public class ReservationSpecifications {
         return (root, query, cb) -> cb.notEqual(root.get("id"), reservationId);
     }
 
-    public static Specification<Reservation> getUserReservationById(int userId, int reservationId) {
+    public static Specification<Reservation> findByReservationIdAndUserId(int userId, int reservationId) {
         return (root, query, cb) -> cb.and(
                 cb.equal(root.get("id"), reservationId),
                 cb.equal(root.get("user").get("id"), userId)

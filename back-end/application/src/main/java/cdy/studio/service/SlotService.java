@@ -4,7 +4,7 @@ import cdy.studio.core.events.RoomCreated;
 import cdy.studio.core.models.Slot;
 import cdy.studio.infrastructure.repositories.SlotRepository;
 import cdy.studio.infrastructure.specifications.SlotSpecifications;
-import cdy.studio.service.requests.queries.SlotCriteria;
+import cdy.studio.service.requests.queries.AvailableSlotsQuery;
 import cdy.studio.service.views.SlotView;
 import lombok.AllArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -38,7 +38,7 @@ public class SlotService {
         return slots.stream().map(SlotView::new).toList();
     }
 
-    public List<SlotView> findAvailableSlots(SlotCriteria criteria) {
+    public List<SlotView> findAvailableSlots(AvailableSlotsQuery criteria) {
         var spec = SlotSpecifications.availableSlots(criteria.getStartDate(), criteria.getEndDate());
 
         if (criteria.getRoomId() != null) {
@@ -47,7 +47,7 @@ public class SlotService {
 
         var availableSlots = repo.findBy(spec,
                 r -> r.sortBy(Sort.by("id"))
-                        .project("room.location.parent", "items").all());
+                        .project("room.location.parent", "slotItems.item").all());
 
         return availableSlots.stream().map(SlotView::new).toList();
     }

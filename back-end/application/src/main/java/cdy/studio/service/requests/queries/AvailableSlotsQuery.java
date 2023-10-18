@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class SlotCriteria {
+public class AvailableSlotsQuery {
     private Integer roomId;
 
     @NotNull(message = "Başlangıç tarihi dolu olmalıdır.")

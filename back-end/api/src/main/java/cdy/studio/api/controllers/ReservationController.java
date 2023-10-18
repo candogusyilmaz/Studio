@@ -14,8 +14,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/reservations")
@@ -26,7 +24,7 @@ public class ReservationController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody @Valid ReservationCreateRequest req) {
-        reservationService.create(req, authenticationProvider.getAuthentication().getId());
+        reservationService.create(req);
     }
 
     @PutMapping("/{id}")
@@ -41,12 +39,7 @@ public class ReservationController {
 
     @GetMapping("/history")
     public Page<ReservationView> getReservationsHistoryByUser(@PageableDefault Pageable page) {
-        return reservationService.getAll(authenticationProvider.getAuthentication().getId(), page);
-    }
-
-    @GetMapping("/all")
-    public Set<ReservationView> getReservations() {
-        return reservationService.getAll();
+        return reservationService.findReservationsByUserId(authenticationProvider.getAuthentication().getId(), page);
     }
 
     @PatchMapping("/cancel/{id}")
