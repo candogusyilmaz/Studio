@@ -26,6 +26,6 @@ public class UserService implements UserDetailsService {
     }
 
     public Page<UserView> getAll(Pageable page) {
-        return userRepository.findBy((root, query, criteriaBuilder) -> null, r -> r.project("roles.permissions").sortBy(page.getSort()).page(page).map(UserView::new));
+        return userRepository.findBy((root, query, criteriaBuilder) -> null, r -> r.project("userRoles.role.rolePermissions.permission").sortBy(page.getSort()).page(page).map(UserView::new));
     }
 }

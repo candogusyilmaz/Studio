@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
+        <version>3.1.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>cdy.studio</groupId>
@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
     <properties>
         <java.version>17</java.version>
-        <springframework.version>3.1.4</springframework.version>
+        <springframework.version>3.1.5</springframework.version>
     </properties>
     <modules>
         <module>domain</module>
@@ -85,6 +85,13 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>31.1-jre</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-hibernate6 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-hibernate6</artifactId>
+            <version>2.16.0</version>
         </dependency>
     </dependencies>
 
