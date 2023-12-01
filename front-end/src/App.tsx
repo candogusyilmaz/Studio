@@ -16,7 +16,7 @@ import { AxiosError } from "axios";
 import { getPreferredLanguage } from "./utils/LocalStorageUtils";
 
 function retry(failureCount: number, error: unknown) {
-  const maximumNumberOfFailures = 3;
+  const maximumNumberOfFailures = 0;
 
   if (error instanceof AxiosError) {
     // if there is no response dont retry
