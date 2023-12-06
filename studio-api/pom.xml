@@ -8,7 +8,7 @@
         <version>3.2.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>dev.cdy</groupId>
+    <groupId>dev.canverse</groupId>
     <artifactId>studio-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>studio-api</name>

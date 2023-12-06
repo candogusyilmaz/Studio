@@ -6,8 +6,8 @@ cors:
   allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS,HEAD
   allowed-origins: "http://localhost:5173,http://localhost:4173"
 jwt:
-  access-token-expiration-in-seconds: 3000
-  refresh-token-expiration-in-seconds: 12000
+  access-token-expiration-in-seconds: 999999
+  refresh-token-expiration-in-seconds: 9999999
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/studio_db
