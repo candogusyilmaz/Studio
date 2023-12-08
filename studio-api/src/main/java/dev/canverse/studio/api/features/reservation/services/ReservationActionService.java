@@ -8,13 +8,13 @@ import dev.canverse.studio.api.features.reservation.events.ReservationCancelled;
 import dev.canverse.studio.api.features.reservation.events.ReservationCreated;
 import dev.canverse.studio.api.features.reservation.events.ReservationUpdated;
 import dev.canverse.studio.api.features.reservation.repositories.ReservationActionRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ReservationActionService {
     private final AuthenticationProvider authenticationProvider;
     private final ReservationActionRepository actionRepository;

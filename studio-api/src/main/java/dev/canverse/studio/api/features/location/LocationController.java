@@ -4,7 +4,7 @@ import dev.canverse.studio.api.features.location.dtos.CreateLocation;
 import dev.canverse.studio.api.features.location.dtos.LocationInfo;
 import dev.canverse.studio.api.features.location.repositories.LocationSpecifications;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/locations")
 public class LocationController {
     private final LocationService locationService;

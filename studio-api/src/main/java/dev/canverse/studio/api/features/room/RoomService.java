@@ -1,21 +1,20 @@
 package dev.canverse.studio.api.features.room;
 
 import com.google.common.base.Preconditions;
-import dev.canverse.studio.api.exceptions.NotFoundException;
 import dev.canverse.studio.api.features.location.repositories.LocationRepository;
 import dev.canverse.studio.api.features.room.dtos.CreateRoom;
 import dev.canverse.studio.api.features.room.dtos.RoomInfo;
 import dev.canverse.studio.api.features.room.entities.Room;
 import dev.canverse.studio.api.features.room.repositories.RoomRepository;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RoomService {
 
     private final RoomRepository roomRepository;
@@ -24,10 +23,10 @@ public class RoomService {
     @Transactional
     public void create(CreateRoom.Request dto) {
         var location = locationRepository.findById(dto.getLocationId())
-                .orElseThrow(() -> new NotFoundException("Lokasyon bulunamadı!"));
+                .orElseThrow(() -> new IllegalArgumentException("Location not found."));
 
         Preconditions.checkArgument(roomNameUniqueAtLocation(location.getId(), dto.getName()),
-                "Lokasyona ait aynı isimde bir oda bulunmaktadır.");
+                "Room name must be unique at location.");
 
         var room = new Room();
         room.setName(dto.getName());
@@ -44,7 +43,7 @@ public class RoomService {
 
     public RoomInfo getById(int id) {
         var room = roomRepository.findBy((root, query, cb) -> cb.equal(root.get("id"), id), r -> r.project("location").first())
-                .orElseThrow(() -> new NotFoundException("Oda bulunamadı."));
+                .orElseThrow(() -> new IllegalArgumentException("Room not found."));
 
         return new RoomInfo(room);
     }

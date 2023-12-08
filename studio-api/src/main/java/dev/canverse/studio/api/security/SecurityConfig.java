@@ -2,7 +2,7 @@ package dev.canverse.studio.api.security;
 
 import dev.canverse.studio.api.features.authentication.jwt.JwtAuthConverter;
 import dev.canverse.studio.api.features.user.services.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +28,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(jsr250Enabled = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig {
     private final CorsProperties corsProperties;
     private final JwtAuthConverter authConverter;

@@ -6,7 +6,7 @@ import dev.canverse.studio.api.features.slot.dtos.SlotInfo;
 import dev.canverse.studio.api.features.slot.entities.Slot;
 import dev.canverse.studio.api.features.slot.repositories.SlotRepository;
 import dev.canverse.studio.api.features.slot.repositories.SlotSpecifications;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SlotService {
     private final SlotRepository repo;
 

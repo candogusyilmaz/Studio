@@ -1,13 +1,12 @@
 package dev.canverse.studio.api.features.reservation;
 
-import dev.canverse.studio.api.exceptions.NotFoundException;
 import dev.canverse.studio.api.features.authentication.AuthenticationProvider;
 import dev.canverse.studio.api.features.reservation.dtos.CreateReservation;
 import dev.canverse.studio.api.features.reservation.dtos.ReservationInfo;
 import dev.canverse.studio.api.features.reservation.dtos.UpdateReservation;
 import dev.canverse.studio.api.features.reservation.services.ReservationService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -15,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/reservations")
 public class ReservationController {
     private final ReservationService reservationService;
@@ -30,10 +29,6 @@ public class ReservationController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody @Valid UpdateReservation.Request req, @PathVariable int id) {
-        if (id <= 0) {
-            throw new NotFoundException("Rezervasyon bulunamadı.");
-        }
-
         reservationService.update(id, req);
     }
 

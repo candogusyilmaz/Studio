@@ -3,7 +3,7 @@ package dev.canverse.studio.api.features.room;
 import dev.canverse.studio.api.features.room.dtos.CreateRoom;
 import dev.canverse.studio.api.features.room.dtos.RoomInfo;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/rooms")
 public class RoomController {
     private final RoomService roomService;

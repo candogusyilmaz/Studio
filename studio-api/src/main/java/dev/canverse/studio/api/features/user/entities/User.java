@@ -44,7 +44,7 @@ public class User implements UserDetails {
     private String timezone;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private transient Set<UserRole> userRoles;
+    private Set<UserRole> userRoles;
 
     public User(int id) {
         this.id = id;

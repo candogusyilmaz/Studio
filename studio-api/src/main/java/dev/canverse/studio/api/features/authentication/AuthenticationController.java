@@ -2,7 +2,7 @@ package dev.canverse.studio.api.features.authentication;
 
 import dev.canverse.studio.api.features.authentication.dtos.CreateToken;
 import dev.canverse.studio.api.features.user.entities.User;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthenticationController {
     private final TokenService tokenService;

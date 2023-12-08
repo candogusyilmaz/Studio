@@ -9,10 +9,20 @@ import java.util.Comparator;
 
 @Service
 public class AuthenticationProvider {
+    /**
+     * Retrieves the authenticated user.
+     *
+     * @return A User object representing the authenticated user.
+     */
     public User getAuthentication() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
+    /**
+     * Gets the highest level of the authenticated user based on their roles.
+     *
+     * @return The highest level among the user's roles or Integer.MIN_VALUE if no roles are present.
+     */
     public int getHighestLevel() {
         if (this.getAuthentication().getUserRoles().isEmpty())
             return Integer.MIN_VALUE;

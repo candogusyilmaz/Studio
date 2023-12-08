@@ -1,4 +1,4 @@
-package dev.canverse.studio.api.features.authorization;
+package dev.canverse.studio.api.features.authorization.services;
 
 import com.google.common.reflect.ClassPath;
 import dev.canverse.studio.api.features.authorization.entities.Permission;
@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class AuthorityPersister implements ApplicationListener<ApplicationReadyEvent> {
-    private static final Logger logger = Logger.getLogger(AuthorityPersister.class.getName());
+public class PermissionSyncService implements ApplicationListener<ApplicationReadyEvent> {
+    private static final Logger logger = Logger.getLogger(PermissionSyncService.class.getName());
     private final PermissionRepository permissionRepository;
 
     @Override
@@ -66,8 +66,7 @@ public class AuthorityPersister implements ApplicationListener<ApplicationReadyE
             return ClassPath.from(ClassLoader.getSystemClassLoader())
                     .getAllClasses()
                     .stream()
-                    .filter(clazz -> clazz.getPackageName()
-                            .equalsIgnoreCase("cdy.studio.api.controllers"))
+                    .filter(clazz -> clazz.getPackageName().startsWith("dev.canverse.studio.api") && clazz.getSimpleName().endsWith("Controller"))
                     .map(ClassPath.ClassInfo::load)
                     .collect(Collectors.toSet());
         } catch (IOException e) {

@@ -3,11 +3,11 @@ package dev.canverse.studio.api.features.authorization;
 import dev.canverse.studio.api.features.authorization.dtos.CreateRole;
 import dev.canverse.studio.api.features.authorization.services.RoleService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/roles")
 public class RoleController {
     private final RoleService roleService;

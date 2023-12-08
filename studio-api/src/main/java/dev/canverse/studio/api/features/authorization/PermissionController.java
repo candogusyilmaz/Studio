@@ -2,7 +2,7 @@ package dev.canverse.studio.api.features.authorization;
 
 import dev.canverse.studio.api.features.authorization.dtos.PermissionInfo;
 import dev.canverse.studio.api.features.authorization.services.PermissionService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -11,7 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/permissions")
 public class PermissionController {
     private final PermissionService permissionService;

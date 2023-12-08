@@ -26,7 +26,7 @@ public class Permission implements GrantedAuthority {
     private String displayName;
 
     @OneToMany(mappedBy = "permission", cascade = CascadeType.ALL, orphanRemoval = true)
-    private transient Set<RolePermission> rolePermissions;
+    private Set<RolePermission> rolePermissions;
 
     public Permission(String name, String displayName) {
         this.name = name;
