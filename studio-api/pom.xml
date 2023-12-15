@@ -56,9 +56,11 @@
         </dependency>
         <!-- endregion -->
 
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>42.7.1</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -76,6 +78,7 @@
             <version>32.1.3-jre</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/dev.canverse/expectation -->
         <dependency>
             <groupId>dev.canverse</groupId>
             <artifactId>expectation</artifactId>

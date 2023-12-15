@@ -25,10 +25,7 @@ public class LocationService {
      * @throws dev.canverse.expectation.ExpectationFailedException Thrown if a location with the same name already exists or if the parent location is not found.
      */
     public void create(CreateLocation.Request dto) {
-        var locationAlreadyExists = false;
-
         Expect.of(locationRepository.exists(dto.getName(), dto.getParentId())).isFalse("There is already a location with the same name.");
-        Expect.of(locationAlreadyExists).isFalse("There is already a location with the same name.");
 
         var location = new Location(dto.getName());
 
