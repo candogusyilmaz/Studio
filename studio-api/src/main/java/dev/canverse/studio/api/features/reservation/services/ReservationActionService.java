@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class ReservationActionService {
-    private final AuthenticationProvider authenticationProvider;
     private final ReservationActionRepository actionRepository;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -25,7 +24,7 @@ public class ReservationActionService {
         var action = new ReservationAction();
 
         action.setReservation(event.getReservation());
-        action.setActionBy(authenticationProvider.getAuthentication());
+        action.setActionBy(AuthenticationProvider.getAuthentication());
         action.setStatus(ReservationStatus.ACTIVE);
         action.setDescription(event.getReservation().toString());
 
@@ -38,7 +37,7 @@ public class ReservationActionService {
         var action = new ReservationAction();
 
         action.setReservation(event.getReservation());
-        action.setActionBy(authenticationProvider.getAuthentication());
+        action.setActionBy(AuthenticationProvider.getAuthentication());
         action.setStatus(ReservationStatus.UPDATED);
         action.setDescription(event.getReservation().toString());
 
@@ -51,7 +50,7 @@ public class ReservationActionService {
         var action = new ReservationAction();
 
         action.setReservation(event.getReservation());
-        action.setActionBy(authenticationProvider.getAuthentication());
+        action.setActionBy(AuthenticationProvider.getAuthentication());
         action.setStatus(ReservationStatus.CANCELLED);
         action.setDescription(event.getReservation().toString());
 

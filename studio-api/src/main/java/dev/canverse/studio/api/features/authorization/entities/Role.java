@@ -1,5 +1,7 @@
 package dev.canverse.studio.api.features.authorization.entities;
 
+import dev.canverse.expectation.Expect;
+import dev.canverse.studio.api.features.authentication.AuthenticationProvider;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +32,13 @@ public class Role {
     public Role(String name, int level) {
         this.name = name;
         this.level = level;
+    }
+
+    @PrePersist
+    @PreUpdate
+    @PreRemove
+    private void beforeSave() {
+        Expect.of(level).lessThan(AuthenticationProvider.getHighestLevel(), "You cannot create/update/remove a role higher or equal to your level.");
     }
 
     public Set<RolePermission> getRolePermissions() {

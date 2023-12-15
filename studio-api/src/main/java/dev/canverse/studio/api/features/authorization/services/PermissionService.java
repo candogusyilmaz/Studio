@@ -1,5 +1,6 @@
 package dev.canverse.studio.api.features.authorization.services;
 
+import dev.canverse.expectation.Expect;
 import dev.canverse.studio.api.features.authorization.dtos.PermissionInfo;
 import dev.canverse.studio.api.features.authorization.repositories.PermissionRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +28,10 @@ public class PermissionService {
      *
      * @param id The ID of the permission to retrieve.
      * @return A PermissionInfo object representing the permission.
-     * @throws IllegalArgumentException Thrown if the permission with the specified ID is not found.
+     * @throws dev.canverse.expectation.ExpectationFailedException Thrown if the permission with the specified ID is not found.
      */
     public PermissionInfo getById(int id) {
-        return permissionRepository.findById(id).map(PermissionInfo::new)
-                .orElseThrow(() -> new IllegalArgumentException("Permission not found."));
+        return Expect.of(permissionRepository.findById(id).map(PermissionInfo::new)).present("Permission not found.");
     }
 
     /**
@@ -39,12 +39,10 @@ public class PermissionService {
      *
      * @param id          The ID of the permission to be updated.
      * @param displayName The new display name for the permission.
-     * @throws IllegalArgumentException Thrown if the permission with the specified ID is not found.
+     * @throws dev.canverse.expectation.ExpectationFailedException Thrown if the permission with the specified ID is not found.
      */
     public void updateDisplayName(int id, String displayName) {
-        var permission = permissionRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Permission not found."));
-
+        var permission = Expect.of(permissionRepository.findById(id)).present("Permission not found.");
         permission.setDisplayName(displayName);
         permissionRepository.saveAndFlush(permission);
     }

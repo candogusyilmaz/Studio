@@ -1,7 +1,6 @@
 package dev.canverse.studio.api.features.authorization.services;
 
-import com.google.common.base.Preconditions;
-import dev.canverse.studio.api.features.authentication.AuthenticationProvider;
+import dev.canverse.expectation.Expect;
 import dev.canverse.studio.api.features.authorization.dtos.CreateRole;
 import dev.canverse.studio.api.features.authorization.entities.Role;
 import dev.canverse.studio.api.features.authorization.entities.RolePermission;
@@ -17,17 +16,16 @@ public class RoleService {
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
     private final RolePermissionRepository rolePermissionRepository;
-    private final AuthenticationProvider authenticationProvider;
 
     /**
      * Creates a new role based on the provided request.
      *
      * @param req The request containing the details of the role to be created.
-     * @throws IllegalArgumentException Thrown if the user's level is not sufficient or if a role with the same name already exists.
+     * @throws dev.canverse.expectation.ExpectationFailedException Thrown if a role with the same name already exists.
      */
     public void create(CreateRole.Request req) {
-        Preconditions.checkArgument(authenticationProvider.getHighestLevel() >= req.getLevel(), "You cannot create a role higher or equal to your level.");
-        Preconditions.checkArgument(!roleRepository.existsByName(req.getName()), "There is already a role with this name.");
+        Expect.of(roleRepository.existsByName(req.getName()))
+                .isFalse("There is already a role with this name.");
 
         var role = new Role(req.getName(), req.getLevel());
         roleRepository.save(role);
@@ -38,18 +36,15 @@ public class RoleService {
      *
      * @param roleId       The ID of the role to which the permission is to be added.
      * @param permissionId The ID of the permission to be added.
-     * @throws IllegalArgumentException Thrown if the role or permission is not found.
-     * @throws IllegalStateException    Thrown if the user's level is not sufficient or if the role already has the permission.
+     * @throws dev.canverse.expectation.ExpectationFailedException Thrown if the role or permission is not found.
+     * @throws dev.canverse.expectation.ExpectationFailedException Thrown if the role already has the permission.
      */
     public void addPermission(int roleId, int permissionId) {
-        var role = roleRepository.findById(roleId).orElseThrow(() -> new IllegalArgumentException("Role not found."));
+        var role = Expect.of(roleRepository.findById(roleId)).present("Role not found.");
 
-        Preconditions.checkState(authenticationProvider.getHighestLevel() >= role.getLevel(),
-                "You cannot add a permission to a role higher or equal to your level.");
-        Preconditions.checkState(!rolePermissionRepository.existsByRoleIdAndPermissionId(roleId, permissionId),
-                "Role already has this permission.");
+        Expect.of(rolePermissionRepository.exists(roleId, permissionId)).isFalse("Role already has this permission.");
 
-        var permission = permissionRepository.findById(permissionId).orElseThrow(() -> new IllegalArgumentException("Permission not found."));
+        var permission = Expect.of(permissionRepository.findById(permissionId)).present("Permission not found.");
         var rp = new RolePermission(role, permission);
 
         rolePermissionRepository.save(rp);
@@ -60,19 +55,10 @@ public class RoleService {
      *
      * @param roleId       The ID of the role from which the permission is to be removed.
      * @param permissionId The ID of the permission to be removed.
-     * @throws IllegalArgumentException Thrown if the role does not have the specified permission.
-     * @throws IllegalStateException    Thrown if the user's level is not sufficient to perform the operation.
+     * @throws dev.canverse.expectation.ExpectationFailedException Thrown if the role/permission combination is not found.
      */
     public void removePermission(int roleId, int permissionId) {
-        var rolePermission = rolePermissionRepository.findBy((root, query, cb) ->
-                                cb.and(
-                                        cb.equal(root.get("role").get("id"), roleId),
-                                        cb.equal(root.get("permission").get("id"), permissionId))
-                        , r -> r.project("role").first())
-                .orElseThrow(() -> new IllegalArgumentException("Role has no such permission."));
-
-        Preconditions.checkState(authenticationProvider.getHighestLevel() >= rolePermission.getRole().getLevel(),
-                "You cannot remove a permission from a role higher or equal to your level.");
+        var rolePermission = Expect.of(rolePermissionRepository.findById(roleId, permissionId)).present("Role/permission combination not found.");
 
         rolePermissionRepository.delete(rolePermission);
     }

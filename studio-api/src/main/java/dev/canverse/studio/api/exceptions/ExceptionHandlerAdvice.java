@@ -1,5 +1,6 @@
 package dev.canverse.studio.api.exceptions;
 
+import dev.canverse.expectation.ExpectationFailedException;
 import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,6 +42,13 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleApiException(ApiException ex, ServletWebRequest request) {
         ex.getBody().setInstance(URI.create(request.getRequest().getRequestURI()));
         return ResponseEntity.status(ex.getHttpStatusCode()).body(ex.getBody());
+    }
+
+    @ExceptionHandler(ExpectationFailedException.class)
+    public ResponseEntity<Object> handleExpectationFailedException(ExpectationFailedException ex, ServletWebRequest request) {
+        var detail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        detail.setInstance(URI.create(request.getRequest().getRequestURI()));
+        return ResponseEntity.status(detail.getStatus()).body(detail);
     }
 
     private static Map<String, ArrayList<String>> getValidationErrors(MethodArgumentNotValidException ex) {

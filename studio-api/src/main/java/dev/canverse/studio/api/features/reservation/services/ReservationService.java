@@ -1,5 +1,6 @@
 package dev.canverse.studio.api.features.reservation.services;
 
+import dev.canverse.expectation.Expect;
 import dev.canverse.studio.api.features.authentication.AuthenticationProvider;
 import dev.canverse.studio.api.features.reservation.dtos.CreateReservation;
 import dev.canverse.studio.api.features.reservation.dtos.ReservationInfo;
@@ -25,20 +26,16 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
-    private final AuthenticationProvider authenticationProvider;
     private final ReservationRepository reservationRepository;
     private final SlotRepository slotRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void create(CreateReservation.Request dto) {
-        if (reservationRepository.conflictingWithOthers(dto.getSlotId(), dto.getStartDate(), dto.getEndDate())) {
-            throw new IllegalStateException("Slot is already reserved in the specified date range.");
-        }
-
-        if (reservationRepository.conflictingWithSelf(authenticationProvider.getAuthentication().getId(), dto.getStartDate(), dto.getEndDate())) {
-            throw new IllegalStateException("You already have a reservation in the specified date range.");
-        }
+        Expect.of(reservationRepository.conflictingWithOthers(dto.getSlotId(), dto.getStartDate(), dto.getEndDate()))
+                .isFalse("Slot is already reserved in the specified date range.");
+        Expect.of(reservationRepository.conflictingWithSelf(AuthenticationProvider.getAuthentication().getId(), dto.getStartDate(), dto.getEndDate()))
+                .isFalse("You already have a reservation in the specified date range.");
 
         var slot = slotRepository
                 .findBy(SlotSpecifications.slotIdEquals(dto.getSlotId()), FluentQuery.FetchableFluentQuery::first)
@@ -46,7 +43,7 @@ public class ReservationService {
 
         var reservation = new Reservation();
         reservation.setSlot(slot);
-        reservation.setUser(authenticationProvider.getAuthentication());
+        reservation.setUser(AuthenticationProvider.getAuthentication());
         reservation.setDate(dto.getStartDate(), dto.getEndDate());
 
         reservationRepository.save(reservation);
@@ -55,16 +52,14 @@ public class ReservationService {
     @Transactional
     public void update(int reservationId, UpdateReservation.Request dto) {
         var res = reservationRepository
-                .findReservationByUserId(authenticationProvider.getAuthentication().getId(), reservationId)
+                .findReservationByUserId(AuthenticationProvider.getAuthentication().getId(), reservationId)
                 .orElseThrow(() -> new IllegalArgumentException("Reservation not found."));
 
-        if (reservationRepository.conflictingWithOthers(res.getId(), dto.getSlotId(), dto.getStartDate(), dto.getEndDate())) {
-            throw new IllegalStateException("Slot is already reserved in the specified date range.");
-        }
+        Expect.of(reservationRepository.conflictingWithOthers(res.getId(), dto.getSlotId(), dto.getStartDate(), dto.getEndDate()))
+                .isFalse("Slot is already reserved in the specified date range.");
+        Expect.of(reservationRepository.conflictingWithSelf(res.getId(), res.getUser().getId(), dto.getStartDate(), dto.getEndDate()))
+                .isFalse("You already have a reservation in the specified date range.");
 
-        if (reservationRepository.conflictingWithSelf(res.getId(), res.getUser().getId(), dto.getStartDate(), dto.getEndDate())) {
-            throw new IllegalStateException("You already have a reservation in the specified date range.");
-        }
 
         if (!dto.getSlotId().equals(res.getSlot().getId())) {
             var slot = slotRepository
@@ -83,18 +78,13 @@ public class ReservationService {
 
     @Transactional
     public void cancelReservation(int id) {
-        var spec = ReservationSpecifications.findByReservationIdAndUserId(authenticationProvider.getAuthentication().getId(), id);
+        var spec = ReservationSpecifications.findByReservationIdAndUserId(AuthenticationProvider.getAuthentication().getId(), id);
 
         var reservation = reservationRepository.findBy(spec, r -> r.project("lastAction").first())
                 .orElseThrow(() -> new IllegalArgumentException("Reservation not found."));
 
-        if (reservation.getEndDate().isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("Since the reservation has ended, it cannot be cancelled.");
-        }
-
-        if (!reservation.getLastAction().getStatus().isCancellable()) {
-            throw new IllegalStateException("Reservation status is not cancellable.");
-        }
+        Expect.of(reservation.getEndDate()).after(LocalDateTime.now(), "Since the reservation has ended, it cannot be cancelled.");
+        Expect.of(reservation.getLastAction().getStatus().isCancellable()).isTrue("Reservation status is not cancellable.");
 
         eventPublisher.publishEvent(new ReservationCancelled(reservation));
     }

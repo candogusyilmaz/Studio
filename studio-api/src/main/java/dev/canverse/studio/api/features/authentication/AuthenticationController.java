@@ -16,12 +16,12 @@ import java.util.Optional;
 @RequestMapping("/api/auth")
 public class AuthenticationController {
     private final TokenService tokenService;
-    private final AuthenticationManager authManager;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/token")
     public ResponseEntity<CreateToken.Response> token(@RequestBody CreateToken.Request login) {
         var token = new UsernamePasswordAuthenticationToken(login.getUsername(), login.getPassword());
-        var auth = authManager.authenticate(token);
+        var auth = authenticationManager.authenticate(token);
         var user = (User) auth.getPrincipal();
 
         var body = tokenService.createAccessToken(user);

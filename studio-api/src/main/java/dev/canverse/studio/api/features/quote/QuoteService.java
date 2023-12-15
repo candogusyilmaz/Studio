@@ -1,6 +1,7 @@
 package dev.canverse.studio.api.features.quote;
 
 import com.google.common.base.Preconditions;
+import dev.canverse.expectation.Expect;
 import dev.canverse.studio.api.features.authentication.AuthenticationProvider;
 import dev.canverse.studio.api.features.quote.dtos.CreateQuote;
 import dev.canverse.studio.api.features.quote.dtos.QuoteInfo;
@@ -26,9 +27,8 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 @RequiredArgsConstructor
 public class QuoteService {
-    private static final int MAX_NUMBER_OF_SIMULTANEOUS_PENDING_QUOTES = 3;
+    private static final long MAX_NUMBER_OF_SIMULTANEOUS_PENDING_QUOTES = 3;
     private final QuoteRepository quoteRepository;
-    private final AuthenticationProvider authenticationProvider;
 
     /**
      * Creates a new quote based on the provided request.
@@ -37,10 +37,10 @@ public class QuoteService {
      * @throws IllegalStateException Thrown if there are simultaneous pending quotes for the authenticated user.
      */
     public void create(CreateQuote.Request dto) {
-        validateSimultaneousPendingQuotes(authenticationProvider.getAuthentication().getId());
+        validateSimultaneousPendingQuotes(AuthenticationProvider.getAuthentication().getId());
 
         var quote = new Quote();
-        quote.setUser(authenticationProvider.getAuthentication());
+        quote.setUser(AuthenticationProvider.getAuthentication());
         quote.setContent(dto.getContent());
         quote.setEnabled(true);
 
@@ -78,13 +78,13 @@ public class QuoteService {
      */
     public void toggleMyQuote(int quoteId) {
         var quote = quoteRepository
-                .findBy(QuoteSpecifications.getQuotesByUserId(authenticationProvider.getAuthentication().getId(), quoteId), FluentQuery.FetchableFluentQuery::first)
+                .findBy(QuoteSpecifications.getQuotesByUserId(AuthenticationProvider.getAuthentication().getId(), quoteId), FluentQuery.FetchableFluentQuery::first)
                 .orElseThrow(() -> new IllegalArgumentException("Quote not found."));
 
         Preconditions.checkArgument(quote.getStatus() != QuoteStatus.ACTIVE, "Today's quote cannot be disabled.");
 
         if (quote.getStatus() == QuoteStatus.PENDING && !quote.isEnabled()) {
-            validateSimultaneousPendingQuotes(authenticationProvider.getAuthentication().getId());
+            validateSimultaneousPendingQuotes(AuthenticationProvider.getAuthentication().getId());
         }
 
         quote.setEnabled(!quote.isEnabled());
@@ -138,12 +138,11 @@ public class QuoteService {
      * @throws IllegalArgumentException Thrown if the user exceeds the maximum allowed number of simultaneous pending quotes.
      */
     private void validateSimultaneousPendingQuotes(int userId) {
-
         long pendingQuotesCount = quoteRepository
                 .findBy(QuoteSpecifications.getQuotesByUserId(userId, QuoteStatus.PENDING, true),
                         FluentQuery.FetchableFluentQuery::count);
 
-        Preconditions.checkArgument(pendingQuotesCount <= MAX_NUMBER_OF_SIMULTANEOUS_PENDING_QUOTES,
-                "Aynı anda en fazla %s tane gösterilmek üzere olan alıntınız olabilir.", MAX_NUMBER_OF_SIMULTANEOUS_PENDING_QUOTES);
+        Expect.of(pendingQuotesCount).lessThanOrEqualTo(MAX_NUMBER_OF_SIMULTANEOUS_PENDING_QUOTES,
+                "You can have at most %s pending quotes at the same time.", MAX_NUMBER_OF_SIMULTANEOUS_PENDING_QUOTES);
     }
 }

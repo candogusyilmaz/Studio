@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/reservations")
 public class ReservationController {
     private final ReservationService reservationService;
-    private final AuthenticationProvider authenticationProvider;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -34,7 +33,7 @@ public class ReservationController {
 
     @GetMapping("/history")
     public Page<ReservationInfo> getReservationsHistoryByUser(@PageableDefault Pageable page) {
-        return reservationService.findReservationsByUserId(authenticationProvider.getAuthentication().getId(), page);
+        return reservationService.findReservationsByUserId(AuthenticationProvider.getAuthentication().getId(), page);
     }
 
     @PatchMapping("/cancel/{id}")

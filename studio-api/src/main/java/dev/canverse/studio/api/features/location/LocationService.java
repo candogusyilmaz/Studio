@@ -1,17 +1,14 @@
 package dev.canverse.studio.api.features.location;
 
-import com.google.common.base.Preconditions;
-import dev.canverse.studio.api.exceptions.NotFoundException;
+import dev.canverse.expectation.Expect;
 import dev.canverse.studio.api.features.location.dtos.CreateLocation;
 import dev.canverse.studio.api.features.location.dtos.LocationInfo;
 import dev.canverse.studio.api.features.location.entities.Location;
 import dev.canverse.studio.api.features.location.repositories.LocationRepository;
-import dev.canverse.studio.api.features.location.repositories.LocationSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.repository.query.FluentQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,31 +22,20 @@ public class LocationService {
      * Creates a new location based on the provided request.
      *
      * @param dto The request containing the details of the location to be created.
-     * @throws IllegalArgumentException Thrown if a location with the same name already exists or if the parent location is not found.
+     * @throws dev.canverse.expectation.ExpectationFailedException Thrown if a location with the same name already exists or if the parent location is not found.
      */
     public void create(CreateLocation.Request dto) {
         var locationAlreadyExists = false;
 
-        if (dto.getParentId() != null) {
-            locationAlreadyExists = locationRepository.findBy(
-                    LocationSpecifications.findByNameAndParentId(dto.getName(), dto.getParentId()),
-                    FluentQuery.FetchableFluentQuery::exists);
-        } else {
-            locationAlreadyExists = locationRepository.findBy(
-                    LocationSpecifications.findByName(dto.getName()),
-                    FluentQuery.FetchableFluentQuery::exists);
-        }
-
-        Preconditions.checkArgument(!locationAlreadyExists, "There is already a location with the same name.");
+        Expect.of(locationRepository.exists(dto.getName(), dto.getParentId())).isFalse("There is already a location with the same name.");
+        Expect.of(locationAlreadyExists).isFalse("There is already a location with the same name.");
 
         var location = new Location(dto.getName());
 
-        if (dto.getParentId() != null) {
-            var parent = locationRepository.findById(dto.getParentId())
-                    .orElseThrow(() -> new IllegalArgumentException("Parent location not found."));
-
+        Expect.of(dto.getParentId()).ifNotNull(id -> {
+            var parent = Expect.of(locationRepository.findById(id)).present("Parent location not found.");
             location.setParent(parent);
-        }
+        });
 
         locationRepository.save(location);
     }
@@ -83,12 +69,12 @@ public class LocationService {
      *
      * @param id The ID of the location to retrieve.
      * @return A LocationInfo object representing the location.
-     * @throws IllegalArgumentException Thrown if the location with the specified ID is not found.
+     * @throws dev.canverse.expectation.ExpectationFailedException Thrown if the location with the specified ID is not found.
      */
     public LocationInfo getById(int id) {
-        var location = locationRepository
-                .findBy((root, query, cb) -> cb.equal(root.get("id"), id), r -> r.project("parent").first()
-                        .orElseThrow(() -> new NotFoundException("Location with the given id not found.", id)));
+        var location = locationRepository.findBy(
+                (root, query, cb) -> cb.equal(root.get("id"), id),
+                r -> Expect.of(r.project("parent").first()).present("Location not found."));
 
         return new LocationInfo(location);
     }

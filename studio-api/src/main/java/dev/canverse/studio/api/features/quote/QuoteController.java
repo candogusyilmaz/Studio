@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/quotes")
 public class QuoteController {
     private final QuoteService quoteService;
-    private final AuthenticationProvider authenticationProvider;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -36,7 +35,7 @@ public class QuoteController {
 
     @GetMapping
     public Page<QuoteInfo> getMyQuotes(@PageableDefault Pageable pageable) {
-        return quoteService.getQuotes(pageable, authenticationProvider.getAuthentication());
+        return quoteService.getQuotes(pageable, AuthenticationProvider.getAuthentication());
     }
 
     @PatchMapping("/toggle/{id}")
