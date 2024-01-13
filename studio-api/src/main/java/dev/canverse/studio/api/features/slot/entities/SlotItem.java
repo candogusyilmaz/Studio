@@ -7,8 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.SoftDeleteType;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
@@ -16,8 +17,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "slot_items")
-@Where(clause = "deleted = false")
-// TODO: @SoftDelete annotation is available in the next version of Hibernate. Refactor this after spring has upgraded to the next version.
+@SoftDelete(strategy = SoftDeleteType.DELETED)
 @NoArgsConstructor
 public class SlotItem {
     @Id

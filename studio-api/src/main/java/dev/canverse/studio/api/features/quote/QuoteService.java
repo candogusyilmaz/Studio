@@ -1,6 +1,5 @@
 package dev.canverse.studio.api.features.quote;
 
-import com.google.common.base.Preconditions;
 import dev.canverse.expectation.Expect;
 import dev.canverse.studio.api.features.authentication.AuthenticationProvider;
 import dev.canverse.studio.api.features.quote.dtos.CreateQuote;
@@ -40,7 +39,6 @@ public class QuoteService {
         validateSimultaneousPendingQuotes(AuthenticationProvider.getAuthentication().getId());
 
         var quote = new Quote();
-        quote.setUser(AuthenticationProvider.getAuthentication());
         quote.setContent(dto.getContent());
         quote.setEnabled(true);
 
@@ -81,7 +79,7 @@ public class QuoteService {
                 .findBy(QuoteSpecifications.getQuotesByUserId(AuthenticationProvider.getAuthentication().getId(), quoteId), FluentQuery.FetchableFluentQuery::first)
                 .orElseThrow(() -> new IllegalArgumentException("Quote not found."));
 
-        Preconditions.checkArgument(quote.getStatus() != QuoteStatus.ACTIVE, "Today's quote cannot be disabled.");
+        Expect.of(quote.getStatus()).not(QuoteStatus.ACTIVE, "Today's quote cannot be disabled.");
 
         if (quote.getStatus() == QuoteStatus.PENDING && !quote.isEnabled()) {
             validateSimultaneousPendingQuotes(AuthenticationProvider.getAuthentication().getId());
@@ -135,7 +133,7 @@ public class QuoteService {
      * Validates the number of simultaneous pending quotes for the authenticated user.
      *
      * @param userId The ID of the authenticated user.
-     * @throws IllegalArgumentException Thrown if the user exceeds the maximum allowed number of simultaneous pending quotes.
+     * @throws dev.canverse.expectation.ExpectationFailedException Thrown if the user exceeds the maximum allowed number of simultaneous pending quotes.
      */
     private void validateSimultaneousPendingQuotes(int userId) {
         long pendingQuotesCount = quoteRepository

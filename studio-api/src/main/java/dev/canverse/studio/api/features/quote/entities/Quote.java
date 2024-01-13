@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,13 +17,16 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "quotes")
+@EntityListeners(AuditingEntityListener.class)
 public class Quote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @CreatedBy
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    @Setter(AccessLevel.NONE)
     private User user;
 
     @Column(nullable = false, updatable = false)
@@ -46,6 +51,7 @@ public class Quote {
     private boolean enabled;
 
     @CreationTimestamp
+    @JoinColumn(name = "created_at", nullable = false, updatable = false)
     @Setter(AccessLevel.NONE)
     private LocalDateTime createdAt;
 

@@ -1,6 +1,5 @@
 package dev.canverse.studio.api.features.reservation.services;
 
-import dev.canverse.studio.api.features.authentication.AuthenticationProvider;
 import dev.canverse.studio.api.features.reservation.entities.ReservationAction;
 import dev.canverse.studio.api.features.reservation.entities.ReservationStatus;
 import dev.canverse.studio.api.features.reservation.events.ReservationActionCreated;
@@ -24,9 +23,7 @@ public class ReservationActionService {
         var action = new ReservationAction();
 
         action.setReservation(event.getReservation());
-        action.setActionBy(AuthenticationProvider.getAuthentication());
         action.setStatus(ReservationStatus.ACTIVE);
-        action.setDescription(event.getReservation().toString());
 
         actionRepository.save(action);
         eventPublisher.publishEvent(new ReservationActionCreated(action));
@@ -37,9 +34,7 @@ public class ReservationActionService {
         var action = new ReservationAction();
 
         action.setReservation(event.getReservation());
-        action.setActionBy(AuthenticationProvider.getAuthentication());
         action.setStatus(ReservationStatus.UPDATED);
-        action.setDescription(event.getReservation().toString());
 
         actionRepository.save(action);
         eventPublisher.publishEvent(new ReservationActionCreated(action));
@@ -50,9 +45,7 @@ public class ReservationActionService {
         var action = new ReservationAction();
 
         action.setReservation(event.getReservation());
-        action.setActionBy(AuthenticationProvider.getAuthentication());
         action.setStatus(ReservationStatus.CANCELLED);
-        action.setDescription(event.getReservation().toString());
 
         actionRepository.save(action);
         eventPublisher.publishEvent(new ReservationActionCreated(action));

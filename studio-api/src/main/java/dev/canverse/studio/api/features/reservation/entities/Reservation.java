@@ -1,6 +1,6 @@
 package dev.canverse.studio.api.features.reservation.entities;
 
-import com.google.common.base.Preconditions;
+import dev.canverse.expectation.Expect;
 import dev.canverse.studio.api.features.reservation.events.ReservationCreated;
 import dev.canverse.studio.api.features.reservation.events.ReservationUpdated;
 import dev.canverse.studio.api.features.slot.entities.Slot;
@@ -70,10 +70,8 @@ public class Reservation extends AbstractAggregateRoot<Reservation> {
     }
 
     public void setDate(LocalDateTime startDate, LocalDateTime endDate) {
-        Preconditions.checkArgument(startDate.isBefore(endDate),
-                "Başlangıç tarihi bitiş tarihinden sonra olmalıdır.");
-        Preconditions.checkArgument(Duration.between(startDate, endDate).toMinutes() >= Duration.ofMinutes(10).toMinutes(),
-                "Başlangıç tarihi ile bitiş tarihi arasında en az 10 dakika olmalıdır.");
+        Expect.of(startDate).before(endDate, "Start date must be before end date.");
+        Expect.of(Duration.between(startDate, endDate).toMinutes()).greaterThanOrEq(10L, "Start date and end date must be at least 10 minutes apart.");
 
         this.startDate = startDate.truncatedTo(ChronoUnit.MINUTES);
         this.endDate = endDate.truncatedTo(ChronoUnit.MINUTES);

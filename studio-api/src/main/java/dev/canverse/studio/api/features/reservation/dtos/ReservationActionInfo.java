@@ -17,8 +17,8 @@ public class ReservationActionInfo implements Serializable {
     private int id;
     private String description;
     private ReservationStatus status;
-    private LocalDateTime actionDate;
-    private UserSummaryInfo actionBy;
+    private LocalDateTime createdAt;
+    private UserSummaryInfo createdBy;
 
     public ReservationActionInfo(ReservationAction res) {
         if (res == null) return;
@@ -26,7 +26,7 @@ public class ReservationActionInfo implements Serializable {
         this.id = res.getId();
         this.description = res.getDescription();
         this.status = res.getStatus();
-        this.actionDate = res.getActionDate();
-        this.actionBy = new UserSummaryInfo(res.getActionBy());
+        this.createdAt = res.getCreatedAt();
+        this.createdBy = new UserSummaryInfo(res.getCreatedBy());
     }
 }

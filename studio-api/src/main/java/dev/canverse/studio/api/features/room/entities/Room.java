@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.SoftDeleteType;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.Where;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.time.LocalDateTime;
@@ -21,8 +22,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "rooms")
-@Where(clause = "deleted = false")
-// TODO: @SoftDelete annotation is available in the next version of Hibernate. Refactor this after spring has upgraded to the next version.
+@SoftDelete(strategy = SoftDeleteType.DELETED)
 @NoArgsConstructor
 public class Room extends AbstractAggregateRoot<Room> {
     @Id

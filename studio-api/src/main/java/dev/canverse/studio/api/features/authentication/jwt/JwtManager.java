@@ -1,16 +1,14 @@
 package dev.canverse.studio.api.features.authentication.jwt;
 
-import com.google.common.base.Preconditions;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import dev.canverse.expectation.Expect;
 import dev.canverse.studio.api.features.user.services.UserService;
 import dev.canverse.studio.api.security.RsaKeyProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Component
 public class JwtManager implements JwtDecoder {
@@ -35,7 +33,7 @@ public class JwtManager implements JwtDecoder {
             var tokenVersion = Integer.valueOf(tokenVersionString);
             var tokenVersionInDb = userService.getTokenVersion(username);
 
-            Preconditions.checkArgument(!Objects.equals(tokenVersion, tokenVersionInDb), "Token version mismatch!");
+            Expect.of(tokenVersionInDb).is(tokenVersion, "Token version mismatch!");
         }
 
         return decoded;
