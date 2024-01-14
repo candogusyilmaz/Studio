@@ -18,7 +18,7 @@ public class SlotController {
     private final SlotService slotService;
 
     @GetMapping
-    public List<SlotInfo> getAll() {
+    public List<SlotInfo> getSlots() {
         return slotService.getAll();
     }
 

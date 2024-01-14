@@ -20,7 +20,7 @@ public class QuoteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody @Valid CreateQuote.Request dto) {
+    public void createQuote(@RequestBody @Valid CreateQuote.Request dto) {
         quoteService.create(dto);
     }
 
@@ -34,13 +34,13 @@ public class QuoteController {
     }
 
     @GetMapping
-    public Page<QuoteInfo> getMyQuotes(@PageableDefault Pageable pageable) {
+    public Page<QuoteInfo> getUserQuotes(@PageableDefault Pageable pageable) {
         return quoteService.getQuotes(pageable, AuthenticationProvider.getAuthentication());
     }
 
     @PatchMapping("/toggle/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void enableOrDisableUserQuote(@PathVariable int id) {
+    public void toggleQuote(@PathVariable int id) {
         quoteService.toggleMyQuote(id);
     }
 }

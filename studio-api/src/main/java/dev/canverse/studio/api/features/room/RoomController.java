@@ -18,17 +18,17 @@ public class RoomController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody @Valid CreateRoom.Request req) {
+    public void createRoom(@RequestBody @Valid CreateRoom.Request req) {
         roomService.create(req);
     }
 
     @GetMapping
-    public Page<RoomInfo> getAll(@PageableDefault Pageable pageable) {
+    public Page<RoomInfo> getRooms(@PageableDefault Pageable pageable) {
         return roomService.getAll(pageable);
     }
 
     @GetMapping("/{id}")
-    public RoomInfo getById(@PathVariable int id) {
+    public RoomInfo getRoomById(@PathVariable int id) {
         return roomService.getById(id);
     }
 }

@@ -22,23 +22,23 @@ public class LocationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody @Valid CreateLocation.Request req) {
+    public void createLocation(@RequestBody @Valid CreateLocation.Request req) {
         locationService.create(req);
     }
 
     @GetMapping
-    public Page<LocationInfo> getAll(@PageableDefault Pageable pageable, Optional<String> name) {
+    public Page<LocationInfo> getLocationsPaged(@PageableDefault Pageable pageable, Optional<String> name) {
         var nameQuerySpec = name.map(LocationSpecifications::findByName).orElse(null);
         return locationService.getAll(pageable, nameQuerySpec);
     }
 
     @GetMapping("/all")
-    public List<LocationInfo> getAll() {
+    public List<LocationInfo> getLocations() {
         return locationService.getAll();
     }
 
     @GetMapping("/{id}")
-    public LocationInfo getById(@PathVariable int id) {
+    public LocationInfo getLocationById(@PathVariable int id) {
         return locationService.getById(id);
     }
 }

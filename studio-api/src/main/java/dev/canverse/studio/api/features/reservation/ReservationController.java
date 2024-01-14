@@ -21,18 +21,18 @@ public class ReservationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody @Valid CreateReservation.Request req) {
+    public void createReservation(@RequestBody @Valid CreateReservation.Request req) {
         reservationService.create(req);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody @Valid UpdateReservation.Request req, @PathVariable int id) {
+    public void updateReservation(@RequestBody @Valid UpdateReservation.Request req, @PathVariable int id) {
         reservationService.update(id, req);
     }
 
     @GetMapping("/history")
-    public Page<ReservationInfo> getReservationsHistoryByUser(@PageableDefault Pageable page) {
+    public Page<ReservationInfo> getReservationHistory(@PageableDefault Pageable page) {
         return reservationService.findReservationsByUserId(AuthenticationProvider.getAuthentication().getId(), page);
     }
 
