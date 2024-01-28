@@ -30,9 +30,6 @@ public class SlotItem {
     @ManyToOne(optional = false)
     private Item item;
 
-    @Column(nullable = false)
-    private boolean deleted;
-
     @CreationTimestamp
     @Setter(AccessLevel.NONE)
     private LocalDateTime createdAt;

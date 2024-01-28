@@ -14,6 +14,7 @@ import org.hibernate.annotations.SoftDeleteType;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -22,6 +23,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "slots")
+@EntityListeners(AuditingEntityListener.class)
 @SoftDelete(strategy = SoftDeleteType.DELETED)
 public class Slot {
     @Id
@@ -40,9 +42,6 @@ public class Slot {
 
     @OneToMany(mappedBy = "slot")
     private Set<Reservation> reservations;
-
-    @Column(nullable = false)
-    private boolean deleted;
 
     @CreatedBy
     @ManyToOne(optional = false)

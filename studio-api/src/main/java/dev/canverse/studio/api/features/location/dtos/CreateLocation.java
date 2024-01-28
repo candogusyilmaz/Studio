@@ -15,6 +15,7 @@ public class CreateLocation {
         @Length(min = 3, max = 27, message = "Name must be between {min} and {max} characters.")
         private String name;
         private Integer parentId;
+        private Boolean root;
 
         public void setName(String name) {
             this.name = CharMatcher.whitespace().trimAndCollapseFrom(name, ' ');

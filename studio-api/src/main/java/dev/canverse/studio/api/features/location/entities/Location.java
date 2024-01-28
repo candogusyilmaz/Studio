@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.SoftDeleteType;
 
 import java.util.Set;
 
@@ -13,6 +15,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "locations")
+@SoftDelete(strategy = SoftDeleteType.DELETED)
 @NoArgsConstructor
 public class Location {
     @Id
@@ -26,11 +29,15 @@ public class Location {
     @JoinColumn(name = "parent_id")
     private Location parent;
 
+    @Column(nullable = false)
+    private boolean root;
+
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Room> rooms;
 
-    public Location(String name) {
+    public Location(String name, boolean root) {
         this.name = name;
+        this.root = root;
     }
 
     public Set<Room> getRooms() {

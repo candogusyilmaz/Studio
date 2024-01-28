@@ -2,6 +2,7 @@ package dev.canverse.studio.api.exceptions;
 
 import dev.canverse.expectation.ExpectationFailedException;
 import org.springframework.http.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -36,6 +37,11 @@ public class ExceptionHandlerAdvice extends ResponseEntityExceptionHandler {
         detail.setInstance(URI.create(request.getRequest().getRequestURI()));
         this.logger.error("An unexpected error occurred.", ex);
         return ResponseEntity.status(detail.getStatus()).body(detail);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleAccessDeniedException() {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @ExceptionHandler(ApiException.class)

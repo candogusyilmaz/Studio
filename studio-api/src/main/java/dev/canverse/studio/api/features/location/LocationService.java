@@ -27,12 +27,13 @@ public class LocationService {
     public void create(CreateLocation.Request dto) {
         Expect.of(locationRepository.exists(dto.getName(), dto.getParentId())).isFalse("There is already a location with the same name.");
 
-        var location = new Location(dto.getName());
+        var location = new Location(dto.getName(), dto.getRoot());
 
-        Expect.of(dto.getParentId()).ifNotNull(id -> {
-            var parent = Expect.of(locationRepository.findById(id)).present("Parent location not found.");
+        if (dto.getParentId() != null) {
+            var parent = Expect.of(locationRepository.findById(dto.getParentId())).present("Parent location not found.");
+            Expect.of(parent.isRoot()).isTrue("Parent location must be a root location.");
             location.setParent(parent);
-        });
+        }
 
         locationRepository.save(location);
     }

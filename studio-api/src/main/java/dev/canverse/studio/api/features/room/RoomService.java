@@ -23,6 +23,7 @@ public class RoomService {
     public void create(CreateRoom.Request dto) {
         var location = Expect.of(locationRepository.findById(dto.getLocationId())).present("Location not found.");
 
+        Expect.of(location.isRoot()).isFalse("Cannot create room at root location.");
         Expect.of(roomRepository.existsByName(dto.getName(), location.getId())).isFalse("Room name must be unique at location.");
 
         var room = new Room();

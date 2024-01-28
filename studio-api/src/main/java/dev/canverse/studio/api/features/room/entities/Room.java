@@ -35,11 +35,8 @@ public class Room extends AbstractAggregateRoot<Room> {
     @Column(nullable = false)
     private int capacity;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private Location location;
-
-    @Column(nullable = false)
-    private boolean deleted;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Slot> slots;
