@@ -1,6 +1,7 @@
 package dev.canverse.studio.api.features.reservation.dtos;
 
 import dev.canverse.studio.api.features.reservation.entities.Reservation;
+import dev.canverse.studio.api.features.shared.TimePeriod;
 import dev.canverse.studio.api.features.slot.dtos.SlotInfo;
 import dev.canverse.studio.api.features.user.dtos.UserSummaryInfo;
 import lombok.Getter;
@@ -8,15 +9,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class ReservationInfo implements Serializable {
     private int id;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private TimePeriod timePeriod;
     private UserSummaryInfo user;
     private SlotInfo slot;
     private ReservationActionInfo lastAction;
@@ -25,8 +24,7 @@ public class ReservationInfo implements Serializable {
         if (res == null) return;
 
         this.id = res.getId();
-        this.startDate = res.getStartDate();
-        this.endDate = res.getEndDate();
+        this.timePeriod = res.getTimePeriod();
         this.user = new UserSummaryInfo(res.getUser());
         this.slot = new SlotInfo(res.getSlot());
         this.lastAction = new ReservationActionInfo(res.getLastAction());

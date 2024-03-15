@@ -1,43 +1,41 @@
 package dev.canverse.studio.api.features.user.entities;
 
-import dev.canverse.studio.api.features.authorization.entities.Role;
-import dev.canverse.studio.api.features.shared.TimePeriod;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Entity
-@Table(name = "user_roles")
+@Table(name = "groups")
 @NoArgsConstructor
-public class UserRole {
+public class Group implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(optional = false)
-    private User user;
+    @Column(nullable = false, unique = true)
+    private String name;
 
-    @ManyToOne(optional = false)
-    private Role role;
+    private String description;
 
-    @Setter
-    private TimePeriod timePeriod;
-
+    @Column(nullable = false)
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    @Setter(AccessLevel.NONE)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @Setter(AccessLevel.NONE)
     private LocalDateTime updatedAt;
 
-    public UserRole(User user, Role role) {
-        this.user = user;
-        this.role = role;
-    }
+    private boolean disabled = false;
+
+    private boolean deleted = false;
 }

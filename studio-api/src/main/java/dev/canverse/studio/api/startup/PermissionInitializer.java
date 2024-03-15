@@ -1,11 +1,15 @@
-package dev.canverse.studio.api.features.authorization.services;
+package dev.canverse.studio.api.startup;
 
 import com.google.common.reflect.ClassPath;
 import dev.canverse.studio.api.features.authorization.entities.Permission;
 import dev.canverse.studio.api.features.authorization.repositories.PermissionRepository;
+import dev.canverse.studio.api.startup.events.PermissionInitializerComplete;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,54 +17,54 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class PermissionSyncService implements ApplicationListener<ApplicationReadyEvent> {
-    private static final Logger logger = Logger.getLogger(PermissionSyncService.class.getName());
+public class PermissionInitializer implements ApplicationListener<ApplicationReadyEvent> {
     private final PermissionRepository permissionRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
+    @Transactional
     public void onApplicationEvent(@NonNull ApplicationReadyEvent event) {
-        var persistedPermissions = permissionRepository.findAll();
         var controllers = getControllers();
-        var controllerMethodPermissions = getPermissions(controllers);
+        var permissionsOnControllers = getPermissions(controllers);
+        var persistedPermissions = permissionRepository.findAll();
 
-        // Find the difference between the permissions in the database and the permissions in the controllers
-        var newPermissions = controllerMethodPermissions.stream()
+        savePermissions(persistedPermissions, permissionsOnControllers);
+        deletePermissions(persistedPermissions, permissionsOnControllers);
+        eventPublisher.publishEvent(new PermissionInitializerComplete(this));
+    }
+
+    private void savePermissions(List<Permission> persistedPermissions, List<Permission> permissionsOnControllers) {
+        // Permissions that are not persisted in the database but used in the controllers
+        var newPermissions = permissionsOnControllers.stream()
                 .filter(p -> persistedPermissions.stream().noneMatch(pp -> p.getName().equals(pp.getName())))
                 .toList();
 
-        if (!newPermissions.isEmpty())
-            logger.log(Level.INFO, "New permissions found: {0}", newPermissions.stream().map(Permission::getName).collect(Collectors.joining(", ")));
+        if (newPermissions.isEmpty())
+            return;
 
-        // Find the permissions that are not used in the controllers
-        var unusedPermissions = persistedPermissions.stream()
-                .filter(p -> controllerMethodPermissions.stream().noneMatch(pp -> p.getName().equals(pp.getName())))
-                .toList();
-        if (!unusedPermissions.isEmpty())
-            logger.log(Level.INFO, "Unused permissions found: {0}", unusedPermissions.stream().map(Permission::getName).collect(Collectors.joining(", ")));
-
-
-        if (!newPermissions.isEmpty()) {
-            // Persist the new permissions
-            permissionRepository.saveAllAndFlush(newPermissions);
-            logger.log(Level.INFO, "{0} new permissions persisted.", newPermissions.size());
-        }
-
-        if (!unusedPermissions.isEmpty()) {
-            // Delete the unused permissions
-            permissionRepository.deleteAll(unusedPermissions);
-            logger.log(Level.INFO, "{0} unused permissions deleted.", unusedPermissions.size());
-        }
+        permissionRepository.saveAll(newPermissions);
+        log.info("{} new permissions persisted.", newPermissions.size());
     }
 
-    // TODO: Dosya yolunda eğer boşluk varsa hata fırlatıyor başka karakterlerde de aynı sorun çıkabilir
-    // TODO: Daha iyi bir yöntem bul!
+    private void deletePermissions(List<Permission> persistedPermissions, List<Permission> permissionsOnControllers) {
+        // Permissions that are not used in the controllers but persisted in the database
+        var unusedPermissions = persistedPermissions.stream()
+                .filter(p -> permissionsOnControllers.stream().noneMatch(pp -> p.getName().equals(pp.getName())))
+                .toList();
+
+        if (unusedPermissions.isEmpty())
+            return;
+
+        permissionRepository.deleteAll(unusedPermissions);
+        log.info("{} permissions deleted.", unusedPermissions.size());
+    }
+
     private static Set<Class<?>> getControllers() {
         try {
             return ClassPath.from(ClassLoader.getSystemClassLoader())
@@ -100,7 +104,7 @@ public class PermissionSyncService implements ApplicationListener<ApplicationRea
         return permissions.stream()
                 .map(p -> {
                     if (!StringUtils.isAlphanumeric(p.replace("_", "")))
-                        throw new IllegalArgumentException("Yetki adı alfanümerik olmalıdır.");
+                        throw new IllegalArgumentException("Permission name must be alphanumeric.");
                     return new Permission(p, p);
                 })
                 .toList();

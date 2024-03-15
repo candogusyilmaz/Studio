@@ -23,6 +23,7 @@ public class PermissionController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('everyone_permissions1')")
     public PermissionInfo getById(@PathVariable int id) {
         return permissionService.getById(id);
     }

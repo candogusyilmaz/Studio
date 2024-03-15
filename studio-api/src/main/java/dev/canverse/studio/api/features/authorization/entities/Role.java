@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Getter
@@ -15,7 +17,7 @@ import java.util.Set;
 @Entity
 @Table(name = "roles")
 @NoArgsConstructor
-public class Role {
+public class Role implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -38,6 +40,9 @@ public class Role {
     @PreUpdate
     @PreRemove
     private void beforeSave() {
+        if (SecurityContextHolder.getContext().getAuthentication() == null)
+            return;
+
         Expect.of(level).lessThan(AuthenticationProvider.getHighestLevel(), "You cannot create/update/remove a role higher or equal to your level.");
     }
 

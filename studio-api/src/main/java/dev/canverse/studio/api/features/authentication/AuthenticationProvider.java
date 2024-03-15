@@ -1,6 +1,7 @@
 package dev.canverse.studio.api.features.authentication;
 
 import dev.canverse.studio.api.features.user.entities.User;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Collections;
@@ -16,6 +17,11 @@ public class AuthenticationProvider {
      * @return A User object representing the authenticated user.
      */
     public static User getAuthentication() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null)
+            throw new AuthenticationCredentialsNotFoundException("No user is authenticated.");
+
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 

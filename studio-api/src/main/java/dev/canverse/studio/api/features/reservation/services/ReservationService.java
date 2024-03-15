@@ -6,16 +6,15 @@ import dev.canverse.studio.api.features.reservation.dtos.CreateReservation;
 import dev.canverse.studio.api.features.reservation.dtos.ReservationInfo;
 import dev.canverse.studio.api.features.reservation.dtos.UpdateReservation;
 import dev.canverse.studio.api.features.reservation.entities.Reservation;
-import dev.canverse.studio.api.features.reservation.events.ReservationActionCreated;
 import dev.canverse.studio.api.features.reservation.events.ReservationCancelled;
 import dev.canverse.studio.api.features.reservation.repositories.ReservationRepository;
 import dev.canverse.studio.api.features.reservation.repositories.ReservationSpecifications;
+import dev.canverse.studio.api.features.shared.TimePeriod;
 import dev.canverse.studio.api.features.slot.repositories.SlotRepository;
 import dev.canverse.studio.api.features.slot.repositories.SlotSpecifications;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.FluentQuery;
@@ -44,7 +43,7 @@ public class ReservationService {
         var reservation = new Reservation();
         reservation.setSlot(slot);
         reservation.setUser(AuthenticationProvider.getAuthentication());
-        reservation.setDate(dto.getStartDate(), dto.getEndDate());
+        reservation.setTimePeriod(new TimePeriod(dto.getStartDate(), dto.getEndDate()));
 
         reservationRepository.save(reservation);
     }
@@ -68,7 +67,7 @@ public class ReservationService {
             res.setSlot(slot);
         }
 
-        res.setDate(dto.getStartDate(), dto.getEndDate());
+        res.setTimePeriod(new TimePeriod(dto.getStartDate(), dto.getEndDate()));
         reservationRepository.save(res);
     }
 
@@ -83,14 +82,9 @@ public class ReservationService {
         var reservation = reservationRepository.findBy(spec, r -> r.project("lastAction").first())
                 .orElseThrow(() -> new IllegalArgumentException("Reservation not found."));
 
-        Expect.of(reservation.getEndDate()).after(LocalDateTime.now(), "Since the reservation has ended, it cannot be cancelled.");
+        Expect.of(reservation.getTimePeriod().getEndDate()).after(LocalDateTime.now(), "Since the reservation has ended, it cannot be cancelled.");
         Expect.of(reservation.getLastAction().getStatus().isCancellable()).isTrue("Reservation status is not cancellable.");
 
         eventPublisher.publishEvent(new ReservationCancelled(reservation));
-    }
-
-    @EventListener
-    public void updateLastActionWhenReservationActionCreated(ReservationActionCreated event) {
-        reservationRepository.updateLastAction(event.getAction().getReservation().getId(), event.getAction().getId());
     }
 }

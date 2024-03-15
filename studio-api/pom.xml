@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.1</version>
+        <version>3.2.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>dev.canverse</groupId>
@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.1</version>
+            <version>42.7.2</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>dev.canverse</groupId>
             <artifactId>expectation</artifactId>
-            <version>0.0.6</version>
+            <version>0.0.7</version>
         </dependency>
     </dependencies>
 

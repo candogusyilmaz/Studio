@@ -17,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
     @Query("select u from User u where u.username = :username")
     @EntityGraph(attributePaths = {"userRoles.role", "userRoles.role.rolePermissions.permission"})
     User findByUsernameIncludePermissions(String username);
+
+    Optional<User> findByUsername(String username);
 }

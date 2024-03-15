@@ -5,12 +5,15 @@ import dev.canverse.studio.api.features.authentication.AuthenticationProvider;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.io.Serializable;
 
 @Getter
 @Entity
 @Table(name = "role_permissions")
 @NoArgsConstructor
-public class RolePermission {
+public class RolePermission implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -30,6 +33,9 @@ public class RolePermission {
     @PreUpdate
     @PreRemove
     private void beforeSave() {
+        if (SecurityContextHolder.getContext().getAuthentication() == null)
+            return;
+
         Expect.of(role.getLevel()).lessThan(AuthenticationProvider.getHighestLevel(), "You cannot modify a role's permissions higher or equal to your level.");
     }
 }
